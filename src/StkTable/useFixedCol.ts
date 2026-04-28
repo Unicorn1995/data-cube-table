@@ -101,12 +101,15 @@ export function useFixedCol<DT extends Record<string, any>>(
         const leftShadowCol: StkTableColumn<DT>[] = [];
         /** 右侧展示阴影的列 */
         const rightShadowCol: StkTableColumn<DT>[] = [];
-        tableHeadersForCalc.value.forEach((row, level) => {
+        const len = tableHeadersForCalc.value.length;
+        for (let level = 0; level < len; level++) {
+            const row = tableHeadersForCalc.value[level];
             /**
              * 左侧第n个fixed:left 计算要加上前面所有left 的列宽。
              */
             let left = 0;
-            row.forEach(col => {
+            for (let i = 0, rowLen = row.length; i < rowLen; i++) {
+                const col = row[i];
                 const position = getFixedColPositionValue(col);
                 const isFixedLeft = col.fixed === 'left';
                 const isFixedRight = col.fixed === 'right';
@@ -125,8 +128,8 @@ export function useFixedCol<DT extends Record<string, any>>(
                         rightShadowCol[level] = col;
                     }
                 }
-            });
-        });
+            }
+        }
 
         if (props.fixedColShadow) {
             fixedShadowCols.value = leftShadowCol.concat(rightShadowCol).filter(Boolean) as StkTableColumn<DT>[];

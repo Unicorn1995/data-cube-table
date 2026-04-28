@@ -1451,13 +1451,17 @@ function onTableWheel(e: WheelEvent) {
     }
 }
 
+/** Prevent re-entrant requestAnimationFrame in onTableScroll */
+let scrollRAFScheduled = false;
+
 /**
  * @param e scrollEvent
  */
 function onTableScroll(e: Event) {
-    if (!e?.target) return;
-    // const target = e.target;
+    if (!e?.target || scrollRAFScheduled) return;
+    scrollRAFScheduled = true;
     requestAnimationFrame(() => {
+        scrollRAFScheduled = false;
         const { scrollTop, scrollLeft } = e.target as HTMLElement;
         const { scrollTop: vScrollTop } = virtualScroll.value;
         const { scrollLeft: vScrollLeft } = virtualScrollX.value;
