@@ -1,4 +1,8 @@
 
+## 0.11.11
+* Optimize
+  - register `userAreaSelection` will be warn when `props.useAreaSelection` not provide
+
 ## 0.11.10
 * Feature
   - feat: `AreaSelectionConfig` add `highlight` config. `highlight.cell` controls cell highlight and border (default: true), `highlight.row` controls row highlight (default: false).
