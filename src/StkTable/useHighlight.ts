@@ -114,7 +114,7 @@ export function useHighlight(props: any, stkTableId: string, tableContainerRef: 
         if (method === 'animation') {
             cellEl.animate(keyframe, duration);
         } else {
-            highlightCellsInCssKeyFrame(cellEl, rowKeyValue, className, duration);
+            highlightCellsInCssKeyFrame(cellEl, rowKeyValue, colKeyValue, className, duration);
         }
     }
 
@@ -198,18 +198,22 @@ export function useHighlight(props: any, stkTableId: string, tableContainerRef: 
      * 使用css @keyframes动画，实现高亮单元格动画
      * 此方案作为兼容方式。v0.3.4 将使用Element.animate 接口实现动画。
      */
-    function highlightCellsInCssKeyFrame(cellEl: HTMLElement, rowKeyValue: UniqKey, className: string, duration: number) {
+    function highlightCellsInCssKeyFrame(cellEl: HTMLElement, rowKeyValue: UniqKey, colKeyValue: string, className: string, duration: number) {
         if (cellEl.classList.contains(className)) {
             cellEl.classList.remove(className);
             void cellEl.offsetHeight; // 通知浏览器重绘
         }
         cellEl.classList.add(className);
-        window.clearTimeout(highlightDimCellsTimeout.get(rowKeyValue));
+        const cellKey = `${rowKeyValue}-${colKeyValue}`;
+        window.clearTimeout(highlightDimCellsTimeout.get(cellKey));
+        if (!duration) {
+            return;
+        }
         highlightDimCellsTimeout.set(
-            rowKeyValue,
+            cellKey,
             window.setTimeout(() => {
                 cellEl.classList.remove(className);
-                highlightDimCellsTimeout.delete(rowKeyValue);
+                highlightDimCellsTimeout.delete(cellKey);
             }, duration),
         );
     }

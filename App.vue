@@ -1,13 +1,15 @@
 <template>
     <!-- <VirtualTree></VirtualTree> -->
     <!-- <VirtualTreeSelectTest></VirtualTreeSelectTest> -->
-    <StkTableTest></StkTableTest>
+    <!-- <StkTableTest></StkTableTest> -->
+    <FlyInAnimation></FlyInAnimation>
     <!-- <StkTableExpandCellVue></StkTableExpandCellVue> -->
 </template>
 
 <script setup>
 // import VirtualTree from './test/VirtualTree.vue';
-import StkTableTest from './test/StkTableTest.vue';
+// import StkTableTest from './test/StkTableTest.vue';
+import FlyInAnimation from './test/FlyInAnimation.vue';
 // import VirtualTreeSelectTest from './test/VirtualTreeSelect.vue';
 // import StkTableExpandCellVue from './test/StkTableExpandCell/index.vue';
 </script>

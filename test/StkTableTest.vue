@@ -17,11 +17,13 @@
     <div class="result-panel">
         <pre>{{ JSON.stringify(currentSelection, null, 2) }}</pre>
     </div>
+    <FlyInAnimation></FlyInAnimation>
 </template>
 
 <script lang="ts" setup>
 import { ref, useTemplateRef } from 'vue';
 import { registerFeature, StkTable, StkTableColumn } from '../src/StkTable/index';
+import FlyInAnimation from './FlyInAnimation.vue';
 
 type Row = {
     id: number;
