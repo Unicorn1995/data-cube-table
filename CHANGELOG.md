@@ -7,6 +7,7 @@
   - register `userAreaSelection` will be warn when `props.useAreaSelection` not provide
 * Bugfix
   - fix: `highlightDimCell` can not remove className when in css method.
+  - footer z-index to 2. To prevent fixed cell over the footer tr.
 
 ## 0.11.10
 * Feature

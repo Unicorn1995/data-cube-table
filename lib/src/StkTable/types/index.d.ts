@@ -325,9 +325,15 @@ export type AreaSelectionRange = {
         /** row index range @deprecated */
         y: [number, number];
         /** start point index*/
-        begin: { row: number; col: number };
+        begin: {
+            row: number;
+            col: number;
+        };
         /** end point index */
-        end: { row: number; col: number };
+        end: {
+            row: number;
+            col: number;
+        };
     };
 };
 /** 单元格选区配置 */
