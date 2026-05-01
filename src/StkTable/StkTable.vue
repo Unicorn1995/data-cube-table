@@ -172,7 +172,8 @@
                                     <component
                                         :is="col.customCell"
                                         v-if="col.customCell"
-                                        class="table-cell-wrapper" tabindex="-1"
+                                        class="table-cell-wrapper"
+                                        tabindex="-1"
                                         :col="col"
                                         :row="row"
                                         :rowIndex="getRowIndex(rowIndex)"
@@ -196,7 +197,8 @@
                                     </div>
                                     <TreeNodeCell
                                         v-else-if="col.type === 'tree-node'"
-                                        class="table-cell-wrapper" tabindex="-1"
+                                        class="table-cell-wrapper"
+                                        tabindex="-1"
                                         :col="col"
                                         :row="row"
                                         @click="triangleClick($event, row, col)"
