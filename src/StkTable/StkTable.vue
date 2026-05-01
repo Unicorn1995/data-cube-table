@@ -115,7 +115,8 @@
                             <component
                                 :is="col.customFooterCell"
                                 v-if="col.customFooterCell"
-                                class="table-cell-wrapper" tabindex="-1"
+                                class="table-cell-wrapper"
+                                tabindex="-1"
                                 :col="col"
                                 :row="footRow"
                                 :rowIndex="footRowIndex"
