@@ -115,14 +115,14 @@
                             <component
                                 :is="col.customFooterCell"
                                 v-if="col.customFooterCell"
-                                class="table-cell-wrapper"
+                                class="table-cell-wrapper" tabindex="-1"
                                 :col="col"
                                 :row="footRow"
                                 :rowIndex="footRowIndex"
                                 :colIndex="colIndex"
                                 :cellValue="footRow[col.dataIndex]"
                             />
-                            <div class="table-cell-wrapper" :title="footRow[col.dataIndex] || ''">
+                            <div class="table-cell-wrapper" tabindex="-1" :title="footRow[col.dataIndex] || ''">
                                 <span v-if="footRow[col.dataIndex] != null">{{ footRow[col.dataIndex] }}</span>
                             </div>
                         </td>
@@ -153,7 +153,7 @@
                     >
                         <td v-if="virtualX_on" class="vt-x-left"></td>
                         <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
-                            <div class="table-cell-wrapper">
+                            <div class="table-cell-wrapper" tabindex="-1">
                                 <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
                                     {{ (row.__EXP_R__ && row.__EXP_C__ && row.__EXP_R__[row.__EXP_C__.dataIndex]) || '' }}
                                 </slot>
@@ -171,7 +171,7 @@
                                     <component
                                         :is="col.customCell"
                                         v-if="col.customCell"
-                                        class="table-cell-wrapper"
+                                        class="table-cell-wrapper" tabindex="-1"
                                         :col="col"
                                         :row="row"
                                         :rowIndex="getRowIndex(rowIndex)"
@@ -187,20 +187,20 @@
                                             <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
                                         </template>
                                     </component>
-                                    <div v-else-if="!col.type" class="table-cell-wrapper" :title="row[col.dataIndex] || ''">
+                                    <div v-else-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="row[col.dataIndex] || ''">
                                         {{ (row && row[col.dataIndex]) !== void 0 ? row && row[col.dataIndex] : getEmptyCellText(col, row) }}
                                     </div>
-                                    <div v-else-if="col.type === 'seq'" class="table-cell-wrapper">
+                                    <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
                                         {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
                                     </div>
                                     <TreeNodeCell
                                         v-else-if="col.type === 'tree-node'"
-                                        class="table-cell-wrapper"
+                                        class="table-cell-wrapper" tabindex="-1"
                                         :col="col"
                                         :row="row"
                                         @click="triangleClick($event, row, col)"
                                     ></TreeNodeCell>
-                                    <div v-else class="table-cell-wrapper" :title="row[col.dataIndex] || ''">
+                                    <div v-else class="table-cell-wrapper" tabindex="-1" :title="row[col.dataIndex] || ''">
                                         <DragHandle v-if="col.type === 'dragRow'" @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
                                         <TriangleIcon v-else-if="col.type === 'expand'" @click="triangleClick($event, row, col)" />
                                         <span v-if="row[col.dataIndex] != null">{{ row[col.dataIndex] }}</span>
