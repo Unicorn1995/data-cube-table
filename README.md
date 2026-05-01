@@ -44,18 +44,18 @@ const stkTableRef = ref<InstanceType<typeof StkTable>>();
 const stkTableRef = useTemplateRef('stkTableRef');
 
 // highlight row
-stkTableRef.value.setHighlightDimRow([rowKey]，{
-  method: 'css'|'animation',// default animation。
-  className: 'custom-class-name', // method css。
-  keyframe: [{backgroundColor:'#aaa'}, {backgroundColor: '#222'}],//same as https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
-  duration: 2000,。
+stkTableRef.value.setHighlightDimRow([rowKey], {
+  method: 'css' | 'animation', // default animation
+  className: 'custom-class-name', // for method 'css'
+  keyframe: [{ backgroundColor: '#aaa' }, { backgroundColor: '#222' }], // same as https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+  duration: 2000,
 });
- // highlight cell
+// highlight cell
 stkTableRef.value.setHighlightDimCell(rowKey, colDataIndex, {
-  method: 'css'|'animation',
-  className:'custom-class-name', // method css。
-  keyframe: [{backgroundColor:'#aaa'}, {backgroundColor: '#222'}], // method animation。
-  duration: 2000,。
+  method: 'css' | 'animation',
+  className: 'custom-class-name', // for method 'css'
+  keyframe: [{ backgroundColor: '#aaa' }, { backgroundColor: '#222' }], // for method 'animation'
+  duration: 2000,
 });
 
 const columns = [

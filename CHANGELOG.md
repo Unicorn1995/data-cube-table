@@ -1,6 +1,9 @@
 
 ## 0.11.11
+* Feature
+  - feat: `AreaSelectionRange.index` add `begin` and `end` fields. `begin` is the drag start point (anchor), `end` is the drag end point. Both are `{ row: number; col: number }`. The previous `x` / `y` tuples are kept and still populated, but marked as `@deprecated`.
 * Optimize
+  - optimize: when `dataSource` rows or columns shrink, `areaSelection` ranges and the keyboard anchor are automatically clamped to the new bounds (or cleared when row/col count becomes 0) to avoid out-of-bounds indices.
   - register `userAreaSelection` will be warn when `props.useAreaSelection` not provide
 * Bugfix
   - fix: `highlightDimCell` can not remove className when in css method.

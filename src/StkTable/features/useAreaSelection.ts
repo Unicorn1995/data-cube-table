@@ -1,4 +1,4 @@
-import { Ref, ShallowRef, computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { Ref, ShallowRef, computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { AreaSelectionConfig, AreaSelectionRange, CellKeyGen, ColKeyGen, StkTableColumn, UniqKey } from '../types';
 import { VirtualScrollStore, VirtualScrollXStore } from '../useVirtualScroll';
 import { getClosestColKey, getClosestTrIndex } from '../utils';
@@ -193,6 +193,56 @@ export function useAreaSelection<DT extends Record<string, any>>(
         removeListener();
     });
 
+    /**
+     * 监听数据行数/列数变化，当行列变少时钳制选区与锚点，避免越界
+     * en: Watch row/col count changes, clamp selection ranges and anchor to avoid out-of-bounds
+     */
+    watch([() => dataSourceCopy.value.length, () => tableHeaderLast.value.length], ([rowCount, colCount]) => {
+        if (!config.value.enabled) return;
+
+        // 钳制锚点
+        if (anchorCell) {
+            if (rowCount === 0 || colCount === 0) {
+                anchorCell = null;
+            } else {
+                anchorCell.rowIndex = clamp(anchorCell.rowIndex, 0, rowCount - 1);
+                anchorCell.colIndex = clamp(anchorCell.colIndex, 0, colCount - 1);
+            }
+        }
+
+        if (!selectionRanges.value.length) return;
+
+        // 行或列为 0 时清空选区
+        if (rowCount === 0 || colCount === 0) {
+            clearSelectedArea();
+            emitSelectionChange();
+            return;
+        }
+
+        const maxRow = rowCount - 1;
+        const maxCol = colCount - 1;
+        let changed = false;
+        const newRanges: AreaSelectionRange[] = [];
+        for (const range of selectionRanges.value) {
+            const { begin, end } = range.index;
+            const nbRow = clamp(begin.row, 0, maxRow);
+            const nbCol = clamp(begin.col, 0, maxCol);
+            const neRow = clamp(end.row, 0, maxRow);
+            const neCol = clamp(end.col, 0, maxCol);
+            if (nbRow !== begin.row || nbCol !== begin.col || neRow !== end.row || neCol !== end.col) {
+                changed = true;
+                newRanges.push(makeRange(nbRow, nbCol, neRow, neCol));
+            } else {
+                newRanges.push(range);
+            }
+        }
+
+        if (changed) {
+            selectionRanges.value = newRanges;
+            emitSelectionChange();
+        }
+    });
+
     function addListener() {
         removeListener();
         const el = tableContainerRef.value;
@@ -213,14 +263,27 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
     /** 获取归一化（min/max）后的选区范围 */
     function normalizeRange(range: AreaSelectionRange) {
-        const { index } = range;
-        const [x1, x2] = index.x;
-        const [y1, y2] = index.y;
+        const { begin, end } = range.index;
         return {
-            minRow: Math.min(y1, y2),
-            maxRow: Math.max(y1, y2),
-            minCol: Math.min(x1, x2),
-            maxCol: Math.max(x1, x2),
+            minRow: Math.min(begin.row, end.row),
+            maxRow: Math.max(begin.row, end.row),
+            minCol: Math.min(begin.col, end.col),
+            maxCol: Math.max(begin.col, end.col),
+        };
+    }
+
+    /**
+     * 构造选区范围。begin = 拖拽起点，end = 拖拽终点。
+     * 同时填充已废弃的 x/y 字段以保证向后兼容。
+     */
+    function makeRange(beginRow: number, beginCol: number, endRow: number, endCol: number): AreaSelectionRange {
+        return {
+            index: {
+                x: [beginCol, endCol],
+                y: [beginRow, endRow],
+                begin: { row: beginRow, col: beginCol },
+                end: { row: endRow, col: endCol },
+            },
         };
     }
 
@@ -334,21 +397,11 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         const ctrlKey = e.ctrlKey || e.metaKey;
 
-        const range: AreaSelectionRange = {
-            index: {
-                x: [colIndex, colIndex],
-                y: [rowIndex, rowIndex],
-            },
-        };
+        const range: AreaSelectionRange = makeRange(rowIndex, colIndex, rowIndex, colIndex);
         // Shift 扩选：从锚点扩展到当前位置，更新最后一个区域
         if (e.shiftKey && anchorCell && shiftEnabled.value) {
             const ranges = selectionRanges.value.slice();
-            const shiftRange: AreaSelectionRange = {
-                index: {
-                    x: [anchorCell.colIndex, colIndex],
-                    y: [anchorCell.rowIndex, rowIndex],
-                },
-            };
+            const shiftRange: AreaSelectionRange = makeRange(anchorCell.rowIndex, anchorCell.colIndex, rowIndex, colIndex);
             if (ranges.length) {
                 ranges[ranges.length - 1] = shiftRange;
             } else {
@@ -408,12 +461,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
     /** 更新最后一个选区的终点（拖拽过程中） */
     function updateSelectionEnd(endRowIndex: number, endColIndex: number) {
         if (!anchorCell) return;
-        const newRange: AreaSelectionRange = {
-            index: {
-                x: [anchorCell.colIndex, endColIndex],
-                y: [anchorCell.rowIndex, endRowIndex],
-            },
-        };
+        const newRange: AreaSelectionRange = makeRange(anchorCell.rowIndex, anchorCell.colIndex, endRowIndex, endColIndex);
         const ranges = [...selectionRanges.value];
         if (ranges.length > 0) {
             ranges[ranges.length - 1] = newRange;
@@ -617,14 +665,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         // en: If no selection, start from the first cell
         if (!selectionRanges.value.length) {
             anchorCell = { rowIndex: 0, colIndex: 0 };
-            selectionRanges.value = [
-                {
-                    index: {
-                        x: [0, 0],
-                        y: [0, 0],
-                    },
-                },
-            ];
+            selectionRanges.value = [makeRange(0, 0, 0, 0)];
             emitSelectionChange();
             scrollToCell(0, 0);
             return;
@@ -635,24 +676,19 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         // Shift 扩展选区，否则移动单格选区
         if (e.shiftKey && isArrowKey && shiftEnabled.value) {
-            // 扩展选区：更新最后一个区域的 endRow/endCol
+            // 扩展选区：保留 begin，更新最后一个区域的 end
             const ranges = [...selectionRanges.value];
             const range = ranges.length > 0 ? ranges[ranges.length - 1] : null;
             if (!range) return;
-            const { index } = range;
-            let newEndRow = index.y[1] + rowDelta;
-            let newEndCol = index.x[1] + colDelta;
+            const { begin, end } = range.index;
+            let newEndRow = end.row + rowDelta;
+            let newEndCol = end.col + colDelta;
 
             // 边界检查
             newEndRow = clamp(newEndRow, 0, rowCount - 1);
             newEndCol = clamp(newEndCol, 0, colCount - 1);
 
-            ranges[ranges.length - 1] = {
-                index: {
-                    x: [index.x[0], newEndCol],
-                    y: [index.y[0], newEndRow],
-                },
-            };
+            ranges[ranges.length - 1] = makeRange(begin.row, begin.col, newEndRow, newEndCol);
             selectionRanges.value = ranges;
 
             scrollToCell(newEndRow, newEndCol);
@@ -681,14 +717,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
             // 更新锚点和选区（移动单格时清空其他区域，仅保留新位置）
             anchorCell = { rowIndex: newRow, colIndex: newCol };
-            selectionRanges.value = [
-                {
-                    index: {
-                        x: [newCol, newCol],
-                        y: [newRow, newRow],
-                    },
-                },
-            ];
+            selectionRanges.value = [makeRange(newRow, newCol, newRow, newCol)];
 
             scrollToCell(newRow, newCol);
         }

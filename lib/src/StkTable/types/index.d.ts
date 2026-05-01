@@ -320,8 +320,14 @@ export type RowActiveOption<DT> = {
 /** 单元格选区范围 */
 export type AreaSelectionRange = {
     index: {
+        /** column index range @deprecated */
         x: [number, number];
+        /** row index range @deprecated */
         y: [number, number];
+        /** start point index*/
+        begin: { row: number; col: number };
+        /** end point index */
+        end: { row: number; col: number };
     };
 };
 /** 单元格选区配置 */

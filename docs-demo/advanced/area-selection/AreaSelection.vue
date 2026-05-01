@@ -79,11 +79,18 @@ function formatCell(row: Row, col: any, raw: any) {
 }
 
 function formatCurrentRange(ranges: any) {
-    if (!ranges) return '';
-    const rangesStr = ranges?.map((r: any) => '    ' + JSON.stringify(r)).join(',\n') || '[]';
-    return `[
-${rangesStr}
-]`;
+    if (!ranges || !ranges.length) return '[]';
+    const rangesStr = ranges
+        .map((r: any) => {
+            const idx = r?.index || {};
+            const keys = Object.keys(idx);
+            if (!keys.length) return '    {\n        "index":{}\n    }';
+            const props = keys.map(k => `        "${k}":${JSON.stringify(idx[k])}`);
+            props[props.length - 1] += '}';
+            return ['    {', '        "index":{', props.join(',\n'), '    }'].join('\n');
+        })
+        .join(',\n');
+    return `[\n${rangesStr}\n]`;
 }
 </script>
 
