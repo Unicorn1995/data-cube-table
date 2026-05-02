@@ -310,6 +310,7 @@ import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
+import { useFocusoutControll } from './utils/useFocusoutControll';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTr, getClosestTrIndex, rafThrottle, transformWidthToStr } from './utils/index';
 
@@ -730,6 +731,8 @@ let currentHoverRow: DT | null = null;
 const currentHoverRowKey = ref<UniqKey | null>(null);
 /** 当前hover的列的key */
 // const currentColHoverKey = ref(null);
+
+useFocusoutControll(props, tableContainerRef);
 
 const [tableHeaders, tableHeadersForCalc, dealColumns] = useTableColumns<DT>(props.virtualX, isRelativeMode);
 
