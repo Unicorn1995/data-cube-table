@@ -628,6 +628,14 @@ export function useAreaSelection<DT extends Record<string, any>>(
     function onKeydown(e: KeyboardEvent) {
         if (!config.value.enabled) return;
 
+        // 防止虚拟滚动移除 DOM 时焦点被动丢失，导致后续 keydown 无法冒泡到容器
+        // en: Prevent focus loss when virtual scroll removes DOM, causing subsequent keydown events to not bubble to the container
+        const container = tableContainerRef.value;
+        const activeEl = document.activeElement as HTMLElement | null;
+        if (container && activeEl && container.contains(activeEl) && activeEl !== container) {
+            container.focus({ preventScroll: true });
+        }
+
         const key = e.key;
 
         // Esc ：cancel

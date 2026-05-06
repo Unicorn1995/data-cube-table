@@ -1,4 +1,8 @@
 
+## 0.11.12
+* Bugfix
+  - fix: blur when use area selection moved by keyboard.
+
 ## 0.11.11
 * Feature
   - feat: `AreaSelectionRange.index` add `begin` and `end` fields. `begin` is the drag start point (anchor), `end` is the drag end point. Both are `{ row: number; col: number }`. The previous `x` / `y` tuples are kept and still populated, but marked as `@deprecated`.
