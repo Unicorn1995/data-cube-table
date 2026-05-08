@@ -193,18 +193,24 @@
 ```ts
 type AreaSelectionRange = {
     index: {
-        /** 열 인덱스 범위 [시작 열, 끝 열] (양쪽 끝 포함) */
+        /** 열 인덱스 범위 [시작 열, 끝 열] (양쪽 끝 포함) @deprecated begin/end를 사용하세요 */
         x: [number, number];
-        /** 행 인덱스 범위 [시작 행, 끝 행] (양쪽 끝 포함) */
+        /** 행 인덱스 범위 [시작 행, 끝 행] (양쪽 끝 포함) @deprecated begin/end를 사용하세요 */
         y: [number, number];
+        /** 선택 영역 시작점 인덱스 */
+        begin: { row: number; col: number };
+        /** 선택 영역 끝점 인덱스 */
+        end: { row: number; col: number };
     };
 };
 ```
 
 | 필드 | 타입 | 설명 |
 | --- | --- | --- |
-| index.x | `[number, number]` | 선택 영역이 덮는 열 인덱스 범위, `[시작 열, 끝 열]`, 양쪽 끝 포함 |
-| index.y | `[number, number]` | 선택 영역이 덮는 행 인덱스 범위, `[시작 행, 끝 행]`, 양쪽 끝 포함 |
+| index.x | `[number, number]` | 선택 영역이 덮는 열 인덱스 범위, `[시작 열, 끝 열]`, 양쪽 끝 포함. 사용 중단, begin/end를 사용하세요 |
+| index.y | `[number, number]` | 선택 영역이 덮는 행 인덱스 범위, `[시작 행, 끝 행]`, 양쪽 끝 포함. 사용 중단, begin/end를 사용하세요 |
+| index.begin | `{ row: number; col: number }` | 선택 영역 시작점 인덱스 |
+| index.end | `{ row: number; col: number }` | 선택 영역 끝점 인덱스 |
 
 Ctrl 다중 선택 또는 Shift 범위 선택을 사용할 때 `ranges`에는 여러 선택 영역이 포함될 수 있습니다.
 

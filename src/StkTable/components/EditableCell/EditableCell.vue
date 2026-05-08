@@ -1,5 +1,5 @@
 <template>
-    <div ref="rootRef" class="stk-editable-cell" @dblclick="startEditing">
+    <div ref="rootRef" class="stk-editable-cell" @dblclick="onTrigger" @click="onTrigger">
         <template v-if="!editing">{{ displayValue }}</template>
         <input v-else ref="inputRef" class="stk-editable-cell-input" :value="editValue" @blur="onBlur" @input="onInput" @keydown="onKeydown" />
     </div>
@@ -9,7 +9,10 @@
 import type { CustomCellProps } from '../../types';
 import { computed, nextTick, ref, watch } from 'vue';
 
-const props = defineProps<CustomCellProps<T>>();
+const props = withDefaults(
+    defineProps<CustomCellProps<T> & { trigger?: 'dblclick' | 'click'; onChange?: (newValue: any) => void }>(),
+    { trigger: 'dblclick' },
+);
 
 const editValue = ref<any>(props.cellValue);
 const isEditing = ref(false);
@@ -32,6 +35,11 @@ watch(
     },
 );
 
+function onTrigger(e: MouseEvent) {
+    if (e.type !== props.trigger) return;
+    startEditing();
+}
+
 function startEditing() {
     editValue.value = props.cellValue;
     isEditing.value = true;
@@ -42,7 +50,9 @@ function startEditing() {
 
 function finishEditing() {
     isEditing.value = false;
-    setCellValue(editValue.value);
+    const newValue = editValue.value;
+    setCellValue(newValue);
+    props.onChange?.(newValue);
     refocusContainer();
 }
 

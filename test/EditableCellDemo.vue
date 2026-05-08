@@ -34,10 +34,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { StkTable, EditableCell, registerFeature, useAreaSelection } from '../src/StkTable';
+import { StkTable, registerFeature, useAreaSelection, useEditableCell } from '../src/StkTable';
 import type { StkTableColumn } from '../src/StkTable';
 
 registerFeature([useAreaSelection]);
+
+const { EditableCell } = useEditableCell();
+const EditableCellComponent = EditableCell();
 
 type RowType = {
     id: number;
@@ -57,10 +60,10 @@ const areaSelectionConfig = {
 
 const columns: StkTableColumn<RowType>[] = [
     { title: 'ID', dataIndex: 'id', width: 60 },
-    { title: '姓名', dataIndex: 'name', width: 120, customCell: EditableCell<RowType> },
-    { title: '年龄', dataIndex: 'age', width: 80, customCell: EditableCell<RowType> },
-    { title: '城市', dataIndex: 'city', width: 140, customCell: EditableCell<RowType> },
-    { title: '邮箱', dataIndex: 'email', customCell: EditableCell<RowType> },
+    { title: '姓名', dataIndex: 'name', width: 120, customCell: EditableCellComponent },
+    { title: '年龄', dataIndex: 'age', width: 80, customCell: EditableCellComponent },
+    { title: '城市', dataIndex: 'city', width: 140, customCell: EditableCellComponent },
+    { title: '邮箱', dataIndex: 'email', customCell: EditableCellComponent },
 ];
 
 const tableData = ref<RowType[]>([

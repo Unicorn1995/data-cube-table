@@ -8,4 +8,6 @@ export { useFilter } from './components/Filter';
 export type { FilterStatus, UseFilterOptions } from './components/Filter';
 // 导出EditableCell组件
 export { EditableCell } from './components/EditableCell';
+export { useEditableCell } from './components/EditableCell';
+export type { UseEditableCellOptions } from './components/EditableCell';
 import './style.less';
