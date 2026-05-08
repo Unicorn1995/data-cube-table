@@ -13,6 +13,9 @@ export interface FilterStatus {
 }
 
 // createFilter选项接口
-export interface CreateFilterOptions {
-    filterRemote: boolean; // 是否远程筛选
+export interface CreateFilterOption {
+    /** 是否远程筛选 */
+    remote?: boolean;
+    /** 是否自动从数据中提取筛选选项，默认 false */
+    autoExtractOptions?: boolean;
 }

@@ -6,7 +6,9 @@ import SourceCell from './custom-cells/SourceCell.vue';
 import { DataType } from './types';
 import { useI18n } from '../../hooks/useI18n/index';
 
-const { Filter } = createFilter();
+const { Filter } = createFilter({
+    autoExtractOptions: true
+});
 export const columns: () => StkTableColumn<DataType>[] = () => {
     const { t } = useI18n();
     return [
@@ -109,7 +111,7 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             width: 120,
             fixed: 'left',
         },
-        { dataIndex: 'orgDebtRating', title: t('mainDebtRating') },
+        { dataIndex: 'orgDebtRating', title: t('mainDebtRating'),customHeaderCell: Filter() },
         { dataIndex: 'cbImpliedRating', title: t('impliedRatingCnBond'), width: 120 },
         { dataIndex: 'csiImpliedRating', title: t('impliedRatingCsi'), width: 120 },
         { dataIndex: 'outlook', title: t('outlook'), sortField: 'outlook' },

@@ -1,36 +1,36 @@
 import { CustomHeaderCellProps, UniqKey } from '@/StkTable/types';
 import { computed, defineComponent, getCurrentInstance, h, markRaw, ref, VNode } from 'vue';
 import Filter from './Filter.vue';
-import type { FilterOption, FilterStatus } from './types';
+import type { CreateFilterOption, FilterOption, FilterStatus } from './types';
 
 /**
  * 从数据源提取筛选选项
  * @param dataSource 数据源
  * @param columnKey 列名
  * @returns 筛选选项数组
-//  */
-// function extractFilterOptions(dataSource: any[], columnKey: string): FilterOption[] {
-//     const uniqueValues = new Set<any>();
+ */
+function extractFilterOptions(dataSource: any[], columnKey: string): FilterOption[] {
+    const uniqueValues = new Set<any>();
 
-//     // 提取唯一值
-//     dataSource.forEach(row => {
-//         if (row[columnKey] !== undefined && row[columnKey] !== null) {
-//             uniqueValues.add(row[columnKey]);
-//         }
-//     });
+    // 提取唯一值
+    dataSource.forEach(row => {
+        if (row[columnKey] !== undefined && row[columnKey] !== null) {
+            uniqueValues.add(row[columnKey]);
+        }
+    });
 
-//     return Array.from(uniqueValues).map(value => ({
-//         label: String(value),
-//         value,
-//     }));
-// }
+    return Array.from(uniqueValues).map(value => ({
+        label: String(value),
+        value,
+    }));
+}
 
 /**
  * 表格筛选功能工厂函数 (BETA)
  * @beta
  * @returns
  */
-export function createFilter(option?: { remote?: boolean }) {
+export function createFilter(option?: CreateFilterOption) {
     const filterStatus = ref<Record<UniqKey, FilterStatus>>({});
 
     function FilterComponent(config?: { options?: FilterOption[] }, component?: VNode) {
@@ -62,6 +62,16 @@ export function createFilter(option?: { remote?: boolean }) {
                         return filterStatus.value[colKey]?.value.length || 0;
                     });
 
+                    // 自动从数据中提取筛选选项
+                    const autoOptions = computed<FilterOption[]>(() => {
+                        if (!option?.autoExtractOptions) return [];
+                        const dataSource: any[] = stkTableInstance?.props?.dataSource || [];
+                        return extractFilterOptions(dataSource, colKey);
+                    });
+
+                    // 优先使用 FilterComponent 传入的 options，其次使用自动提取的选项
+                    const resolvedOptions = computed(() => config?.options ?? autoOptions.value);
+
                     function handleChange(value: FilterOption['value'][]) {
                         filterStatus.value[colKey] = { value };
                         stkTableInstance?.exposed?.setFilter(filterStatus.value, option);
@@ -73,7 +83,7 @@ export function createFilter(option?: { remote?: boolean }) {
                                 ...props,
                                 theme: theme.value,
                                 active: filterNumber.value > 0,
-                                options: config?.options || [],
+                                options: resolvedOptions.value,
                                 onChange: handleChange,
                             },
                             [component ? h(component, props) : null],
