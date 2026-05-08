@@ -99,6 +99,13 @@ const NameInputCell = {
                 onInput: (e: Event) => {
                     props.row[props.col.dataIndex] = (e.target as HTMLInputElement).value;
                 },
+                onKeydown: e => {
+                    // 如果是esc 或者tab 则不处理，让容器处理
+                    if (e.key === 'Escape' || e.key === 'Tab') {
+                        return;
+                    }
+                    e.stopPropagation();
+                },
             });
     },
 };
