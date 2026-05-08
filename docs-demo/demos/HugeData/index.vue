@@ -46,6 +46,7 @@ const columns = ref(columnsRaw());
 const dataSource = shallowRef<DataType[]>([]);
 const footerData = ref<Record<string, any>[]>([]);
 
+const RATING_OPTIONS = ['AAA', 'AA+', 'AA-', 'AA', 'B+', 'B'];
 const CODE_BASE = 10_000_000;
 const createData = (i: number) => {
     return {
@@ -57,6 +58,7 @@ const createData = (i: number) => {
         cbOfrBp: (Math.random() * 10).toFixed(4),
         bestBuyPrice: (Math.random() * 10).toFixed(4),
         bestSellPrice: (Math.random() * 10).toFixed(4),
+        orgDebtRating: RATING_OPTIONS[Math.floor(Math.random() * RATING_OPTIONS.length)],
     };
 };
 
