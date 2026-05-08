@@ -6,9 +6,7 @@ import SourceCell from './custom-cells/SourceCell.vue';
 import { DataType } from './types';
 import { useI18n } from '../../hooks/useI18n/index';
 
-const { Filter } = createFilter({
-    autoExtractOptions: true
-});
+const { Filter } = createFilter();
 export const columns: () => StkTableColumn<DataType>[] = () => {
     const { t } = useI18n();
     return [
@@ -62,6 +60,24 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             headerAlign: 'right',
             sorter: true,
             sortType: 'number',
+            customHeaderCell: Filter({
+                options: [
+                    { label: '<1', value: 1 },
+                    { label: '1-2', value: 2 },
+                    { label: '>2', value: 3 },
+                ],
+                filter({ cellValue, filterValues }) {
+                    return filterValues.some(fv => {
+                        if (fv === 1) {
+                            return cellValue < 1;
+                        }
+                        if (fv === 2) {
+                            return cellValue >= 1 && cellValue < 2;
+                        }
+                        return cellValue >= 2;
+                    });
+                },
+            }),
         },
         {
             dataIndex: 'bestSellPrice',
@@ -111,7 +127,11 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             width: 120,
             fixed: 'left',
         },
-        { dataIndex: 'orgDebtRating', title: t('mainDebtRating'),customHeaderCell: Filter() },
+        {
+            dataIndex: 'orgDebtRating',
+            title: t('mainDebtRating'),
+            customHeaderCell: Filter({ autoOptions: true }),
+        },
         { dataIndex: 'cbImpliedRating', title: t('impliedRatingCnBond'), width: 120 },
         { dataIndex: 'csiImpliedRating', title: t('impliedRatingCsi'), width: 120 },
         { dataIndex: 'outlook', title: t('outlook'), sortField: 'outlook' },

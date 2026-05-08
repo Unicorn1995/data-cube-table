@@ -1046,13 +1046,19 @@ function setFilter(
 function filterDataSource(dataSource: DT[]) {
     const filterKeys = Object.keys(filterStatus.value);
     if (!filterKeys?.length) return dataSource;
-    return dataSource.filter(row => {
-        return filterKeys.every(key => {
-            const { value } = filterStatus.value[key];
-            if (!value?.length) return true;
-            return value.some(v => row[key] == v);
+    let result = dataSource;
+    for (const key of filterKeys) {
+        const { value, filter } = filterStatus.value[key];
+        if (!value?.length) continue;
+        result = result.filter(row => {
+            const cellValue = row[key];
+            if (filter) {
+                return filter({ row, cellValue, filterValues: value });
+            }
+            return value.some(v => cellValue == v);
         });
-    });
+    }
+    return result;
 }
 
 /**
