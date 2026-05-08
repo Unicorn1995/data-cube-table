@@ -1,7 +1,7 @@
 import { CustomHeaderCellProps, UniqKey } from '@/StkTable/types';
 import { computed, defineComponent, getCurrentInstance, h, markRaw, ref, VNode } from 'vue';
 import Filter from './Filter.vue';
-import type { CreateFilterOption, FilterOption, FilterStatus } from './types';
+import type { CreateFilterOption, FilterComponentConfig, FilterOption, FilterStatus } from './types';
 
 /**
  * 从数据源提取筛选选项
@@ -12,10 +12,10 @@ import type { CreateFilterOption, FilterOption, FilterStatus } from './types';
 function extractFilterOptions(dataSource: any[], columnKey: string): FilterOption[] {
     const uniqueValues = new Set<any>();
 
-    // 提取唯一值
     dataSource.forEach(row => {
-        if (row[columnKey] !== undefined && row[columnKey] !== null) {
-            uniqueValues.add(row[columnKey]);
+        const val = row[columnKey];
+        if (val !== undefined && val !== null) {
+            uniqueValues.add(val);
         }
     });
 
@@ -33,7 +33,7 @@ function extractFilterOptions(dataSource: any[], columnKey: string): FilterOptio
 export function createFilter(option?: CreateFilterOption) {
     const filterStatus = ref<Record<UniqKey, FilterStatus>>({});
 
-    function FilterComponent(config?: { options?: FilterOption[] }, component?: VNode) {
+    function FilterComponent(config?: FilterComponentConfig, component?: VNode) {
         return markRaw(
             defineComponent({
                 // eslint-disable-next-line vue/require-prop-types
@@ -64,7 +64,7 @@ export function createFilter(option?: CreateFilterOption) {
 
                     // 自动从数据中提取筛选选项
                     const autoOptions = computed<FilterOption[]>(() => {
-                        if (!option?.autoExtractOptions) return [];
+                        if (!config?.autoOptions) return [];
                         const dataSource: any[] = stkTableInstance?.props?.dataSource || [];
                         return extractFilterOptions(dataSource, colKey);
                     });
@@ -73,7 +73,10 @@ export function createFilter(option?: CreateFilterOption) {
                     const resolvedOptions = computed(() => config?.options ?? autoOptions.value);
 
                     function handleChange(value: FilterOption['value'][]) {
-                        filterStatus.value[colKey] = { value };
+                        filterStatus.value[colKey] = {
+                            value,
+                            filter: config?.filter ?? filterStatus.value[colKey]?.filter,
+                        };
                         stkTableInstance?.exposed?.setFilter(filterStatus.value, option);
                     }
                     return () =>

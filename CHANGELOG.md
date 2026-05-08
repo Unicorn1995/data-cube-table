@@ -2,6 +2,9 @@
 ## 0.11.12
 * Feature
   - feat: Add `EditableCell` component for cell editing. Double click to edit, Enter to confirm, Esc to cancel.
+  - `createFilter`
+    - support `autoOptions`.
+    - support `filter` function to custom.
 * Bugfix
   - fix: blur when use area selection moved by keyboard.
 * Change
