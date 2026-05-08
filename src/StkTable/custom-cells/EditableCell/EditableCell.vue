@@ -9,10 +9,9 @@
 import type { CustomCellProps } from '../../types';
 import { computed, nextTick, ref, watch } from 'vue';
 
-const props = withDefaults(
-    defineProps<CustomCellProps<T> & { trigger?: 'dblclick' | 'click'; onChange?: (newValue: any) => void }>(),
-    { trigger: 'dblclick' },
-);
+const props = withDefaults(defineProps<CustomCellProps<T> & { trigger?: 'dblclick' | 'click'; onChange?: (newValue: any) => void }>(), {
+    trigger: 'dblclick',
+});
 
 const editValue = ref<any>(props.cellValue);
 const isEditing = ref(false);
@@ -99,24 +98,3 @@ function refocusContainer() {
     el?.focus();
 }
 </script>
-
-<style scoped lang="less">
-.stk-editable-cell {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    cursor: default;
-    min-width: 0;
-
-    .stk-editable-cell-input {
-        width: 100%;
-        font-size: inherit;
-        line-height: inherit;
-        box-sizing: border-box;
-        outline: none;
-        padding: 0 8px;
-        border: none;
-        background: rgba(24, 144, 255, 0.08);
-    }
-}
-</style>
