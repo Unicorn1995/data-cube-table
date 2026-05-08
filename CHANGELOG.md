@@ -6,6 +6,7 @@
   - fix: blur when use area selection moved by keyboard.
 * Change
   - areaSelection: press esc will not clear selection area.
+  - `useFilter` rename to `createFilter` (Beta)
 
 ## 0.11.11
 * Feature

@@ -27,8 +27,8 @@ import 'stk-table-vue/lib/style.css'; // 引入样式，一般在 main.js(全局
 // 工具函数
 import { tableSort, insertToOrderedArray, strCompare, binarySearch } from 'stk-table-vue';
 // 按需特性
-import { useAreaSelection, registerFeature, useFilter } from 'stk-table-vue';
-import type { FilterStatus, UseFilterOptions } from 'stk-table-vue';
+import { useAreaSelection, registerFeature, createFilter } from 'stk-table-vue';
+import type { FilterStatus, CreateFilterOptions } from 'stk-table-vue';
 ```
 
 ***

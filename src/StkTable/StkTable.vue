@@ -254,7 +254,7 @@ export default {
  */
 import { computed, nextTick, onMounted, provide, ref, shallowRef, toRaw, toRef, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
-import type { FilterStatus } from './components/Filter/types';
+import type { FilterStatus } from './custom-cells/Filter/types';
 import SortIcon from './components/SortIcon.vue';
 import TreeNodeCell from './components/TreeNodeCell.vue';
 import TriangleIcon from './components/TriangleIcon.vue';

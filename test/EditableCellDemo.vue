@@ -34,12 +34,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { StkTable, registerFeature, useAreaSelection, useEditableCell } from '../src/StkTable';
+import { StkTable, registerFeature, useAreaSelection, createEditableCell } from '../src/StkTable';
 import type { StkTableColumn } from '../src/StkTable';
 
 registerFeature([useAreaSelection]);
 
-const { EditableCell } = useEditableCell();
+const { EditableCell } = createEditableCell();
 const EditableCellComponent = EditableCell();
 
 type RowType = {

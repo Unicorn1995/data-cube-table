@@ -1,12 +1,12 @@
 import { StkTableColumn } from '@/StkTable';
-import { useFilter } from '../../../src/StkTable/index';
+import { createFilter } from '../../../src/StkTable/index';
 import { h } from 'vue';
 import ExpandCell from './custom-cells/ExpandCell.vue';
 import SourceCell from './custom-cells/SourceCell.vue';
 import { DataType } from './types';
 import { useI18n } from '../../hooks/useI18n/index';
 
-const { Filter } = useFilter();
+const { Filter } = createFilter();
 export const columns: () => StkTableColumn<DataType>[] = () => {
     const { t } = useI18n();
     return [
