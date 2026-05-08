@@ -193,18 +193,24 @@ Cell selection range type. Each range describes the cells covered in the table v
 ```ts
 type AreaSelectionRange = {
     index: {
-        /** Column index range [startCol, endCol] (both ends inclusive) */
+        /** Column index range [startCol, endCol] (both ends inclusive) @deprecated Use begin/end instead */
         x: [number, number];
-        /** Row index range [startRow, endRow] (both ends inclusive) */
+        /** Row index range [startRow, endRow] (both ends inclusive) @deprecated Use begin/end instead */
         y: [number, number];
+        /** Start point index of the selection */
+        begin: { row: number; col: number };
+        /** End point index of the selection */
+        end: { row: number; col: number };
     };
 };
 ```
 
 | Field | Type | Description |
 | --- | --- | --- |
-| index.x | `[number, number]` | Column index range covered by the selection, `[startCol, endCol]`, both ends inclusive |
-| index.y | `[number, number]` | Row index range covered by the selection, `[startRow, endRow]`, both ends inclusive |
+| index.x | `[number, number]` | Column index range covered by the selection, `[startCol, endCol]`, both ends inclusive. Deprecated, use begin/end instead |
+| index.y | `[number, number]` | Row index range covered by the selection, `[startRow, endRow]`, both ends inclusive. Deprecated, use begin/end instead |
+| index.begin | `{ row: number; col: number }` | Start point index of the selection |
+| index.end | `{ row: number; col: number }` | End point index of the selection |
 
 When using Ctrl multi-select or Shift range-select, `ranges` may contain multiple selection ranges.
 

@@ -193,18 +193,24 @@
 ```ts
 type AreaSelectionRange = {
     index: {
-        /** 列索引范围 [起始列, 结束列]（包含两端） */
+        /** 列索引范围 [起始列, 结束列]（包含两端） @deprecated 请使用 begin/end */
         x: [number, number];
-        /** 行索引范围 [起始行, 结束行]（包含两端） */
+        /** 行索引范围 [起始行, 结束行]（包含两端） @deprecated 请使用 begin/end */
         y: [number, number];
+        /** 选区起始点索引 */
+        begin: { row: number; col: number };
+        /** 选区结束点索引 */
+        end: { row: number; col: number };
     };
 };
 ```
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| index.x | `[number, number]` | 选区覆盖的列索引范围，`[起始列, 结束列]`，包含两端 |
-| index.y | `[number, number]` | 选区覆盖的行索引范围，`[起始行, 结束行]`，包含两端 |
+| index.x | `[number, number]` | 选区覆盖的列索引范围，`[起始列, 结束列]`，包含两端。已废弃，请使用 begin/end |
+| index.y | `[number, number]` | 选区覆盖的行索引范围，`[起始行, 结束行]`，包含两端。已废弃，请使用 begin/end |
+| index.begin | `{ row: number; col: number }` | 选区起始点索引 |
+| index.end | `{ row: number; col: number }` | 选区结束点索引 |
 
 当使用 Ctrl 多选或 Shift 扩选时，`ranges` 可能包含多个选区。
 

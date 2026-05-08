@@ -193,18 +193,24 @@
 ```ts
 type AreaSelectionRange = {
     index: {
-        /** 列インデックス範囲 [開始列, 終了列]（両端を含む） */
+        /** 列インデックス範囲 [開始列, 終了列]（両端を含む） @deprecated begin/endを使用してください */
         x: [number, number];
-        /** 行インデックス範囲 [開始行, 終了行]（両端を含む） */
+        /** 行インデックス範囲 [開始行, 終了行]（両端を含む） @deprecated begin/endを使用してください */
         y: [number, number];
+        /** 選択範囲の開始点インデックス */
+        begin: { row: number; col: number };
+        /** 選択範囲の終了点インデックス */
+        end: { row: number; col: number };
     };
 };
 ```
 
 | フィールド | 型 | 説明 |
 | --- | --- | --- |
-| index.x | `[number, number]` | 選択範囲が覆う列インデックス範囲、`[開始列, 終了列]`、両端を含む |
-| index.y | `[number, number]` | 選択範囲が覆う行インデックス範囲、`[開始行, 終了行]`、両端を含む |
+| index.x | `[number, number]` | 選択範囲が覆う列インデックス範囲、`[開始列, 終了列]`、両端を含む。非推奨、begin/endを使用してください |
+| index.y | `[number, number]` | 選択範囲が覆う行インデックス範囲、`[開始行, 終了行]`、両端を含む。非推奨、begin/endを使用してください |
+| index.begin | `{ row: number; col: number }` | 選択範囲の開始点インデックス |
+| index.end | `{ row: number; col: number }` | 選択範囲の終了点インデックス |
 
 Ctrl 複数選択または Shift 範囲選択を使用する場合、`ranges` には複数の選択範囲が含まれる可能性があります。
 
