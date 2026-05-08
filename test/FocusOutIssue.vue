@@ -166,7 +166,22 @@ function updateActiveEl() {
 function onFocusIn() {
     updateActiveEl();
 }
-function onFocusOut() {
+function onFocusOut(e: FocusEvent) {
+    const target = e.target as HTMLElement;
+    const relatedTarget = e.relatedTarget as HTMLElement;
+
+    // 如果焦点移到了容器外，且原目标元素已不在DOM中
+    if (!containerEl?.contains(relatedTarget)) {
+        // 使用 requestAnimationFrame 确保在DOM更新后检查
+        requestAnimationFrame(() => {
+            // 检查原聚焦元素是否还在DOM中
+            if (!document.contains(target)) {
+                // 元素已被移除（如虚拟滚动），自动聚焦到容器
+                containerEl?.focus();
+            }
+        });
+    }
+
     // focusout 事件早于焦点切换完成，因此异步读取 activeElement
     requestAnimationFrame(updateActiveEl);
 }
