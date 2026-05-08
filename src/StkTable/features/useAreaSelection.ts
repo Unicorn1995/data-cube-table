@@ -620,6 +620,16 @@ export function useAreaSelection<DT extends Record<string, any>>(
         return text;
     }
 
+    function blurCellElement() {
+        // 防止虚拟滚动移除 DOM 时焦点被动丢失，导致后续 keydown 无法冒泡到容器
+        // en: Prevent focus loss when virtual scroll removes DOM, causing subsequent keydown events to not bubble to the container
+        const container = tableContainerRef.value;
+        const activeEl = document.activeElement as HTMLElement | null;
+        if (container && activeEl && container.contains(activeEl) && activeEl !== container) {
+            container.focus({ preventScroll: true });
+        }
+    }
+
     /**
      * Ctrl+C / Cmd+C copy
      * Esc ：cancel
@@ -628,21 +638,14 @@ export function useAreaSelection<DT extends Record<string, any>>(
     function onKeydown(e: KeyboardEvent) {
         if (!config.value.enabled) return;
 
-        // 防止虚拟滚动移除 DOM 时焦点被动丢失，导致后续 keydown 无法冒泡到容器
-        // en: Prevent focus loss when virtual scroll removes DOM, causing subsequent keydown events to not bubble to the container
-        const container = tableContainerRef.value;
-        const activeEl = document.activeElement as HTMLElement | null;
-        if (container && activeEl && container.contains(activeEl) && activeEl !== container) {
-            container.focus({ preventScroll: true });
-        }
-
         const key = e.key;
 
         // Esc ：cancel
         if (key === KEY_ESCAPE || key === KEY_ESC) {
+            blurCellElement();
             if (selectionRanges.value.length) {
-                clearSelectedArea();
-                emitSelectionChange();
+                // clearSelectedArea();
+                // emitSelectionChange();
                 e.preventDefault();
             }
             return;
@@ -684,6 +687,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         // Shift 扩展选区，否则移动单格选区
         if (e.shiftKey && isArrowKey && shiftEnabled.value) {
+            blurCellElement();
             // 扩展选区：保留 begin，更新最后一个区域的 end
             const ranges = [...selectionRanges.value];
             const range = ranges.length > 0 ? ranges[ranges.length - 1] : null;
@@ -701,6 +705,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
             scrollToCell(newEndRow, newEndCol);
         } else {
+            blurCellElement();
             // 移动单格选区
             // 取最后一个区域的 end 位置作为基础，清空旧选区重建
             const ranges = selectionRanges.value;
