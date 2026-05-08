@@ -1,7 +1,11 @@
 
 ## 0.11.12
+* Feature
+  - feat: Add `EditableCell` component for cell editing. Double click to edit, Enter to confirm, Esc to cancel.
 * Bugfix
   - fix: blur when use area selection moved by keyboard.
+* Change
+  - areaSelection: press esc will not clear selection area.
 
 ## 0.11.11
 * Feature

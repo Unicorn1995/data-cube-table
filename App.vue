@@ -3,17 +3,19 @@
     <!-- <VirtualTreeSelectTest></VirtualTreeSelectTest> -->
     <!-- <StkTableTest></StkTableTest> -->
     <!-- <FlyInAnimation></FlyInAnimation> -->
-    <FocusOutIssue></FocusOutIssue>
+    <!-- <FocusOutIssue></FocusOutIssue> -->
     <!-- <StkTableExpandCellVue></StkTableExpandCellVue> -->
+    <EditableCellDemo></EditableCellDemo>
 </template>
 
 <script setup>
 // import VirtualTree from './test/VirtualTree.vue';
 // import StkTableTest from './test/StkTableTest.vue';
 // import FlyInAnimation from './test/FlyInAnimation.vue';
-import FocusOutIssue from './test/FocusOutIssue.vue';
+// import FocusOutIssue from './test/FocusOutIssue.vue';
 // import VirtualTreeSelectTest from './test/VirtualTreeSelect.vue';
 // import StkTableExpandCellVue from './test/StkTableExpandCell/index.vue';
+import EditableCellDemo from './test/EditableCellDemo.vue';
 </script>
 
 <style>
