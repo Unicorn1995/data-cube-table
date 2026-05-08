@@ -1,13 +1,12 @@
-export { default as StkTable } from './StkTable.vue';
-export { tableSort, insertToOrderedArray, strCompare, binarySearch } from './utils';
-export type { StkTableColumn, SortState, SortConfig, SortOption, Order } from './types/index';
 export { useAreaSelection } from './features/index';
 export { registerFeature } from './registerFeature';
-// 导出Filter相关功能
-export { useFilter } from './components/Filter';
-export type { FilterStatus, UseFilterOptions } from './components/Filter';
-// 导出EditableCell组件
-export { EditableCell } from './components/EditableCell';
-export { useEditableCell } from './components/EditableCell';
-export type { UseEditableCellOptions } from './components/EditableCell';
+export { default as StkTable } from './StkTable.vue';
+export type { Order, SortConfig, SortOption, SortState, StkTableColumn } from './types/index';
+export { binarySearch, insertToOrderedArray, strCompare, tableSort } from './utils';
+// export custom cells
+export { createFilter } from './custom-cells/Filter';
+export type { CreateFilterOptions, FilterStatus } from './custom-cells/Filter';
+export { createEditableCell } from './custom-cells/EditableCell';
+export type { CreateEditableCellOptions } from './custom-cells/EditableCell';
+
 import './style.less';

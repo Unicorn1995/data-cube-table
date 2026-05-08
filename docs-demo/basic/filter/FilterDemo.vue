@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
-import { StkTableColumn } from '../../../src/StkTable/index';
-import { useFilter } from '../../../src/StkTable/components/Filter';
+import { createFilter } from '../../../src/StkTable/custom-cells/Filter';
 
 // 表格数据
 const dataSource = ref(
@@ -19,7 +18,7 @@ const dataSource = ref(
 const stkTableRef = ref<StkTable>();
 
 // 使用筛选功能
-const { Filter } = useFilter(stkTableRef, {
+const { Filter } = createFilter({
     onChange: filterStatus => {
         console.log('筛选状态变化:', filterStatus.value);
         // 这里可以处理远程筛选逻辑
