@@ -163,7 +163,6 @@ defineExpose({ visible, show, hide, setTheme });
         }"
         @click.stop
     >
-        <div style="padding: 4px">Filter (Beta)</div>
         <StkTable
             row-key="id"
             headless
