@@ -6,7 +6,7 @@ import SourceCell from './custom-cells/SourceCell.vue';
 import { DataType } from './types';
 import { useI18n } from '../../hooks/useI18n/index';
 
-const { Filter } = createFilter();
+const { Filter, filterStatus } = createFilter();
 export const columns: () => StkTableColumn<DataType>[] = () => {
     const { t } = useI18n();
     return [
@@ -44,13 +44,17 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             align: 'right',
             headerAlign: 'right',
             sorter: true,
-            customHeaderCell: Filter({
-                options: [
-                    { label: '3000', value: 3000 },
-                    { label: '4000', value: 4000 },
-                    { label: '2000', value: 2000 },
-                ],
-            }),
+            customHeaderCell: Filter(
+                {
+                    options: [
+                        { label: '3000', value: 3000 },
+                        { label: '4000', value: 4000 },
+                        { label: '2000', value: 2000 },
+                    ],
+                },
+                ({ col }: { col: StkTableColumn<DataType> }) =>
+                    h('span', {}, [col.title + `(${filterStatus.value.bestBuyVol?.value || '-'})`]),
+            ),
         },
         {
             dataIndex: 'bestBuyPrice',
