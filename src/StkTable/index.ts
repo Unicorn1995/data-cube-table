@@ -5,7 +5,7 @@ export type { Order, SortConfig, SortOption, SortState, StkTableColumn } from '.
 export { binarySearch, insertToOrderedArray, strCompare, tableSort } from './utils';
 // export custom cells
 export { createFilter } from './custom-cells/Filter';
-export type { CreateFilterOptions, FilterStatus } from './custom-cells/Filter';
+export type { CreateFilterOption, FilterStatus } from './custom-cells/Filter';
 export { createEditableCell } from './custom-cells/EditableCell';
 export type { CreateEditableCellOptions } from './custom-cells/EditableCell';
 
