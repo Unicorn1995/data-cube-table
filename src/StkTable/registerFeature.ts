@@ -18,6 +18,7 @@ export const ON_DEMAND_FEATURE: OnDemandFeature = {
             getClass: () => [],
             getRowClass: () => [],
             get: () => ({ rows: [], cols: [], ranges: [] }),
+            set: () => [],
             clear: () => {},
             copy: () => '',
         };

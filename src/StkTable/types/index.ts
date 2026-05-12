@@ -409,6 +409,17 @@ export type AreaSelectionConfig<T extends Record<string, any> = any> = {
     };
 };
 
+/** 获取选中的单元格信息 */
+export type AreaSelectionSetterRange<DT extends Record<string, any>> = {
+    begin: { row: number | DT; col?: number | StkTableColumn<DT> };
+    end?: { row: number | DT; col?: number | StkTableColumn<DT> };
+};
+
+export type AreaSelectionSetterOption = {
+    silent?: boolean;
+    scrollToView?: boolean;
+};
+
 /** 实验性功能配置 */
 export type ExperimentalConfig = {
     /** use transform to simulate scroll */
