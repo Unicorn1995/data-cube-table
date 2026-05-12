@@ -3,57 +3,33 @@
     align-items: center;
     gap: 4px;
     cursor: pointer;
-    
+    &--light {
+        --icon-active-color: #1b63d9;
+        --icon-hover-color: #1890ff;
+    }
+
+    &--dark {
+        --icon-active-color: #1b63d9;
+        --icon-hover-color: #4f8df4;
+    }
+
     &.stk-filter--active {
         .stk-filter-icon {
-            color: #1b63d9;
+            color: var(--icon-active-color);
         }
     }
-    
+
     .stk-filter-icon {
         display: inline-flex;
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
         cursor: pointer;
         opacity: 0.6;
         transition: opacity 0.2s;
-        
+
         &:hover {
             opacity: 1;
-            color: #409eff;
-        }
-    }
-    
-    // 浅色主题
-    &--light {
-        
-        .stk-filter-icon {
-            
-            &:hover {
-                color: #1890ff;
-            }
-        }
-        
-        &.stk-filter--active {
-            .stk-filter-icon {
-                color: #1890ff;
-            }
-        }
-    }
-    
-    // 深色主题
-    &--dark {
-        
-        .stk-filter-icon {
-            &:hover {
-                color: #40a9ff;
-            }
-        }
-        
-        &.stk-filter--active {
-            .stk-filter-icon {
-                color: #40a9ff;
-            }
+            color: var(--icon-hover-color);
         }
     }
 }
@@ -71,10 +47,9 @@
         --bg-color: #ffffff;
         --text-color: rgba(0, 0, 0, 0.85);
         --cell-hover-color: #fafafa;
-        
+
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
-
 
     position: absolute;
     width: 120px;
@@ -88,7 +63,7 @@
     flex-direction: column;
     color: var(--text-color);
 
-    >.stk-table {
+    > .stk-table {
         --cell-padding-x: 4px;
         padding: 8px 0;
         flex: 1;
@@ -101,8 +76,8 @@
 
     .stk-filter-dropdown-checkbox {
         text-align: center;
-        >[type="checkbox"]{
-            vertical-align: middle; 
+        > [type='checkbox'] {
+            vertical-align: middle;
         }
     }
 
