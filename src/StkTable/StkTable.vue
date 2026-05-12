@@ -308,6 +308,7 @@ import { useTableColumns } from './useTableColumns';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
+import { useIndexResolver } from './useIndexResolver';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
@@ -1767,6 +1768,7 @@ defineExpose({
      * @see {@link getSelectedArea}
      */
     getSelectedArea,
+    setAreaSelection,
     /**
      * 设置拖选选区
      *
