@@ -33,7 +33,7 @@ function extractFilterOptions(dataSource: any[], columnKey: string): FilterOptio
 export function createFilter(option?: CreateFilterOption) {
     const filterStatus = ref<Record<UniqKey, FilterStatus>>({});
 
-    function FilterComponent(config?: FilterComponentConfig, component?: VNode) {
+    function FilterComponent(config?: FilterComponentConfig, component?: VNode | ((props: CustomHeaderCellProps<any>) => VNode)) {
         return markRaw(
             defineComponent({
                 // eslint-disable-next-line vue/require-prop-types
