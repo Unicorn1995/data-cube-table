@@ -886,15 +886,7 @@ if (props.autoResize) {
     useAutoResize(tableContainerRef, initVirtualScroll, props, 200);
 }
 
-function getRowIndex(row: DT): number {
-    const targetKey = rowKeyGen(row);
-    return dataSourceCopy.value.findIndex(item => rowKeyGen(item) === targetKey);
-}
-
-function getColumnIndex(column: PrivateStkTableColumn<DT>): number {
-    const targetKey = colKeyGen.value(column);
-    return tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === targetKey);
-}
+const [getRowIndex, getColumnIndex] = useIndexResolver(dataSourceCopy, tableHeaderLast, rowKeyGen);
 
 const {
     config: areaSelectionConfig,
