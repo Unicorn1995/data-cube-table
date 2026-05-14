@@ -127,49 +127,31 @@ export function useAreaSelection<DT extends Record<string, any>>(
      */
     const getFixedColWidths = computed(() => {
         const cols = tableHeaderLast.value;
-        type FixedColWidth = { i: number; /** accumulated width */ w: number };
-        // 保存每个固定列位置的累计宽度（包含当前列）
-        const leftAccumulated: FixedColWidth[] = [];
-        const rightAccumulated: FixedColWidth[] = [];
+        // 预计算每个列索引位置对应的左右固定列累计宽度
+        // 左固定列：从左向右累加，非固定列继承前一个值
+        const leftWidths: number[] = new Array(cols.length + 1).fill(0);
+        // 右固定列：从右向左累加，非固定列继承后一个值
+        const rightWidths: number[] = new Array(cols.length + 1).fill(0);
 
         let leftSum = 0;
-        let rightSum = 0;
-
-        for (let i = 0, j = cols.length - 1; i < cols.length; i++, j--) {
-            const leftCol = cols[i];
-            const rightCol = cols[j];
-
-            if (leftCol?.fixed === 'left') {
-                leftSum += getCalculatedColWidth(leftCol);
-                leftAccumulated.push({ i, w: leftSum });
+        for (let i = 0; i < cols.length; i++) {
+            leftWidths[i] = leftSum;
+            if (cols[i]?.fixed === 'left') {
+                leftSum += getCalculatedColWidth(cols[i]);
             }
+        }
+        leftWidths[cols.length] = leftSum;
 
-            if (rightCol?.fixed === 'right') {
-                rightSum += getCalculatedColWidth(rightCol);
-                rightAccumulated.unshift({ i: j, w: rightSum });
+        let rightSum = 0;
+        for (let i = cols.length - 1; i >= 0; i--) {
+            rightWidths[i] = rightSum;
+            if (cols[i]?.fixed === 'right') {
+                rightSum += getCalculatedColWidth(cols[i]);
             }
         }
 
         return (colIndex: number) => {
-            // 查找目标列左侧最近的固定列的累计宽度
-            let leftFixedWidth = 0;
-            for (let i = leftAccumulated.length - 1; i >= 0; i--) {
-                if (leftAccumulated[i].i < colIndex) {
-                    leftFixedWidth = leftAccumulated[i].w;
-                    break;
-                }
-            }
-
-            // 查找目标列右侧最近的固定列的累计宽度
-            let rightFixedWidth = 0;
-            for (let i = rightAccumulated.length - 1; i >= 0; i--) {
-                if (rightAccumulated[i].i > colIndex) {
-                    rightFixedWidth = rightAccumulated[i].w;
-                    break;
-                }
-            }
-
-            return [leftFixedWidth, rightFixedWidth] as const;
+            return [leftWidths[colIndex] ?? 0, rightWidths[colIndex + 1] ?? 0] as const;
         };
     });
 
@@ -182,15 +164,20 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const cols = tableHeaderLast.value;
         const data = dataSourceCopy.value;
         for (const range of ranges) {
-            const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
-            for (let r = minRow; r <= maxRow; r++) {
+            const {
+                begin: { row: r1, col: c1 },
+                end: { row: r2, col: c2 },
+            } = range.index;
+
+            const [rStart, rEnd] = r1 < r2 ? [r1, r2] : [r2, r1];
+            const [cStart, cEnd] = c1 < c2 ? [c1, c2] : [c2, c1];
+
+            for (let r = rStart; r <= rEnd; r++) {
                 const row = data[r];
                 if (!row) continue;
-                for (let c = minCol; c <= maxCol; c++) {
+                for (let c = cStart; c <= cEnd; c++) {
                     const col = cols[c];
-                    if (col) {
-                        keys.add(cellKeyGen(row, col));
-                    }
+                    if (col) keys.add(cellKeyGen(row, col));
                 }
             }
         }
@@ -256,17 +243,11 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
     function addListener() {
         removeListener();
-        const el = tableContainerRef.value;
-        if (el) {
-            el.addEventListener('keydown', onKeydown);
-        }
+        tableContainerRef.value?.addEventListener('keydown', onKeydown);
     }
 
     function removeListener() {
-        const el = tableContainerRef.value;
-        if (el) {
-            el.removeEventListener('keydown', onKeydown);
-        }
+        tableContainerRef.value?.removeEventListener('keydown', onKeydown);
         document.removeEventListener('mousemove', onDocumentMouseMove);
         document.removeEventListener('mouseup', onDocumentMouseUp);
         stopAutoScroll();
@@ -304,21 +285,19 @@ export function useAreaSelection<DT extends Record<string, any>>(
         return colKeyToIndexMap.value.get(colKey) ?? -1;
     }
 
-    /** 获取列的左边距和宽度 */
-    function getColPosition(colIndex: number): { l: number; w: number } {
-        let l = 0;
-        let w = 0;
+    /** 获取列的左边距和宽度
+     * @param colIndex 列的绝对索引
+     * @returns [left, width]
+     */
+    function getColPosition(colIndex: number): [number, number] {
+        let left = 0;
         const cols = tableHeaderLast.value;
         for (let i = 0; i < cols.length; i++) {
             const colWidth = getCalculatedColWidth(cols[i]);
-            if (i < colIndex) {
-                l += colWidth;
-            } else if (i === colIndex) {
-                w = colWidth;
-                break;
-            }
+            if (i === colIndex) return [left, colWidth];
+            left += colWidth;
         }
-        return { l, w };
+        return [left, 0];
     }
 
     /** 根据按键计算移动方向 */
@@ -355,18 +334,9 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
     /** 处理Tab键的换行逻辑 */
     function handleTabWrap(row: number, col: number, rawCol: number, rowCount: number, colCount: number): [number, number] {
-        let newRow = row;
-        let newCol = col;
-
-        if (rawCol >= colCount) {
-            newCol = 0;
-            newRow = Math.min(row + 1, rowCount - 1);
-        } else if (rawCol < 0) {
-            newCol = colCount - 1;
-            newRow = Math.max(row - 1, 0);
-        }
-
-        return [newRow, newCol];
+        if (rawCol >= colCount) return [Math.min(row + 1, rowCount - 1), 0];
+        if (rawCol < 0) return [Math.max(row - 1, 0), colCount - 1];
+        return [row, col];
     }
 
     /** 计算自动滚动的增量 */
@@ -794,7 +764,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         }
 
         // 计算目标列的位置
-        const { l: targetColLeft, w: targetColWidth } = getColPosition(colIndex);
+        const [targetColLeft, targetColWidth] = getColPosition(colIndex);
         const targetColRight = targetColLeft + targetColWidth;
 
         // 计算可视区域（水平）
@@ -825,9 +795,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
      * @returns 样式类名数组
      */
     function getAreaSelectionClasses(cellKey: string, absoluteRowIndex: number, colKey: UniqKey): string[] {
-        // 如果禁用了单元格高亮，则不返回任何 class
         if (!highlightCellEnabled.value) return [];
-
         if (!selectedCellKeys.value.has(cellKey)) return [];
 
         const colIndex = colKeyToIndexMap.value.get(colKey);
@@ -837,9 +805,8 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const ranges = selectionRanges.value;
         if (!ranges.length) return classes;
 
-        // 只对最后一个区域（最后操作的区域）添加边界边框
-        const lastRange = normalizeRange(ranges[ranges.length - 1]);
-        const { minRow, maxRow, minCol, maxCol } = lastRange;
+        const lastRange = ranges[ranges.length - 1];
+        const { minRow, maxRow, minCol, maxCol } = normalizeRange(lastRange);
 
         // 判断当前单元格是否在最后一个区域内
         const isInLastRange = absoluteRowIndex >= minRow && absoluteRowIndex <= maxRow && colIndex >= minCol && colIndex <= maxCol;
@@ -860,7 +827,6 @@ export function useAreaSelection<DT extends Record<string, any>>(
      * @returns 样式类名数组
      */
     function getAreaSelectionRowClasses(absoluteRowIndex: number): string[] {
-        // 如果禁用了行高亮，则不返回任何 class
         if (!highlightRowEnabled.value) return [];
 
         const ranges = selectionRanges.value;
@@ -868,7 +834,11 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         // 检查该行是否在任何选区内
         for (const range of ranges) {
-            const { minRow, maxRow } = normalizeRange(range);
+            const {
+                begin: { row: r1 },
+                end: { row: r2 },
+            } = range.index;
+            const [minRow, maxRow] = r1 < r2 ? [r1, r2] : [r2, r1];
             if (absoluteRowIndex >= minRow && absoluteRowIndex <= maxRow) {
                 return ['row-range-selected'];
             }
@@ -910,7 +880,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
     function setAreaSelection(ranges?: AreaSelectionSetterRange<DT>, option: AreaSelectionSetterOption = {}): AreaSelectionRange[] {
         if (!config.value.enabled) return selectionRanges.value;
 
-        const { silent = true, scrollToView = false } = option;
+        const { silent = false, scrollToView = false } = option;
         const rowCount = dataSourceCopy.value.length;
         const colCount = tableHeaderLast.value.length;
 
@@ -931,24 +901,19 @@ export function useAreaSelection<DT extends Record<string, any>>(
         if (ranges) {
             const begin = ranges.begin;
             const end = ranges.end ?? begin;
-            const beginColInput = begin.col && typeof begin.col === 'object' ? getColumnIndex(begin.col) : begin.col;
-            const endColInput = end.col && typeof end.col === 'object' ? getColumnIndex(end.col) : end.col;
 
-            beginRow = typeof begin.row === 'object' ? getRowIndex(begin.row) : begin.row;
-            endRow = typeof end.row === 'object' ? getRowIndex(end.row) : end.row;
+            beginRow = typeof begin.row === 'number' ? begin.row : getRowIndex(begin.row);
+            endRow = typeof end.row === 'number' ? end.row : getRowIndex(end.row);
 
-            if (beginColInput === void 0 && endColInput === void 0) {
-                beginCol = 0;
-                endCol = maxCol;
-            } else if (beginColInput !== void 0 && endColInput === void 0) {
+            const beginColInput = typeof begin.col === 'number' ? begin.col : begin.col ? getColumnIndex(begin.col) : void 0;
+            const endColInput = typeof end.col === 'number' ? end.col : end.col ? getColumnIndex(end.col) : void 0;
+
+            if (beginColInput !== void 0) {
                 beginCol = beginColInput;
-                endCol = beginColInput;
-            } else if (beginColInput === void 0 && endColInput !== void 0) {
+                endCol = endColInput !== void 0 ? endColInput : beginColInput;
+            } else if (endColInput !== void 0) {
                 beginCol = 0;
                 endCol = endColInput;
-            } else {
-                beginCol = beginColInput as number;
-                endCol = endColInput as number;
             }
         }
 
