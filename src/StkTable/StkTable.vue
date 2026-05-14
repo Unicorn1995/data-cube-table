@@ -149,7 +149,7 @@
                         ref="trRef"
                         :key="rowKeyGen(row)"
                         v-bind="getTRProps(row, rowIndex)"
-                        @drop="onTrDrop($event, getRowIndex(rowIndex))"
+                        @drop="onTrDrop($event, getAbsoluteRowIndex(rowIndex))"
                         @mouseleave="onTrMouseLeave"
                     >
                         <td v-if="virtualX_on" class="vt-x-left"></td>
@@ -176,7 +176,7 @@
                                         tabindex="-1"
                                         :col="col"
                                         :row="row"
-                                        :rowIndex="getRowIndex(rowIndex)"
+                                        :rowIndex="getAbsoluteRowIndex(rowIndex)"
                                         :colIndex="colIndex"
                                         :cellValue="row && row[col.dataIndex]"
                                         :expanded="row && row.__EXP__"
@@ -186,14 +186,14 @@
                                             <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
                                         </template>
                                         <template #stkDragIcon>
-                                            <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                            <DragHandle @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))" />
                                         </template>
                                     </component>
                                     <div v-else-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="row[col.dataIndex] || ''">
                                         {{ (row && row[col.dataIndex]) !== void 0 ? row && row[col.dataIndex] : getEmptyCellText(col, row) }}
                                     </div>
                                     <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
-                                        {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
+                                        {{ (props.seqConfig.startIndex || 0) + getAbsoluteRowIndex(rowIndex) + 1 }}
                                     </div>
                                     <TreeNodeCell
                                         v-else-if="col.type === 'tree-node'"
@@ -204,7 +204,7 @@
                                         @click="triangleClick($event, row, col)"
                                     ></TreeNodeCell>
                                     <div v-else class="table-cell-wrapper" tabindex="-1" :title="row[col.dataIndex] || ''">
-                                        <DragHandle v-if="col.type === 'dragRow'" @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                        <DragHandle v-if="col.type === 'dragRow'" @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))" />
                                         <TriangleIcon v-else-if="col.type === 'expand'" @click="triangleClick($event, row, col)" />
                                         <span v-if="row[col.dataIndex] != null">{{ row[col.dataIndex] }}</span>
                                     </div>
@@ -308,6 +308,7 @@ import { useTableColumns } from './useTableColumns';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
+import { useIndexResolver } from './useIndexResolver';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
@@ -897,6 +898,8 @@ if (props.autoResize) {
     useAutoResize(tableContainerRef, initVirtualScroll, props, 200);
 }
 
+const [getRowIndex, getColumnIndex] = useIndexResolver(dataSourceCopy, tableHeaderLast, rowKeyGen);
+
 const {
     config: areaSelectionConfig,
     isSelecting: isAreaSelecting,
@@ -904,6 +907,7 @@ const {
     getClass: getAreaSelectionClasses,
     getRowClass: getAreaSelectionRowClass,
     get: getSelectedArea,
+    set: setAreaSelection,
     clear: clearSelectedArea,
     copy: copySelectedArea,
 } = ON_DEMAND_FEATURE[useAreaSelectionName](
@@ -917,6 +921,8 @@ const {
     scrollTo,
     virtualScroll,
     virtualScrollX,
+    getRowIndex,
+    getColumnIndex,
 );
 
 /** 键盘箭头滚动 */
@@ -1151,7 +1157,7 @@ const cellStyleMap = computed(() => {
     };
 });
 
-function getRowIndex(rowIndex: number) {
+function getAbsoluteRowIndex(rowIndex: number) {
     return rowIndex + virtualScroll.value.startIndex;
 }
 
@@ -1170,7 +1176,7 @@ function getHeaderTitle(col: StkTableColumn<DT>): string {
 }
 
 function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
-    const rowIndex = getRowIndex(index);
+    const rowIndex = getAbsoluteRowIndex(index);
     const rowKey = rowKeyGen(row);
 
     const classList = [props.rowClassName(row, rowIndex), row?.__EXP__ ? 'expanded' : '', row?.__EXP_R__ ? 'expanded-row' : ''];
@@ -1271,7 +1277,7 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
 
     // area selection style
     if (areaSelectionConfig.value.enabled) {
-        const absRowIndex = getRowIndex(rowIndex);
+        const absRowIndex = getAbsoluteRowIndex(rowIndex);
         classList.push(...getAreaSelectionClasses(cellKey, absRowIndex, colKey));
     }
 
@@ -1717,6 +1723,8 @@ defineExpose({
      * @see {@link getTableData}
      */
     getTableData,
+    getRowIndex,
+    getColumnIndex,
     /**
      * 设置展开的行
      *
@@ -1752,6 +1760,7 @@ defineExpose({
      * @see {@link getSelectedArea}
      */
     getSelectedArea,
+    setAreaSelection,
     /**
      * 清空拖选选区
      *

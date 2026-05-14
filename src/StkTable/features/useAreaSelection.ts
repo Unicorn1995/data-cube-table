@@ -1,5 +1,14 @@
 import { Ref, ShallowRef, computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { AreaSelectionConfig, AreaSelectionRange, CellKeyGen, ColKeyGen, StkTableColumn, UniqKey } from '../types';
+import {
+    AreaSelectionConfig,
+    AreaSelectionRange,
+    CellKeyGen,
+    ColKeyGen,
+    StkTableColumn,
+    UniqKey,
+    AreaSelectionSetterRange,
+    AreaSelectionSetterOption,
+} from '../types';
 import { VirtualScrollStore, VirtualScrollXStore } from '../useVirtualScroll';
 import { getClosestColKey, getClosestTrIndex } from '../utils';
 import { getCalculatedColWidth } from '../utils/constRefUtils';
@@ -21,6 +30,8 @@ export function useAreaSelection<DT extends Record<string, any>>(
     scrollTo: (top: number | null, left: number | null) => void,
     virtualScroll: Ref<VirtualScrollStore>,
     virtualScrollX: Ref<VirtualScrollXStore>,
+    getRowIndex: (row: DT) => number,
+    getColumnIndex: (col: StkTableColumn<DT>) => number,
 ) {
     /**
      * 自动滚动：鼠标距容器边缘多少px开始触发
@@ -896,12 +907,75 @@ export function useAreaSelection<DT extends Record<string, any>>(
         isSelecting.value = false;
     }
 
+    function setAreaSelection(ranges?: AreaSelectionSetterRange<DT>, option: AreaSelectionSetterOption = {}): AreaSelectionRange[] {
+        if (!config.value.enabled) return selectionRanges.value;
+
+        const { silent = true, scrollToView = false } = option;
+        const rowCount = dataSourceCopy.value.length;
+        const colCount = tableHeaderLast.value.length;
+
+        if (rowCount <= 0 || colCount <= 0) {
+            clearSelectedArea();
+            if (!silent) emitSelectionChange();
+            return selectionRanges.value;
+        }
+
+        const maxRow = rowCount - 1;
+        const maxCol = colCount - 1;
+
+        let beginRow = 0;
+        let endRow = maxRow;
+        let beginCol = 0;
+        let endCol = maxCol;
+
+        if (ranges) {
+            const begin = ranges.begin;
+            const end = ranges.end ?? begin;
+            const beginColInput = begin.col && typeof begin.col === 'object' ? getColumnIndex(begin.col) : begin.col;
+            const endColInput = end.col && typeof end.col === 'object' ? getColumnIndex(end.col) : end.col;
+
+            beginRow = typeof begin.row === 'object' ? getRowIndex(begin.row) : begin.row;
+            endRow = typeof end.row === 'object' ? getRowIndex(end.row) : end.row;
+
+            if (beginColInput === void 0 && endColInput === void 0) {
+                beginCol = 0;
+                endCol = maxCol;
+            } else if (beginColInput !== void 0 && endColInput === void 0) {
+                beginCol = beginColInput;
+                endCol = beginColInput;
+            } else if (beginColInput === void 0 && endColInput !== void 0) {
+                beginCol = 0;
+                endCol = endColInput;
+            } else {
+                beginCol = beginColInput as number;
+                endCol = endColInput as number;
+            }
+        }
+
+        beginRow = clamp(beginRow, 0, maxRow);
+        endRow = clamp(endRow, 0, maxRow);
+        beginCol = clamp(beginCol, 0, maxCol);
+        endCol = clamp(endCol, 0, maxCol);
+
+        selectionRanges.value = [makeRange(beginRow, beginCol, endRow, endCol)];
+        anchorCell = { rowIndex: beginRow, colIndex: beginCol };
+        isSelecting.value = false;
+
+        if (scrollToView) {
+            scrollToCell(endRow, endCol);
+        }
+
+        if (!silent) emitSelectionChange();
+        return selectionRanges.value;
+    }
+
     return {
         config,
         isSelecting,
         getClass: getAreaSelectionClasses,
         getRowClass: getAreaSelectionRowClasses,
         get: getSelectedArea,
+        set: setAreaSelection,
         clear: clearSelectedArea,
         copy: copySelectedArea,
         onMD: onSelectionMouseDown,
