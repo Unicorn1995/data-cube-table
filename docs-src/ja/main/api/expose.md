@@ -1,4 +1,4 @@
-# Expose 
+# Expose
 
 ## API
 ### initVirtualScroll
@@ -61,7 +61,7 @@ function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: 
  * 現在選択されているセルを設定（props.cellActive=true）
  * @param row ハイライトされたセル、選択解除するにはundefined
  * @param col 列オブジェクト
- * @param option.silent `@current-change` をトリガーしないようにtrueに設定。デフォルト: false
+ * @param option.silent `@current-change` をトリガーさないようにtrueに設定。デフォルト: false
  */
 function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: false })
 ```
@@ -101,6 +101,17 @@ function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOpti
 ### sortCol
 テーブル排序列dataIndex
 
+### sortStates
+複数列の排序状態配列。
+
+```ts
+/**
+ * 排序状態配列
+ * @see SortState[]
+ */
+sortStates: SortState[];
+```
+
 ### getSortColumns
 排序列情報を取得 `{key:string,order:Order}[]`
 
@@ -117,13 +128,13 @@ function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOpti
  * @returns 現在のテーブルデータを返します
  */
 function setSorter(
-    colKey: string, 
+    colKey: string,
     order: Order,
-    option: { 
-        sortOption?: SortOption<DT>; 
-        force?: boolean; 
-        silent?: boolean; 
-        sort?: boolean 
+    option: {
+        sortOption?: SortOption<DT>;
+        force?: boolean;
+        silent?: boolean;
+        sort?: boolean
     } = {}
 ): DT[];
 ```
@@ -145,11 +156,35 @@ function setSorter(
  * @param top nullに設定して位置を変更しない
  * @param left nullに設定して位置を変更しない
  */
-function scrollTo(top: number | null = 0, left: number | null = 0) 
+function scrollTo(top: number | null = 0, left: number | null = 0)
 ```
 
 ### getTableData
 テーブルデータを取得、現在のテーブル排序順序の配列を返します
+
+### getRowIndex
+rowKeyに基づいて行インデックスを取得
+
+```ts
+/**
+ * 行インデックスを取得
+ * @param row rowKey または row データ
+ * @returns 行インデックス、見つからない場合は -1
+ */
+function getRowIndex(row: UniqKey | DT): number
+```
+
+### getColumnIndex
+colKeyに基づいて列インデックスを取得
+
+```ts
+/**
+ * 列インデックスを取得
+ * @param col colKey または列オブジェクト
+ * @returns 列インデックス、見つからない場合は -1
+ */
+function getColumnIndex(col: string | StkTableColumn<DT>): number
+```
 
 ### setRowExpand
 展開行を設定
@@ -184,7 +219,7 @@ auto-row-heightに保存されたすべての高さをクリア
 function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
 ```
 
-### getSelectedArea 
+### getSelectedArea
 選択されたセル情報を取得
 
 ```ts
@@ -193,6 +228,19 @@ function getSelectedArea(): {
     cols: StkTableColumn<DT>[];
     ranges: AreaSelectionRange[]
 }
+```
+
+### setAreaSelection
+ドラッグ選択範囲を設定
+
+```ts
+/**
+ * ドラッグ選択範囲を設定
+ * @param ranges 選択範囲配列
+ * @param option.silent trueに設定すると `@select-area-change` をトリガーしません。デフォルト: false
+ * @param option.scrollToView trueに設定すると選択範囲まで自動スクロールします。デフォルト: false
+ */
+function setAreaSelection(ranges: AreaSelectionRange[], option?: { silent?: boolean; scrollToView?: boolean })
 ```
 
 ### clearSelectedArea
@@ -205,23 +253,15 @@ function getSelectedArea(): {
 function copySelectedArea(): string
 ```
 
-### getSelectedRows
-行ドラッグ選択された行情報を取得します
+### setFilter(Beta)
+フィルター状態を設定
 
 ```ts
-function getSelectedRows(): {
-    rows: DT[];
-    range: RowDragSelectionRange | null;
-    ranges: RowDragSelectionRange[];
-}
+/**
+ * フィルター状態を設定
+ * @param colKey 列の一意キーフィールド
+ * @param filteredValue フィルター値、undefined はフィルターをクリア
+ * @param option.silent trueに設定すると `@filter-change` をトリガーしません。デフォルト: false
+ */
+function setFilter(colKey: string, filteredValue: any, option?: { silent?: boolean })
 ```
-
-### setSelectedRows
-行ドラッグ選択の行を設定します。連続していない行もサポートし、内部では複数の連続範囲として保持します。
-
-```ts
-function setSelectedRows(rowKeyOrRows?: (UniqKey | DT)[], option?: { silent?: boolean })
-```
-
-### clearSelectedRows
-行ドラッグ選択された行をクリアします

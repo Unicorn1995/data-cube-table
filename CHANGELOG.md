@@ -2,14 +2,22 @@
 ## 0.11.12
 * Feature
   - feat: Add `EditableCell` component for cell editing. Double click to edit, Enter to confirm, Esc to cancel.
+  - feat: Add `setAreaSelection` API to programmatically set cell selection range.
+  - feat: Add `getRowIndex` and `getColumnIndex` utility APIs.
   - `createFilter`
-    - support `autoOptions`.
-    - support `filter` function to custom.
+    - support `autoOptions` to auto extract options from data.
+    - support `filter` function to custom filter logic.
+    - dropdown position auto adjust to avoid overflow viewport.
 * Bugfix
   - fix: blur when use area selection moved by keyboard.
+  - fix: area selection input focus issue.
 * Change
   - areaSelection: press esc will not clear selection area.
-  - `useFilter` rename to `createFilter` (Beta)
+  - `useFilter` rename to `createFilter` (Beta).
+  - `useAreaSelection` internal code refactored for better performance.
+* Optimize
+  - optimize `getColPosition` and `getFixedColOffset` calculation in area selection.
+  - optimize `handleTabWrap` and keyboard navigation logic.
 
 ## 0.11.11
 * Feature

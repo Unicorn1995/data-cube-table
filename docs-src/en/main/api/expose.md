@@ -1,4 +1,4 @@
-# Expose 
+# Expose
 
 ## API
 ### initVirtualScroll
@@ -101,6 +101,17 @@ function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOpti
 ### sortCol
 Table sort column dataIndex
 
+### sortStates
+Multi-column sort states array.
+
+```ts
+/**
+ * Sort states array
+ * @see SortState[]
+ */
+sortStates: SortState[];
+```
+
 ### getSortColumns
 Get sort column information `{key:string,order:Order}[]`
 
@@ -117,13 +128,13 @@ Get sort column information `{key:string,order:Order}[]`
  * @returns Returns current table data
  */
 function setSorter(
-    colKey: string, 
+    colKey: string,
     order: Order,
-    option: { 
-        sortOption?: SortOption<DT>; 
-        force?: boolean; 
-        silent?: boolean; 
-        sort?: boolean 
+    option: {
+        sortOption?: SortOption<DT>;
+        force?: boolean;
+        silent?: boolean;
+        sort?: boolean
     } = {}
 ): DT[];
 ```
@@ -145,11 +156,35 @@ Scroll to specified position
  * @param top Set to null to not change position
  * @param left Set to null to not change position
  */
-function scrollTo(top: number | null = 0, left: number | null = 0) 
+function scrollTo(top: number | null = 0, left: number | null = 0)
 ```
 
 ### getTableData
 Get table data, returns array in current table sort order
+
+### getRowIndex
+Get row index based on rowKey
+
+```ts
+/**
+ * Get row index
+ * @param row rowKey or row data
+ * @returns Row index, returns -1 if not found
+ */
+function getRowIndex(row: UniqKey | DT): number
+```
+
+### getColumnIndex
+Get column index based on colKey
+
+```ts
+/**
+ * Get column index
+ * @param col colKey or column object
+ * @returns Column index, returns -1 if not found
+ */
+function getColumnIndex(col: string | StkTableColumn<DT>): number
+```
 
 ### setRowExpand
 Set expanded row
@@ -184,7 +219,7 @@ Set tree structure expanded row
 function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
 ```
 
-### getSelectedArea 
+### getSelectedArea
 Get selected cells information
 
 ```ts
@@ -193,6 +228,19 @@ function getSelectedArea(): {
     cols: StkTableColumn<DT>[];
     ranges: AreaSelectionRange[]
 }
+```
+
+### setAreaSelection
+Set drag selection range
+
+```ts
+/**
+ * Set drag selection range
+ * @param ranges Selection range array
+ * @param option.silent Set to true to not trigger `@select-area-change`. Default: false
+ * @param option.scrollToView Set to true to auto scroll to the selection. Default: false
+ */
+function setAreaSelection(ranges: AreaSelectionRange[], option?: { silent?: boolean; scrollToView?: boolean })
 ```
 
 ### clearSelectedArea
@@ -205,23 +253,15 @@ Copy selected area content to clipboard. Returns the copied text content (TSV fo
 function copySelectedArea(): string
 ```
 
-### getSelectedRows
-Get selected rows from row drag selection
+### setFilter(Beta)
+Set filter state
 
 ```ts
-function getSelectedRows(): {
-    rows: DT[];
-    range: RowDragSelectionRange | null;
-    ranges: RowDragSelectionRange[];
-}
+/**
+ * Set filter state
+ * @param colKey Column unique key field
+ * @param filteredValue Filter value, undefined to clear filter
+ * @param option.silent Set to true to not trigger `@filter-change`. Default: false
+ */
+function setFilter(colKey: string, filteredValue: any, option?: { silent?: boolean })
 ```
-
-### setSelectedRows
-Set selected rows for row drag selection. Non-contiguous rows are supported and will be stored as multiple continuous ranges.
-
-```ts
-function setSelectedRows(rowKeyOrRows?: (UniqKey | DT)[], option?: { silent?: boolean })
-```
-
-### clearSelectedRows
-Clear selected rows from row drag selection
