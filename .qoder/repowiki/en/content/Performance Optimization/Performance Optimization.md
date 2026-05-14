@@ -6,6 +6,7 @@
 - [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts)
 - [useAutoResize.ts](file://src/StkTable/useAutoResize.ts)
 - [useScrollbar.ts](file://src/StkTable/useScrollbar.ts)
+- [useFixedStyle.ts](file://src/StkTable/useFixedStyle.ts)
 - [utils/index.ts](file://src/StkTable/utils/index.ts)
 - [const.ts](file://src/StkTable/const.ts)
 - [types/index.ts](file://src/StkTable/types/index.ts)
@@ -13,14 +14,17 @@
 - [HugeData/index.vue](file://docs-demo/demos/HugeData/index.vue)
 - [VirtualTree.vue](file://src/VirtualTree.vue)
 - [vue2-scroll-optimize.md](file://docs-src/en/main/table/advanced/vue2-scroll-optimize.md)
+- [optimize.md](file://docs-src/en/main/other/optimize.md)
 </cite>
 
 ## Update Summary
 **Changes Made**
+- Added comprehensive documentation for new string-based style computation optimizations
 - Enhanced virtual scrolling performance section with improved pre-judgment logic
 - Added detailed explanation of redundant processing prevention during rapid scrolling
 - Updated optimization strategy documentation for Vue 2 scroll optimization
 - Expanded troubleshooting guide with specific pre-judgment logic examples
+- Documented the elimination of object creation overhead during style calculations
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -37,7 +41,7 @@
 ## Introduction
 This document focuses on performance optimization strategies for Stk Table Vue, with emphasis on virtual scrolling, memory management, rendering optimization, and handling large datasets. It consolidates best practices, component lifecycle optimization, reactive data management, DOM manipulation minimization, benchmarking, monitoring, profiling, and common pitfalls with concrete references to the codebase.
 
-**Updated** Enhanced virtual scrolling performance through targeted optimization of the `updateVirtualScrollY` function, featuring improved pre-judgment logic that prevents redundant processing cycles during rapid scrolling operations.
+**Updated** Enhanced virtual scrolling performance through targeted optimization of the `updateVirtualScrollY` function, featuring improved pre-judgment logic that prevents redundant processing cycles during rapid scrolling operations. Additionally, implemented string-based style computation optimizations that eliminate object creation overhead during style calculations, particularly beneficial for virtualized tables with many columns and rows.
 
 ## Project Structure
 Stk Table Vue organizes performance-critical logic into modular composable hooks and a central table component:
@@ -46,6 +50,7 @@ Stk Table Vue organizes performance-critical logic into modular composable hooks
   - Virtual scrolling: computes visible windows, offsets, and manages row/column visibility with enhanced pre-judgment optimization.
   - Auto resize: observes container size changes and recalibrates virtual scrolling.
   - Custom scrollbar: optional native-like scrollbar with drag support.
+  - Fixed style computation: optimized string-based style generation to eliminate object creation overhead.
   - Utilities: sorting helpers, throttling, and browser compatibility constants.
 - Demo pages illustrate large dataset scenarios and virtual scrolling usage.
 
@@ -55,12 +60,14 @@ STK["StkTable.vue"]
 VS["useVirtualScroll.ts"]
 AR["useAutoResize.ts"]
 SB["useScrollbar.ts"]
+FS["useFixedStyle.ts"]
 UT["utils/index.ts"]
 CT["const.ts"]
 TY["types/index.ts"]
 STK --> VS
 STK --> AR
 STK --> SB
+STK --> FS
 STK --> UT
 STK --> CT
 STK --> TY
@@ -71,6 +78,7 @@ STK --> TY
 - [useVirtualScroll.ts:60-495](file://src/StkTable/useVirtualScroll.ts#L60-L495)
 - [useAutoResize.ts:14-92](file://src/StkTable/useAutoResize.ts#L14-L92)
 - [useScrollbar.ts:29-190](file://src/StkTable/useScrollbar.ts#L29-L190)
+- [useFixedStyle.ts:16-75](file://src/StkTable/useFixedStyle.ts#L16-L75)
 - [utils/index.ts:1-288](file://src/StkTable/utils/index.ts#L1-L288)
 - [const.ts:1-51](file://src/StkTable/const.ts#L1-L51)
 - [types/index.ts:1-318](file://src/StkTable/types/index.ts#L1-L318)
@@ -80,6 +88,7 @@ STK --> TY
 - [useVirtualScroll.ts:60-495](file://src/StkTable/useVirtualScroll.ts#L60-L495)
 - [useAutoResize.ts:14-92](file://src/StkTable/useAutoResize.ts#L14-L92)
 - [useScrollbar.ts:29-190](file://src/StkTable/useScrollbar.ts#L29-L190)
+- [useFixedStyle.ts:16-75](file://src/StkTable/useFixedStyle.ts#L16-L75)
 - [utils/index.ts:1-288](file://src/StkTable/utils/index.ts#L1-L288)
 - [const.ts:1-51](file://src/StkTable/const.ts#L1-L51)
 - [types/index.ts:1-318](file://src/StkTable/types/index.ts#L1-L318)
@@ -88,6 +97,7 @@ STK --> TY
 - Virtual Scrolling Engine: Computes visible rows/columns, offsets, and handles auto row height and expanded row heights with enhanced pre-judgment optimization.
 - Auto Resize Hook: Observes container resize via ResizeObserver or window resize and recalibrates virtual scrolling with debouncing.
 - Custom Scrollbar: Optional native-like scrollbar with throttled updates and drag interactions.
+- Optimized Style Computation: String-based style generation that eliminates object creation overhead during style calculations.
 - Sorting Utilities: Efficient helpers for ordered insertion and locale-aware comparisons.
 - Constants and Types: Provide defaults, compatibility flags, and type-safe configurations.
 
@@ -95,12 +105,13 @@ STK --> TY
 - [useVirtualScroll.ts:60-495](file://src/StkTable/useVirtualScroll.ts#L60-L495)
 - [useAutoResize.ts:14-92](file://src/StkTable/useAutoResize.ts#L14-L92)
 - [useScrollbar.ts:29-190](file://src/StkTable/useScrollbar.ts#L29-L190)
+- [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
 - [utils/index.ts:153-207](file://src/StkTable/utils/index.ts#L153-L207)
 - [const.ts:1-51](file://src/StkTable/const.ts#L1-L51)
 - [types/index.ts:54-120](file://src/StkTable/types/index.ts#L54-L120)
 
 ## Architecture Overview
-The table component composes multiple hooks to manage performance-sensitive operations. Virtual scrolling is the core mechanism to render only visible items, while auto resize and custom scrollbar keep the viewport consistent under dynamic conditions.
+The table component composes multiple hooks to manage performance-sensitive operations. Virtual scrolling is the core mechanism to render only visible items, while auto resize and custom scrollbar keep the viewport consistent under dynamic conditions. The optimized style computation system generates CSS strings directly to minimize object allocation overhead.
 
 ```mermaid
 sequenceDiagram
@@ -109,6 +120,7 @@ participant S as "StkTable.vue"
 participant VS as "useVirtualScroll.ts"
 participant AR as "useAutoResize.ts"
 participant SB as "useScrollbar.ts"
+participant FS as "useFixedStyle.ts"
 C->>S : Mount table with virtual props
 S->>VS : initVirtualScroll()
 VS-->>S : virtualScroll, virtual_dataSourcePart
@@ -116,7 +128,9 @@ S->>AR : observe container size
 AR-->>S : after debounce, re-init virtual scroll
 S->>SB : updateCustomScrollbar()
 SB-->>S : scrollbar metrics
-S-->>C : Render visible rows/columns
+S->>FS : generate style strings
+FS-->>S : CSS style strings
+S-->>C : Render visible rows/columns with optimized styles
 ```
 
 **Diagram sources**
@@ -124,6 +138,7 @@ S-->>C : Render visible rows/columns
 - [useVirtualScroll.ts:196-236](file://src/StkTable/useVirtualScroll.ts#L196-L236)
 - [useAutoResize.ts:76-90](file://src/StkTable/useAutoResize.ts#L76-L90)
 - [useScrollbar.ts:78-99](file://src/StkTable/useScrollbar.ts#L78-L99)
+- [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
 
 ## Detailed Component Analysis
 
@@ -178,6 +193,39 @@ Best practices derived from the implementation:
 
 **Section sources**
 - [useVirtualScroll.ts:310-460](file://src/StkTable/useVirtualScroll.ts#L310-L460)
+
+### Optimized Style Computation System
+**New** The style computation system has been optimized to eliminate object creation overhead during style calculations:
+
+- **String-based Style Generation**: The `getFixedStyle` function returns CSS style strings directly instead of JavaScript objects
+- **Eliminated Object Creation**: Style objects are no longer created during style calculations, reducing garbage collection pressure
+- **Concatenation Approach**: Styles are concatenated as strings using template literals and string concatenation
+- **CSS Variable Support**: Width calculations use CSS variables (`--cw`) for better performance
+- **Transform Width Function**: The `transformWidthToStr` utility converts numeric widths to pixel strings efficiently
+
+```mermaid
+flowchart TD
+Start(["Style Calculation"]) --> CheckFixed{"Is Column Fixed?"}
+CheckFixed --> |No| ReturnEmpty["Return Empty String"]
+CheckFixed --> |Yes| CalcBase["Calculate Base Styles"]
+CalcBase --> BuildString["Build CSS String<br/>Using Template Literals"]
+BuildString --> AddPosition["Add Position Properties"]
+AddPosition --> AddFixed["Add Fixed Position Styles"]
+AddFixed --> Concatenate["Concatenate All Styles"]
+Concatenate --> ReturnString["Return CSS String"]
+ReturnEmpty --> End(["Optimized Performance"])
+ReturnString --> End
+```
+
+**Diagram sources**
+- [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
+- [StkTable.vue:1118-1124](file://src/StkTable/StkTable.vue#L1118-L1124)
+- [utils/index.ts:221-225](file://src/StkTable/utils/index.ts#L221-L225)
+
+**Section sources**
+- [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
+- [StkTable.vue:1118-1124](file://src/StkTable/StkTable.vue#L1118-L1124)
+- [utils/index.ts:221-225](file://src/StkTable/utils/index.ts#L221-L225)
 
 ### Auto Resize and Debounced Recalculation
 - Watches virtual and virtualX flags to attach observers.
@@ -275,6 +323,7 @@ graph LR
 STK["StkTable.vue"] --> VS["useVirtualScroll.ts"]
 STK --> AR["useAutoResize.ts"]
 STK --> SB["useScrollbar.ts"]
+STK --> FS["useFixedStyle.ts"]
 STK --> UT["utils/index.ts"]
 STK --> CT["const.ts"]
 STK --> TY["types/index.ts"]
@@ -285,6 +334,7 @@ STK --> TY["types/index.ts"]
 - [useVirtualScroll.ts:60-495](file://src/StkTable/useVirtualScroll.ts#L60-L495)
 - [useAutoResize.ts:14-92](file://src/StkTable/useAutoResize.ts#L14-L92)
 - [useScrollbar.ts:29-190](file://src/StkTable/useScrollbar.ts#L29-L190)
+- [useFixedStyle.ts:16-75](file://src/StkTable/useFixedStyle.ts#L16-L75)
 - [utils/index.ts:1-288](file://src/StkTable/utils/index.ts#L1-L288)
 - [const.ts:1-51](file://src/StkTable/const.ts#L1-L51)
 - [types/index.ts:1-318](file://src/StkTable/types/index.ts#L1-L318)
@@ -294,6 +344,7 @@ STK --> TY["types/index.ts"]
 - [useVirtualScroll.ts:60-495](file://src/StkTable/useVirtualScroll.ts#L60-L495)
 - [useAutoResize.ts:14-92](file://src/StkTable/useAutoResize.ts#L14-L92)
 - [useScrollbar.ts:29-190](file://src/StkTable/useScrollbar.ts#L29-L190)
+- [useFixedStyle.ts:16-75](file://src/StkTable/useFixedStyle.ts#L16-L75)
 - [utils/index.ts:1-288](file://src/StkTable/utils/index.ts#L1-L288)
 - [const.ts:1-51](file://src/StkTable/const.ts#L1-L51)
 - [types/index.ts:1-318](file://src/StkTable/types/index.ts#L1-L318)
@@ -315,19 +366,24 @@ STK --> TY["types/index.ts"]
 - Cache row heights in a Map keyed by row key to avoid repeated measurements.
 - Clear cached heights when data changes to prevent stale measurements.
 - Use shallow refs for data sources to reduce deep reactivity overhead.
+- **New** Eliminate object creation overhead by using string-based style computation instead of style objects.
 
 **Section sources**
 - [useVirtualScroll.ts:241-253](file://src/StkTable/useVirtualScroll.ts#L241-L253)
 - [StkTable.vue:717-718](file://src/StkTable/StkTable.vue#L717-L718)
+- [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
 
 ### Rendering Optimization
 - Render only visible rows/columns; keep template logic minimal inside loops.
 - Use computed properties for derived values (e.g., virtual data parts, offsets).
 - Avoid unnecessary watchers and reactive churn by batching updates.
+- **New** Use string concatenation for style generation to eliminate object allocation overhead.
+- **New** Leverage CSS variables for width calculations to reduce style recalculation costs.
 
 **Section sources**
 - [useVirtualScroll.ts:104-108](file://src/StkTable/useVirtualScroll.ts#L104-L108)
 - [useVirtualScroll.ts:110-125](file://src/StkTable/useVirtualScroll.ts#L110-L125)
+- [StkTable.vue:1118-1124](file://src/StkTable/StkTable.vue#L1118-L1124)
 
 ### Handling Large Datasets Efficiently
 - Use server-side sorting and pagination for extremely large datasets.
@@ -351,6 +407,7 @@ STK --> TY["types/index.ts"]
 - Use shallow refs for large arrays to avoid deep reactivity.
 - Minimize reactive property churn; batch updates when modifying large lists.
 - Leverage computed getters for derived state to reduce recomputation.
+- **New** Use string-based style computation to reduce reactive overhead.
 
 **Section sources**
 - [StkTable.vue:717-718](file://src/StkTable/StkTable.vue#L717-L718)
@@ -359,10 +416,12 @@ STK --> TY["types/index.ts"]
 - Prefer CSS transforms and offsets over moving DOM nodes.
 - Use virtualized offsets for top/bottom padding to avoid shifting DOM.
 - Limit custom scrollbar updates to throttled intervals.
+- **New** Eliminate object creation during style calculations to reduce DOM manipulation overhead.
 
 **Section sources**
 - [useVirtualScroll.ts:110-125](file://src/StkTable/useVirtualScroll.ts#L110-L125)
 - [useScrollbar.ts:56-58](file://src/StkTable/useScrollbar.ts#L56-L58)
+- [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
 
 ### Enhanced Pre-Judgment Logic for Virtual Scrolling
 **New** The `updateVirtualScrollY` function now includes sophisticated pre-judgment logic to prevent redundant processing during rapid scrolling operations:
@@ -396,10 +455,43 @@ DirectUpdate --> End
 **Section sources**
 - [useVirtualScroll.ts:450-459](file://src/StkTable/useVirtualScroll.ts#L450-L459)
 
+### String-Based Style Computation Optimizations
+**New** The style computation system has been optimized with string-based approach to eliminate object creation overhead:
+
+- **Direct String Concatenation**: Styles are built as CSS strings using template literals and concatenation
+- **Eliminated Object Allocation**: No style objects are created during runtime, reducing garbage collection pressure
+- **Template Literal Usage**: Efficient string building with `${variable}` syntax for dynamic values
+- **CSS Variable Integration**: Width calculations use CSS variables (`--cw`) for better performance
+- **Transform Width Utility**: The `transformWidthToStr` function efficiently converts numeric widths to pixel strings
+
+```mermaid
+flowchart TD
+Start(["Style Generation"]) --> CheckTag{"Tag Type"}
+CheckTag --> |TH| BuildTH["Build TH Style String"]
+CheckTag --> |TD| BuildTD["Build TD Style String"]
+CheckTag --> |TF| BuildTF["Build TF Style String"]
+BuildTH --> AddBase["Add Base Properties"]
+BuildTD --> AddBase
+BuildTF --> AddBase
+AddBase --> AddFixed["Add Fixed Position"]
+AddFixed --> Concatenate["Concatenate All Styles"]
+Concatenate --> ReturnString["Return CSS String"]
+```
+
+**Diagram sources**
+- [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
+- [StkTable.vue:1118-1124](file://src/StkTable/StkTable.vue#L1118-L1124)
+
+**Section sources**
+- [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
+- [StkTable.vue:1118-1124](file://src/StkTable/StkTable.vue#L1118-L1124)
+- [utils/index.ts:221-225](file://src/StkTable/utils/index.ts#L221-L225)
+
 ### Benchmarking, Monitoring, and Profiling
 - Use browser devtools performance panel to record scroll interactions and measure frame times.
 - Monitor scroll events and log startIndex/endIndex to validate virtual windows.
 - Profile long-running operations like sorting and binary insertion to ensure they remain below 1–2 ms per operation.
+- **New** Monitor garbage collection frequency to verify reduced object allocation overhead from string-based style computation.
 
 **Section sources**
 - [HugeData/index.vue:192-194](file://docs-demo/demos/HugeData/index.vue#L192-L194)
@@ -419,6 +511,10 @@ Common pitfalls and solutions:
   - Reference: [useAutoResize.ts:76-90](file://src/StkTable/useAutoResize.ts#L76-L90)
 - **Enhanced** Virtual scrolling performance issues during rapid scrolling: Check pre-judgment logic thresholds and Vue 2 optimization settings.
   - Reference: [useVirtualScroll.ts:450-459](file://src/StkTable/useVirtualScroll.ts#L450-L459)
+- **New** High memory usage with many columns: Verify string-based style computation is being used instead of object creation.
+  - Reference: [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
+- **New** Performance degradation with complex styling: Ensure CSS variables are used instead of frequent style object recreation.
+  - Reference: [StkTable.vue:1118-1124](file://src/StkTable/StkTable.vue#L1118-L1124)
 
 **Section sources**
 - [useVirtualScroll.ts:450-459](file://src/StkTable/useVirtualScroll.ts#L450-L459)
@@ -427,9 +523,15 @@ Common pitfalls and solutions:
 - [useScrollbar.ts:56-58](file://src/StkTable/useScrollbar.ts#L56-L58)
 - [useScrollbar.ts:78-99](file://src/StkTable/useScrollbar.ts#L78-L99)
 - [useAutoResize.ts:76-90](file://src/StkTable/useAutoResize.ts#L76-L90)
+- [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
+- [StkTable.vue:1118-1124](file://src/StkTable/StkTable.vue#L1118-L1124)
 
 ## Conclusion
-Stk Table Vue achieves high-performance rendering for large datasets through a modular, composable architecture centered on virtual scrolling, debounced auto resizing, and optional custom scrollbar. The recent enhancement to the `updateVirtualScrollY` function provides sophisticated pre-judgment logic that prevents redundant processing during rapid scrolling operations, significantly improving performance. By following the best practices outlined—prefer exact row heights, cache measured heights, minimize DOM measurements, throttle updates, leverage binary insertion, and utilize the enhanced pre-judgment logic—you can maintain smooth interactions even with hundreds of thousands of rows.
+Stk Table Vue achieves high-performance rendering for large datasets through a modular, composable architecture centered on virtual scrolling, debounced auto resizing, and optional custom scrollbar. The recent enhancement to the `updateVirtualScrollY` function provides sophisticated pre-judgment logic that prevents redundant processing during rapid scrolling operations, significantly improving performance. 
+
+**New** The implementation of string-based style computation optimizations eliminates object creation overhead during style calculations, particularly benefiting virtualized tables with many columns and rows. This approach reduces garbage collection pressure and improves overall rendering performance by using CSS strings directly instead of JavaScript objects.
+
+By following the best practices outlined—prefer exact row heights, cache measured heights, minimize DOM measurements, throttle updates, leverage binary insertion, utilize the enhanced pre-judgment logic, and adopt string-based style computation—you can maintain smooth interactions even with hundreds of thousands of rows and complex styling scenarios.
 
 ## Appendices
 
@@ -442,6 +544,7 @@ Stk Table Vue achieves high-performance rendering for large datasets through a m
 - Rendering
   - Keep templates inside loops minimal.
   - Use computed for derived values; avoid reactive churn.
+  - **New** Use string-based style computation for better performance with many columns.
 - Resize and Scrollbar
   - Debounce resize recalculations.
   - Throttle custom scrollbar updates.
@@ -451,6 +554,7 @@ Stk Table Vue achieves high-performance rendering for large datasets through a m
 - Performance Optimization
   - **New** Monitor pre-judgment thresholds for optimal rapid scrolling performance.
   - **New** Configure Vue 2 scroll optimization based on application requirements.
+  - **New** Verify string-based style computation is active for optimal memory usage.
 
 ### Enhanced Pre-Judgment Logic Configuration
 **New** The following configuration options are available for fine-tuning virtual scrolling performance:
@@ -463,3 +567,18 @@ Stk Table Vue achieves high-performance rendering for large datasets through a m
 **Section sources**
 - [vue2-scroll-optimize.md:1-26](file://docs-src/en/main/table/advanced/vue2-scroll-optimize.md#L1-L26)
 - [useVirtualScroll.ts:450-459](file://src/StkTable/useVirtualScroll.ts#L450-L459)
+
+### String-Based Style Computation Benefits
+**New** The string-based style computation system provides several performance benefits:
+
+- **Reduced Garbage Collection**: Eliminates object creation overhead during style calculations
+- **Memory Efficiency**: Uses CSS strings instead of JavaScript objects, reducing memory footprint
+- **Faster Style Application**: Direct string concatenation is faster than object merging operations
+- **CSS Variable Integration**: Leverages CSS variables for efficient width calculations
+- **Scalability**: Particularly beneficial for tables with many columns and rows
+
+**Section sources**
+- [useFixedStyle.ts:31-72](file://src/StkTable/useFixedStyle.ts#L31-L72)
+- [StkTable.vue:1118-1124](file://src/StkTable/StkTable.vue#L1118-L1124)
+- [utils/index.ts:221-225](file://src/StkTable/utils/index.ts#L221-L225)
+- [optimize.md:1-32](file://docs-src/en/main/other/optimize.md#L1-L32)

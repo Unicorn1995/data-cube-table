@@ -20,6 +20,9 @@
 - Added template literal consolidation for style computation in cellStyleMap
 - Enhanced merge cells caching with column index cache optimization
 - Improved performance through reduced string concatenation operations
+- **Updated**: String-based style generation in useFixedStyle.ts for reduced object creation overhead
+- **Updated**: Optimized cell style computation in StkTable.vue using string concatenation instead of object merging
+- **Updated**: Enhanced merge cells caching system with column index cache optimization
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -39,6 +42,8 @@
 Computed Style Caching is a critical performance optimization mechanism in the stk-table-vue library that prevents unnecessary re-computation of CSS styles during table rendering and scrolling operations. This system efficiently manages computed styles for table headers, body cells, and footer elements while maintaining optimal performance during dynamic updates.
 
 The caching system operates at multiple levels, from individual cell style computation to entire column style maps, ensuring that style calculations are performed only when necessary and cached for subsequent use during the same render cycle. Recent enhancements include template literal consolidation and improved computed style caching mechanisms that significantly reduce computational overhead.
+
+**Updated**: The system now employs string-based style generation and optimized concatenation techniques to minimize object creation overhead and improve rendering performance for large datasets.
 
 ## Project Structure
 
@@ -76,7 +81,7 @@ STK --> LIB
 **Diagram sources**
 - [StkTable.vue:1-800](file://src/StkTable/StkTable.vue#L1-800)
 - [useVirtualScroll.ts:1-555](file://src/StkTable/useVirtualScroll.ts#L1-555)
-- [useFixedStyle.ts:1-75](file://src/StkTable/useFixedStyle.ts#L1-75)
+- [useFixedStyle.ts:1-76](file://src/StkTable/useFixedStyle.ts#L1-76)
 - [useMergeCells.ts:1-139](file://src/StkTable/useMergeCells.ts#L1-139)
 
 **Section sources**
@@ -88,7 +93,7 @@ STK --> LIB
 The computed style caching system consists of four primary components working in harmony:
 
 ### 1. Cell Style Map Computation
-The `cellStyleMap` computed property generates optimized style maps for different table elements (TH, TD, TF) with enhanced template literal consolidation.
+The `cellStyleMap` computed property generates optimized style maps for different table elements (TH, TD, TF) with enhanced template literal consolidation and string-based style generation.
 
 ### 2. Fixed Column Position Caching
 The `useGetFixedColPosition` hook maintains cached column position calculations for fixed left and right columns.
@@ -100,9 +105,9 @@ The `useColWidthCache` function provides intelligent caching for column width co
 The `useMergeCells` hook implements sophisticated caching for merged cell operations with column index cache optimization.
 
 **Section sources**
-- [useFixedStyle.ts:16-75](file://src/StkTable/useFixedStyle.ts#L16-75)
-- [useGetFixedColPosition.ts:10-64](file://src/StkTable/useGetFixedColPosition.ts#L10-64)
-- [useVirtualScroll.ts:52-83](file://src/StkTable/useVirtualScroll.ts#L52-83)
+- [useFixedStyle.ts:16-76](file://src/StkTable/useFixedStyle.ts#L16-L76)
+- [useGetFixedColPosition.ts:10-64](file://src/StkTable/useGetFixedColPosition.ts#L10-L64)
+- [useVirtualScroll.ts:52-83](file://src/StkTable/useVirtualScroll.ts#L52-L83)
 - [useMergeCells.ts:29-36](file://src/StkTable/useMergeCells.ts#L29-L36)
 
 ## Architecture Overview
@@ -131,7 +136,7 @@ DOM-->>Vue : Styles applied
 ```
 
 **Diagram sources**
-- [useFixedStyle.ts:31-71](file://src/StkTable/useFixedStyle.ts#L31-L71)
+- [useFixedStyle.ts:31-76](file://src/StkTable/useFixedStyle.ts#L31-L76)
 - [useVirtualScroll.ts:73-82](file://src/StkTable/useVirtualScroll.ts#L73-L82)
 - [useMergeCells.ts:41-84](file://src/StkTable/useMergeCells.ts#L41-L84)
 
@@ -141,6 +146,7 @@ The architecture ensures that:
 - Template literals are consolidated to reduce string operations
 - Memory usage remains efficient through targeted invalidation
 - Performance is optimized for both vertical and horizontal scrolling scenarios
+- **Updated**: String-based style generation reduces object creation overhead
 
 ## Detailed Component Analysis
 
@@ -154,7 +160,7 @@ Start([Compute Cell Styles]) --> GetHeaders[Get Table Headers]
 GetHeaders --> IterateDepth[Iterate Through Header Depths]
 IterateDepth --> IterateCols[Iterate Through Columns]
 IterateCols --> CalcWidth[Calculate Column Width]
-CalcWidth --> BuildStyle[Build Base Style Object]
+CalcWidth --> BuildStyle[Build Base Style String]
 BuildStyle --> TemplateConsolidation[Template Literal Consolidation]
 TemplateConsolidation --> GetFixed[Get Fixed Styles]
 GetFixed --> CacheCheck{Cache Exists?}
@@ -173,8 +179,11 @@ The system creates separate maps for:
 - **TD Elements**: Body cells with fixed positioning support  
 - **TF Elements**: Footer cells with sticky positioning
 
+**Updated**: The cellStyleMap now uses string concatenation instead of object merging, with a comment explaining the performance optimization: `// en: Use string instead of object to reduce patchStyle overhead`.
+
 **Section sources**
 - [stk-table-vue.js:3133-3162](file://lib/stk-table-vue.js#L3133-L3162)
+- [StkTable.vue:1106-1132](file://src/StkTable/StkTable.vue#L1106-L1132)
 
 ### Fixed Column Position Caching
 
@@ -254,8 +263,8 @@ The `getFixedStyle` function generates optimized CSS styles for fixed-positioned
 ```mermaid
 flowchart TD
 Start([Generate Fixed Style]) --> CheckFixed{Has Fixed Property?}
-CheckFixed --> |No| ReturnNull[Return Null]
-CheckFixed --> |Yes| InitStyle[Initialize Style Object]
+CheckFixed --> |No| ReturnNull[Return Empty String]
+CheckFixed --> |Yes| InitStyle[Initialize Style String]
 InitStyle --> CheckTag{Tag Type}
 CheckTag --> |TH| CalcHeaderPos[Calculate Header Position]
 CheckTag --> |TD| CalcBodyPos[Calculate Body Position]
@@ -265,17 +274,19 @@ CalcBodyPos --> CheckMode
 CalcFooterPos --> CheckMode
 CheckMode --> |No| CalcStickyPos[Calculate Sticky Position]
 CheckMode --> |Yes| CalcRelativePos[Calculate Relative Position]
-CalcStickyPos --> ReturnStyle[Return Style]
+CalcStickyPos --> ReturnStyle[Return Style String]
 CalcRelativePos --> ReturnStyle
 ReturnNull --> End([End])
 ReturnStyle --> End
 ```
 
+**Updated**: The `getFixedStyle` function now returns a concatenated string instead of an object, significantly reducing object creation overhead during style computation.
+
 **Diagram sources**
-- [useFixedStyle.ts:31-71](file://src/StkTable/useFixedStyle.ts#L31-L71)
+- [useFixedStyle.ts:31-76](file://src/StkTable/useFixedStyle.ts#L31-L76)
 
 **Section sources**
-- [useFixedStyle.ts:16-75](file://src/StkTable/useFixedStyle.ts#L16-L75)
+- [useFixedStyle.ts:16-76](file://src/StkTable/useFixedStyle.ts#L16-L76)
 
 ## Template Literal Consolidation
 
@@ -313,6 +324,7 @@ Key improvements include:
 - **Consolidated Width Calculation**: `getCalculatedColWidth(col) + 'px'` instead of repeated concatenation
 - **Optimized Style Assignment**: Reduced template literal operations in style objects
 - **Efficient String Operations**: Minimized string concatenation in computed properties
+- **Object Creation Reduction**: String-based style generation eliminates object creation overhead
 
 **Section sources**
 - [StkTable.vue:1118](file://src/StkTable/StkTable.vue#L1118)
@@ -346,6 +358,8 @@ The optimization includes:
 - **Reduced Find Operations**: Avoids repeated `findIndex` calls for column lookup
 - **Memory Efficient**: Uses WeakMap for cache storage to prevent memory leaks
 - **Automatic Invalidation**: Cache cleared when data source or column configuration changes
+
+**Updated**: The column index cache optimization eliminates repeated `findIndex` operations by caching column positions, significantly improving performance during merge cell operations.
 
 **Section sources**
 - [useMergeCells.ts:29-36](file://src/StkTable/useMergeCells.ts#L29-L36)
@@ -388,6 +402,7 @@ The dependency relationships ensure:
 - **Reusability**: Utility functions can be shared across components
 - **Maintainability**: Changes in one module don't affect others unnecessarily
 - **Performance**: Direct dependencies minimize computation overhead
+- **String-Based Optimization**: Fixed style generation returns strings instead of objects
 
 **Section sources**
 - [StkTable.vue:250-310](file://src/StkTable/StkTable.vue#L250-L310)
@@ -402,18 +417,23 @@ The computed style caching system implements several performance optimization st
 - **Cache Invalidation**: Automatic clearing when column arrays change
 - **Efficient Data Structures**: Maps and arrays optimized for frequent access
 - **Column Index Cache**: Prevents memory leaks with automatic invalidation
+- **String-Based Caching**: Eliminates object creation overhead in style maps
 
 ### Computational Efficiency
 - **Binary Search**: O(log n) lookup for column positioning during scrolling
 - **Memoization**: Cached results avoid redundant calculations
 - **Template Literal Consolidation**: Reduces string concatenation operations
 - **Batch Operations**: Multiple style computations performed together
+- **Object Creation Reduction**: String-based style generation minimizes GC pressure
 
 ### Rendering Optimization
 - **requestAnimationFrame**: Coalesces style updates for smooth animations
 - **CSS Custom Properties**: Leverages browser optimization for style changes
 - **Minimal DOM Manipulation**: Reduces layout thrashing during updates
 - **Efficient Style Assignment**: Optimized style object creation and assignment
+- **String Concatenation**: Eliminates object merging overhead in style computation
+
+**Updated**: The performance improvements include reduced object creation overhead, optimized string concatenation, and enhanced caching mechanisms that scale efficiently with large datasets.
 
 ## Troubleshooting Guide
 
@@ -426,12 +446,14 @@ Common issues and solutions related to computed style caching:
 - Excessive re-computation of styles
 - Memory leaks from unused caches
 - Template literal consolidation not working
+- **Updated**: String-based style generation not functioning correctly
 
 **Solutions**:
 - Verify cache invalidation triggers on column changes
 - Monitor cache hit rates during performance profiling
 - Check for proper cleanup in component unmount
 - Ensure template literal consolidation is active
+- **Updated**: Verify string-based style generation is properly implemented in getFixedStyle function
 
 ### Style Synchronization Problems
 **Symptoms**: Incorrect fixed positions or misaligned columns
@@ -440,12 +462,14 @@ Common issues and solutions related to computed style caching:
 - Timing issues with style updates
 - Browser compatibility problems
 - Template literal consolidation conflicts
+- **Updated**: String concatenation not producing expected style values
 
 **Solutions**:
 - Ensure consistent cache usage across all table elements
 - Implement proper synchronization for scroll events
 - Test with different browser versions and modes
 - Verify template literal consolidation is functioning correctly
+- **Updated**: Check that string concatenation produces valid CSS declarations
 
 ### Memory Leaks
 **Symptoms**: Increasing memory usage over time
@@ -454,12 +478,14 @@ Common issues and solutions related to computed style caching:
 - Unclean cache invalidation
 - Event listener retention
 - Column index cache not being cleared
+- **Updated**: String-based style caching not properly managing memory
 
 **Solutions**:
 - Verify WeakMap cleanup on component unmount
 - Implement proper cache lifecycle management
 - Monitor memory usage during extended usage
 - Check column index cache invalidation in watch effects
+- **Updated**: Ensure string-based style caching doesn't create memory leaks
 
 **Section sources**
 - [useGetFixedColPosition.ts:17-19](file://src/StkTable/useGetFixedColPosition.ts#L17-L19)
@@ -468,16 +494,20 @@ Common issues and solutions related to computed style caching:
 
 ## Conclusion
 
-The computed style caching system in stk-table-vue represents a sophisticated approach to performance optimization in virtualized table components. Recent enhancements including template literal consolidation and improved computed style caching mechanisms demonstrate significant performance improvements while maintaining flexibility and maintainability.
+The computed style caching system in stk-table-vue represents a sophisticated approach to performance optimization in virtualized table components. Recent enhancements including template literal consolidation, string-based style generation, and improved computed style caching mechanisms demonstrate significant performance improvements while maintaining flexibility and maintainability.
 
 Key achievements of the enhanced caching system include:
 
 - **Template Literal Consolidation**: Reduced string concatenation operations by consolidating template literals
 - **Enhanced Merge Cells Caching**: Implemented column index cache optimization to avoid repeated find operations
+- **String-Based Style Generation**: Eliminated object creation overhead by returning concatenated strings from getFixedStyle
+- **Optimized Cell Style Computation**: Used string concatenation instead of object merging in cellStyleMap
 - **Hierarchical Caching**: Multiple levels of caching from individual styles to entire style maps
 - **Intelligent Invalidation**: Smart cache invalidation based on data changes
 - **Memory Efficiency**: Proper cleanup mechanisms prevent memory leaks
 - **Performance Scaling**: Optimizations that scale with table size and complexity
+
+**Updated**: The latest enhancements focus on reducing object creation overhead through string-based style generation and optimized concatenation techniques, providing significant performance improvements for large datasets with minimal memory footprint.
 
 The system demonstrates best practices in Vue.js performance optimization, providing a foundation for high-performance table rendering that can handle large datasets efficiently while maintaining responsive user interactions.
 
@@ -486,3 +516,4 @@ Future enhancements could include:
 - Advanced prediction algorithms for upcoming style computations
 - Enhanced debugging tools for cache inspection and monitoring
 - Further template literal optimization for even better performance
+- **Updated**: String-based style generation optimization for edge cases
