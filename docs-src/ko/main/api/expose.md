@@ -76,7 +76,7 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
  * @param colKeyValue 열 키
  * @param options.method css-css 렌더링 사용, animation-animation API 사용. 기본값 animation;
  * @param option.className 커스텀 CSS 애니메이션 클래스.
- * @param option.keyframe 커스텀 키프레임 설정 시 highlightConfig.fps는失效됩니다. Keyframe: https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats 
+ * @param option.keyframe 커스텀 키프레임 설정 시 highlightConfig.fps는失效됩니다. Keyframe: https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats
  * @param option.duration 애니메이션 시간. method='css' 상태에서 class 제거용, className 전달 시 커스텀 애니메이션 시간과 일치해야 합니다.
  */
 function setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: HighlightDimCellOption = {})
@@ -91,7 +91,7 @@ function setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: 
  * @param rowKeyValues 행 고유 키 배열
  * @param option.method css-css 렌더링 사용, animation-animation API 사용, js-js 색상 계산. 기본값 animation
  * @param option.className 커스텀 CSS 애니메이션 클래스.
- * @param option.keyframe 커스텀 키프레임 설정 시 highlightConfig.fps는失效됩니다. Keyframe: https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+ * @param option.keyframe 커스텀 키프레임 설정 시 highlightConfig.fps는失效됩니다. Keyframe: https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats
  * @param option.duration 애니메이션 시간. method='css' 상태에서 class 제거용, className 전달 시 커스텀 애니메이션 시간과 일치해야 합니다.
  */
 function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOption = {})
@@ -99,6 +99,17 @@ function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOpti
 
 ### sortCol
 테이블 정렬 열 dataIndex
+
+### sortStates
+다중 열 정렬 상태 배열.
+
+```ts
+/**
+ * 정렬 상태 배열
+ * @see SortState[]
+ */
+sortStates: SortState[];
+```
 
 ### getSortColumns
 정렬 열 정보 가져오기 `{key:string,order:Order}[]`
@@ -116,13 +127,13 @@ function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOpti
  * @returns 현재 테이블 데이터 반환
  */
 function setSorter(
-    colKey: string, 
+    colKey: string,
     order: Order,
-    option: { 
-        sortOption?: SortOption<DT>; 
-        force?: boolean; 
-        silent?: boolean; 
-        sort?: boolean 
+    option: {
+        sortOption?: SortOption<DT>;
+        force?: boolean;
+        silent?: boolean;
+        sort?: boolean
     } = {}
 ): DT[];
 ```
@@ -141,14 +152,38 @@ function setSorter(
 ```ts
 /**
  * 스크롤바 위치 설정
- * @param top null 설정 시 위치 변경 안함 
+ * @param top null 설정 시 위치 변경 안함
  * @param left null 설정 시 위치 변경 안함
  */
-function scrollTo(top: number | null = 0, left: number | null = 0) 
+function scrollTo(top: number | null = 0, left: number | null = 0)
 ```
 
 ### getTableData
 테이블 데이터 가져오기, 현재 테이블 정렬 순서의 배열 반환
+
+### getRowIndex
+rowKey를 기반으로 행 인덱스 가져오기
+
+```ts
+/**
+ * 행 인덱스 가져오기
+ * @param row rowKey 또는 행 데이터
+ * @returns 행 인덱스, 찾지 못하면 -1 반환
+ */
+function getRowIndex(row: UniqKey | DT): number
+```
+
+### getColumnIndex
+colKey를 기반으로 열 인덱스 가져오기
+
+```ts
+/**
+ * 열 인덱스 가져오기
+ * @param col colKey 또는 열 객체
+ * @returns 열 인덱스, 찾지 못하면 -1 반환
+ */
+function getColumnIndex(col: string | StkTableColumn<DT>): number
+```
 
 ### setRowExpand
 확장 행 설정
@@ -183,7 +218,7 @@ function setAutoHeight(rowKey: UniqKey, height?: number | null)
 function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
 ```
 
-### getSelectedArea 
+### getSelectedArea
 선택된 셀 정보 가져오기
 
 ```ts
@@ -192,6 +227,19 @@ function getSelectedArea(): {
     cols: StkTableColumn<DT>[];
     ranges: AreaSelectionRange[]
 }
+```
+
+### setAreaSelection
+드래그 선택 영역 설정
+
+```ts
+/**
+ * 드래그 선택 영역 설정
+ * @param ranges 선택 영역 배열
+ * @param option.silent true 설정 시 `@select-area-change` 트리거 안함. 기본값:false
+ * @param option.scrollToView true 설정 시 선택 영역으로 자동 스크롤. 기본값:false
+ */
+function setAreaSelection(ranges: AreaSelectionRange[], option?: { silent?: boolean; scrollToView?: boolean })
 ```
 
 ### clearSelectedArea
@@ -204,23 +252,15 @@ function getSelectedArea(): {
 function copySelectedArea(): string
 ```
 
-### getSelectedRows
-행 드래그 선택으로 선택된 행 정보를 가져옵니다
+### setFilter(Beta)
+필터 상태 설정
 
 ```ts
-function getSelectedRows(): {
-    rows: DT[];
-    range: RowDragSelectionRange | null;
-    ranges: RowDragSelectionRange[];
-}
+/**
+ * 필터 상태 설정
+ * @param colKey 열 고유 키 필드
+ * @param filteredValue 필터 값, undefined는 필터 해제
+ * @param option.silent true 설정 시 `@filter-change` 트리거 안함. 기본값:false
+ */
+function setFilter(colKey: string, filteredValue: any, option?: { silent?: boolean })
 ```
-
-### setSelectedRows
-행 드래그 선택의 선택된 행을 설정합니다. 연속되지 않은 행도 지원하며, 내부적으로는 여러 개의 연속 범위로 저장됩니다.
-
-```ts
-function setSelectedRows(rowKeyOrRows?: (UniqKey | DT)[], option?: { silent?: boolean })
-```
-
-### clearSelectedRows
-행 드래그 선택으로 선택된 행을 비웁니다

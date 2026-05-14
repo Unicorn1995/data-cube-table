@@ -76,7 +76,7 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
  * @param colKeyValue 列key
  * @param options.method css-使用css渲染，animation-使用animation api。默认animation;
  * @param option.className 自定义css动画的class。
- * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。Keyframe：https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats 
+ * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。Keyframe：https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
  * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
  */
 function setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: HighlightDimCellOption = {})
@@ -92,13 +92,24 @@ function setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: 
  * @param option.method css-使用css渲染，animation-使用animation api，js-使用js计算颜色。默认animation
  * @param option.className 自定义css动画的class。
  * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。Keyframe：https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
- * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。。
+ * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
  */
 function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOption = {})
 ```
 
 ### sortCol
-表格排序列dataIndex
+表格排序列 dataIndex
+
+### sortStates
+多列排序状态数组。
+
+```ts
+/**
+ * 排序状态数组
+ * @see SortState[]
+ */
+sortStates: SortState[];
+```
 
 ### getSortColumns
 获取排序列的信息 `{key:string,order:Order}[]`
@@ -116,13 +127,13 @@ function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOpti
  * @returns 返回当前表格数据
  */
 function setSorter(
-    colKey: string, 
+    colKey: string,
     order: Order,
-    option: { 
-        sortOption?: SortOption<DT>; 
-        force?: boolean; 
-        silent?: boolean; 
-        sort?: boolean 
+    option: {
+        sortOption?: SortOption<DT>;
+        force?: boolean;
+        silent?: boolean;
+        sort?: boolean
     } = {}
 ): DT[];
 ```
@@ -141,14 +152,38 @@ function setSorter(
 ```ts
 /**
  * 设置滚动条位置
- * @param top 设置null则不改变位置 
+ * @param top 设置null则不改变位置
  * @param left 设置null则不改变位置
  */
-function scrollTo(top: number | null = 0, left: number | null = 0) 
+function scrollTo(top: number | null = 0, left: number | null = 0)
 ```
 
 ### getTableData
 获取表格数据，返回当前表格的排序顺序的数组
+
+### getRowIndex
+根据 rowKey 获取行索引
+
+```ts
+/**
+ * 获取行索引
+ * @param row rowKey 或 row 数据
+ * @returns 行索引，未找到返回 -1
+ */
+function getRowIndex(row: UniqKey | DT): number
+```
+
+### getColumnIndex
+根据 colKey 获取列索引
+
+```ts
+/**
+ * 获取列索引
+ * @param col colKey 或列对象
+ * @returns 列索引，未找到返回 -1
+ */
+function getColumnIndex(col: string | StkTableColumn<DT>): number
+```
 
 ### setRowExpand
 设置展开行
@@ -183,7 +218,7 @@ function setAutoHeight(rowKey: UniqKey, height?: number | null)
 function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
 ```
 
-### getSelectedArea 
+### getSelectedArea
 获取选中的单元格信息
 
 ```ts
@@ -192,6 +227,19 @@ function getSelectedArea(): {
     cols: StkTableColumn<DT>[];
     ranges: AreaSelectionRange[]
 }
+```
+
+### setAreaSelection
+设置拖选选区
+
+```ts
+/**
+ * 设置拖选选区
+ * @param ranges 选区范围数组
+ * @param option.silent 设置 true 则不会触发 `@select-area-change`. 默认:false
+ * @param option.scrollToView 设置 true 则会自动滚动到选区位置. 默认:false
+ */
+function setAreaSelection(ranges: AreaSelectionRange[], option?: { silent?: boolean; scrollToView?: boolean })
 ```
 
 ### clearSelectedArea
@@ -204,23 +252,15 @@ function getSelectedArea(): {
 function copySelectedArea(): string
 ```
 
-### getSelectedRows
-获取拖拽选中的行信息
+### setFilter(Beta)
+设置筛选状态
 
 ```ts
-function getSelectedRows(): {
-    rows: DT[];
-    range: RowDragSelectionRange | null;
-    ranges: RowDragSelectionRange[];
-}
+/**
+ * 设置筛选状态
+ * @param colKey 列唯一键字段
+ * @param filteredValue 筛选值，undefined 为清除筛选
+ * @param option.silent 设置 true 则不会触发 `@filter-change`. 默认:false
+ */
+function setFilter(colKey: string, filteredValue: any, option?: { silent?: boolean })
 ```
-
-### setSelectedRows
-设置拖拽选中的行。支持传入多个不连续的行，内部会自动转换为多个连续范围。
-
-```ts
-function setSelectedRows(rowKeyOrRows?: (UniqKey | DT)[], option?: { silent?: boolean })
-```
-
-### clearSelectedRows
-清除拖拽选中的行
