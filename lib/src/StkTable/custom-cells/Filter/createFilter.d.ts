@@ -1,24 +1,14 @@
-import { UniqKey } from '../../types';
+import { CustomHeaderCellProps, UniqKey } from '../../types';
 import { VNode } from 'vue';
-import { FilterOption, FilterStatus } from './types';
+import { CreateFilterOption, FilterComponentConfig, FilterStatus } from './types';
 
 /**
- * 从数据源提取筛选选项
- * @param dataSource 数据源
- * @param columnKey 列名
- * @returns 筛选选项数组
-//  */
-/**
- * 表格筛选功能Hook (BETA)
+ * 表格筛选功能工厂函数 (BETA)
  * @beta
  * @returns
  */
-export declare function useFilter(option?: {
-    remote?: boolean;
-}): {
-    Filter: (config?: {
-        options?: FilterOption[];
-    }, component?: VNode) => import('vue').Raw<import('vue').DefineComponent<{
+export declare function createFilter(option?: CreateFilterOption): {
+    Filter: (config?: FilterComponentConfig, component?: VNode | ((props: CustomHeaderCellProps<any>) => VNode)) => import('vue').Raw<import('vue').DefineComponent<{
         col: import('../../types').StkTableColumn<any>;
         rowIndex: number;
         colIndex: number;

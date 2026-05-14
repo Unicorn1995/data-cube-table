@@ -1,43 +1,51 @@
 /**
  * name: stk-table-vue
- * version: v0.11.11
+ * version: v0.11.12
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
  * license: MIT
  */
+.stk-table.header-text-overflow .stk-filter > span{
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 .stk-filter{
   display:inline-flex;
   align-items:center;
   gap:4px;
   cursor:pointer;
+  flex:1;
+  min-width:0;
+}
+.stk-filter--light{
+  --icon-active-color:#1b63d9;
+  --icon-hover-color:#1890ff;
+}
+.stk-filter--dark{
+  --icon-active-color:#1b63d9;
+  --icon-hover-color:#4f8df4;
 }
 .stk-filter.stk-filter--active .stk-filter-icon{
-  color:#1b63d9;
+  color:var(--icon-active-color);
+}
+.stk-filter > span{
+  flex:1;
+  min-width:0;
+  overflow:hidden;
 }
 .stk-filter .stk-filter-icon{
   display:inline-flex;
-  width:20px;
-  height:20px;
+  width:16px;
+  height:16px;
   cursor:pointer;
   opacity:0.6;
   transition:opacity 0.2s;
+  flex-shrink:0;
 }
 .stk-filter .stk-filter-icon:hover{
   opacity:1;
-  color:#409eff;
-}
-.stk-filter--light .stk-filter-icon:hover{
-  color:#1890ff;
-}
-.stk-filter--light.stk-filter--active .stk-filter-icon{
-  color:#1890ff;
-}
-.stk-filter--dark .stk-filter-icon:hover{
-  color:#40a9ff;
-}
-.stk-filter--dark.stk-filter--active .stk-filter-icon{
-  color:#40a9ff;
+  color:var(--icon-hover-color);
 }
 .stk-filter-dropdown{
   --border-color:#303439;
@@ -80,7 +88,7 @@
 .stk-filter-dropdown .stk-filter-dropdown-checkbox{
   text-align:center;
 }
-.stk-filter-dropdown .stk-filter-dropdown-checkbox > [type="checkbox"]{
+.stk-filter-dropdown .stk-filter-dropdown-checkbox > [type='checkbox']{
   vertical-align:middle;
 }
 .stk-filter-dropdown footer{
@@ -99,6 +107,23 @@
 }
 .stk-filter-dropdown footer button:hover{
   background-color:var(--btn-hover-color);
+}
+.stk-editable-cell{
+  height:100%;
+  display:flex;
+  align-items:center;
+  cursor:default;
+  min-width:0;
+}
+.stk-editable-cell-input{
+  width:100%;
+  font-size:inherit;
+  line-height:inherit;
+  box-sizing:border-box;
+  outline:none;
+  padding:0 4px;
+  border:none;
+  background:transparent;
 }
 @keyframes stk-table-dim{
   from{

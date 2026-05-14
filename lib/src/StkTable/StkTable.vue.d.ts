@@ -1,4 +1,4 @@
-import { FilterStatus } from './components/Filter/types';
+import { FilterStatus } from './custom-cells/Filter/types';
 import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, FooterConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 import { ScrollbarOptions } from './useScrollbar';
 
@@ -343,6 +343,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * @see {@link getTableData}
      */
     getTableData: () => any[];
+    getRowIndex: (row: any) => number;
+    getColumnIndex: (column: PrivateStkTableColumn<any>) => number;
     /**
      * 设置展开的行
      *
@@ -392,6 +394,13 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
         ranges: AreaSelectionRange[];
     };
     /**
+     * 设置拖选选区
+     *
+     * en: Set cell selection range (areaSelection=true)
+     * @see {@link setAreaSelection}
+     */
+    setAreaSelection: (ranges?: import('./types/index').AreaSelectionSetterRange<any> | undefined, option?: import('./types/index').AreaSelectionSetterOption) => AreaSelectionRange[];
+    /**
      * 清空拖选选区
      *
      * en: Clear cell selection range (areaSelection=true)
@@ -406,9 +415,9 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      */
     copySelectedArea: () => string;
     /**
-     * 设置筛选状态
+     * 设置筛选状态(Beta)
      *
-     * en: Set filter status
+     * en: Set filter status(Beta)
      * @see {@link setFilter}
      */
     setFilter: (status: Record<UniqKey, FilterStatus> | null, option?: {
