@@ -34,5 +34,6 @@ registerFeature(useAreaSelection);
 
 ## Exposed
 - [getSelectedArea](/ko/main/api/expose.md#getselectedarea)
+- [setAreaSelection](/ko/main/api/expose.md#setareaselection)
 - [clearSelectedArea](/ko/main/api/expose.md#clearselectedarea)
 - [copySelectedArea](/ko/main/api/expose.md#copyselectedarea)

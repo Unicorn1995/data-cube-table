@@ -34,5 +34,6 @@ registerFeature(useAreaSelection);
 
 ## Exposed
 - [getSelectedArea](/en/main/api/expose.md#getselectedarea)
+- [setAreaSelection](/en/main/api/expose.md#setareaselection)
 - [clearSelectedArea](/en/main/api/expose.md#clearselectedarea)
 - [copySelectedArea](/en/main/api/expose.md#copyselectedarea)
