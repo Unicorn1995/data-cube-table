@@ -308,7 +308,6 @@ import { useTableColumns } from './useTableColumns';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
-import { useIndexResolver } from './useIndexResolver';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
@@ -898,7 +897,15 @@ if (props.autoResize) {
     useAutoResize(tableContainerRef, initVirtualScroll, props, 200);
 }
 
-const [getRowIndex, getColumnIndex] = useIndexResolver(dataSourceCopy, tableHeaderLast, rowKeyGen, colKeyGen);
+function getRowIndex(row: DT): number {
+    const targetKey = rowKeyGen(row);
+    return dataSourceCopy.value.findIndex(item => rowKeyGen(item) === targetKey);
+}
+
+function getColumnIndex(column: PrivateStkTableColumn<DT>): number {
+    const targetKey = colKeyGen.value(column);
+    return tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === targetKey);
+}
 
 const {
     config: areaSelectionConfig,
@@ -1782,9 +1789,9 @@ defineExpose({
      */
     copySelectedArea,
     /**
-     * 设置筛选状态
+     * 设置筛选状态(Beta)
      *
-     * en: Set filter status
+     * en: Set filter status(Beta)
      * @see {@link setFilter}
      */
     setFilter,
