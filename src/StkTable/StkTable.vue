@@ -898,7 +898,7 @@ if (props.autoResize) {
     useAutoResize(tableContainerRef, initVirtualScroll, props, 200);
 }
 
-const [getRowIndex, getColumnIndex] = useIndexResolver(dataSourceCopy, tableHeaderLast, rowKeyGen);
+const [getRowIndex, getColumnIndex] = useIndexResolver(dataSourceCopy, tableHeaderLast, rowKeyGen, colKeyGen);
 
 const {
     config: areaSelectionConfig,
@@ -1760,6 +1760,12 @@ defineExpose({
      * @see {@link getSelectedArea}
      */
     getSelectedArea,
+    /**
+     * 设置拖选选区
+     *
+     * en: Set cell selection range (areaSelection=true)
+     * @see {@link setAreaSelection}
+     */
     setAreaSelection,
     /**
      * 清空拖选选区
