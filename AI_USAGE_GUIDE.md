@@ -412,6 +412,251 @@ type ExperimentalConfig = {
 
 ***
 
+## 自定义单元格完整指南
+
+StkTable 提供三种自定义单元格渲染方式：
+- `customCell` - 自定义**表体**单元格
+- `customHeaderCell` - 自定义**表头**单元格
+- `customFooterCell` - 自定义**表尾**单元格
+
+### 类型定义
+
+```typescript
+// customCell props
+type CustomCellProps<T> = {
+    row: T;                    // 当前行数据
+    col: StkTableColumn<T>;    // 列配置
+    cellValue: any;            // row[col.dataIndex] 的值
+    rowIndex: number;          // 行索引
+    colIndex: number;          // 列索引
+    expanded?: StkTableColumn<any>;  // 展开行配置（未展开为null）
+    treeExpanded?: boolean;    // 树节点是否展开
+};
+
+// customHeaderCell props
+type CustomHeaderCellProps<T> = {
+    col: StkTableColumn<T>;
+    rowIndex: number;
+    colIndex: number;
+};
+
+// customFooterCell props
+type CustomFooterCellProps<T> = {
+    col: StkTableColumn<T>;
+    row: T;                    // 表尾行数据
+    cellValue: any;
+    rowIndex: number;
+    colIndex: number;
+};
+```
+
+### 方式一：使用 h 渲染函数
+
+适用于简单的单元格内容定制：
+
+```typescript
+import { h } from 'vue';
+import type { StkTableColumn } from 'stk-table-vue';
+
+interface RowData {
+    name: string;
+    yield: number;
+    status: 'active' | 'inactive';
+}
+
+const columns: StkTableColumn<RowData>[] = [
+    // 基础格式化：添加单位
+    {
+        title: '收益率',
+        dataIndex: 'yield',
+        customCell: ({ cellValue }) => h('span', `${(cellValue * 100).toFixed(2)}%`),
+    },
+    // 条件样式
+    {
+        title: '状态',
+        dataIndex: 'status',
+        customCell: ({ cellValue }) => h('span', {
+            style: { color: cellValue === 'active' ? '#52c41a' : '#ff4d4f' }
+        }, cellValue === 'active' ? '启用' : '禁用'),
+    },
+    // 复杂内容
+    {
+        title: '名称',
+        dataIndex: 'name',
+        customCell: ({ row, cellValue }) => h('div', {
+            style: { display: 'flex', alignItems: 'center', gap: '8px' }
+        }, [
+            h('span', { class: 'avatar' }),
+            h('strong', cellValue),
+        ]),
+    },
+    // 表头自定义
+    {
+        title: '操作',
+        dataIndex: 'action',
+        customHeaderCell: () => h('span', { style: { color: '#ff4d4f' } }, '⚠ 操作'),
+    },
+    // 表尾自定义
+    {
+        title: '数量',
+        dataIndex: 'count',
+        customFooterCell: ({ cellValue }) => h('strong', `合计: ${cellValue}`),
+    },
+];
+```
+
+### 方式二：使用 Vue SFC 组件
+
+适用于复杂的单元格逻辑，支持完整的 Vue 组件能力：
+
+::: 文件结构示例
+```
+columns/
+├── index.ts          # 列配置
+├── YieldCell.vue     # 收益率单元格组件
+├── StatusCell.vue    # 状态单元格组件
+└── types.ts          # 数据类型定义
+```
+:::
+
+```typescript
+// columns/index.ts
+import type { StkTableColumn } from 'stk-table-vue';
+import type { RowData } from './types';
+import YieldCell from './YieldCell.vue';
+import StatusCell from './StatusCell.vue';
+
+export const columns: StkTableColumn<RowData>[] = [
+    { title: '代码', dataIndex: 'code' },
+    { title: '收益率', dataIndex: 'yield', align: 'right', customCell: YieldCell },
+    { title: '状态', dataIndex: 'status', customCell: StatusCell },
+];
+```
+
+```vue
+<!-- columns/YieldCell.vue -->
+<script lang="ts" setup>
+import { computed } from 'vue';
+import type { CustomCellProps } from 'stk-table-vue';
+import type { RowData } from './types';
+
+const props = defineProps<CustomCellProps<RowData>>();
+
+const displayValue = computed(() => {
+    const val = props.cellValue * 100;
+    return val > 0 ? `+${val.toFixed(2)}%` : `${val.toFixed(2)}%`;
+});
+
+const colorClass = computed(() => {
+    if (props.cellValue > 0) return 'color-up';
+    if (props.cellValue < 0) return 'color-down';
+    return '';
+});
+</script>
+
+<template>
+    <span :class="colorClass">{{ displayValue }}</span>
+</template>
+
+<style scoped>
+.color-up { color: #52c41a; }
+.color-down { color: #ff4d4f; }
+</style>
+```
+
+### 方式三：使用 JSX
+
+适用于熟悉 JSX 语法的开发者：
+
+```tsx
+import type { StkTableColumn } from 'stk-table-vue';
+
+interface RowData {
+    name: string;
+    score: number;
+}
+
+const columns: StkTableColumn<RowData>[] = [
+    {
+        title: '姓名',
+        dataIndex: 'name',
+        customCell: ({ cellValue }) => (
+            <span style={{ color: '#1890ff' }}>{cellValue}</span>
+        ),
+    },
+    {
+        title: '分数',
+        dataIndex: 'score',
+        customCell: ({ cellValue }) => {
+            const color = cellValue >= 90 ? '#52c41a' : cellValue >= 60 ? '#faad14' : '#ff4d4f';
+            return <span style={{ color, fontWeight: 'bold' }}>{cellValue}</span>;
+        },
+    },
+];
+```
+
+### 重要注意事项
+
+1. **建议包裹元素**：`customCell` 返回的 VNode 建议用元素（div/span 等）包裹，否则 `TextNode` 作为 `<td>` 子节点可能导致布局问题。
+
+2. **谨慎使用行内元素**：`customCell` 的根元素请谨慎设置为 `inline`/`inline-block`/`inline-flex` 等行内元素，此布局在**虚拟列表**中可能会撑开行高。
+
+3. **组件类型兼容**：`customCell` 类型直接定义 `Component<Props>` 时，如果 Props 属性为必选，则通过 `defineComponent` 创建的组件必须要定义所有的 Prop。建议将所有 Props 定义为可选，或使用函数式组件。
+
+4. **可编辑单元格**：实现单元格编辑功能时，需要配合 `cellActive` 和 `selectedCellRevokable` props 使用，通过双击或点击触发编辑状态。
+
+5. **选区复制格式化**：如果使用了 `customCell` 自定义渲染，应该配合 `areaSelection.formatCellForClipboard` 回调以确保复制内容与展示内容一致。
+
+### 可编辑单元格示例
+
+```vue
+<!-- EditCell.vue - 可编辑单元格组件 -->
+<script lang="ts" setup>
+import { ref, watch } from 'vue';
+import type { CustomCellProps } from 'stk-table-vue';
+
+interface RowData {
+    id: number;
+    name: string;
+    _isEditing?: boolean;
+}
+
+const props = defineProps<CustomCellProps<RowData>>();
+const isEditing = ref(false);
+const editValue = ref('');
+
+const startEdit = () => {
+    isEditing.value = true;
+    editValue.value = props.cellValue;
+};
+
+const saveEdit = () => {
+    props.row[props.col.dataIndex] = editValue.value;
+    isEditing.value = false;
+};
+
+const cancelEdit = () => {
+    isEditing.value = false;
+};
+</script>
+
+<template>
+    <div @dblclick="startEdit">
+        <input
+            v-if="isEditing"
+            v-model="editValue"
+            @keyup.enter="saveEdit"
+            @keyup.esc="cancelEdit"
+            @blur="cancelEdit"
+            ref="inputRef"
+        />
+        <span v-else>{{ cellValue }}</span>
+    </div>
+</template>
+```
+
+***
+
 ## 常见场景代码模板
 
 ### 1. 虚拟滚动大数据表格
