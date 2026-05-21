@@ -1,4 +1,8 @@
 
+## 0.11.13
+* Bugfix
+  - fix: remove outline from `.table-cell-wrapper` since it has `tabindex="-1"`.
+
 ## 0.11.12
 * Feature
   - feat: Add `EditableCell` component for cell editing. Double click to edit, Enter to confirm, Esc to cancel.
