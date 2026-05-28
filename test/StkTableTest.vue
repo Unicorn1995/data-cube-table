@@ -13,6 +13,8 @@
         stripe
         row-drag-selection
         @row-drag-selection-change="onSelectionChange"
+        @cell-mouseleave="onCellMouseLeave"
+        @cell-mouseenter="onCellMouseEnter"
     />
     <div class="result-panel">
         <pre>{{ JSON.stringify(currentSelection, null, 2) }}</pre>
@@ -57,6 +59,13 @@ const currentSelection = ref({
     count: 0,
     rowIds: [] as number[],
 });
+
+function onCellMouseLeave(e: MouseEvent, row: Row, col: StkTableColumn<Row>) {
+    console.log('cell mouse leave', e, row, col);
+}
+function onCellMouseEnter(e: MouseEvent, row: Row, col: StkTableColumn<Row>) {
+    console.log('cell mouse enter', e, row, col);
+}
 
 function onSelectionChange(
     range: { startRowIndex: number; endRowIndex: number } | null,

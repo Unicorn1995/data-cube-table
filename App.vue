@@ -1,7 +1,7 @@
 <template>
     <!-- <VirtualTree></VirtualTree> -->
     <!-- <VirtualTreeSelectTest></VirtualTreeSelectTest> -->
-    <!-- <StkTableTest></StkTableTest> -->
+    <StkTableTest></StkTableTest>
     <!-- <FlyInAnimation></FlyInAnimation> -->
     <!-- <FocusOutIssue></FocusOutIssue> -->
     <!-- <StkTableExpandCellVue></StkTableExpandCellVue> -->
@@ -10,7 +10,7 @@
 
 <script setup>
 // import VirtualTree from './test/VirtualTree.vue';
-// import StkTableTest from './test/StkTableTest.vue';
+import StkTableTest from './test/StkTableTest.vue';
 // import FlyInAnimation from './test/FlyInAnimation.vue';
 // import FocusOutIssue from './test/FocusOutIssue.vue';
 // import VirtualTreeSelectTest from './test/VirtualTreeSelect.vue';

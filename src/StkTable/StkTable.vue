@@ -137,6 +137,7 @@
                     @click="onCellClick"
                     @mousedown="onCellMouseDown"
                     @mouseover="onCellMouseOver"
+                    @mouseout="onCellMouseOut"
                 >
                     <tr v-if="!isExperimentalScrollY && virtual_on && !isSRBRActive" :style="paddingTopStyle" class="padding-top-tr">
                         <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
@@ -162,13 +163,7 @@
                         </td>
                         <template v-else>
                             <template v-for="(col, colIndex) in virtualX_columnPart">
-                                <td
-                                    v-if="!shouldHideCell(row, col)"
-                                    :key="colKeyGen(col)"
-                                    v-bind="getTDProps(row, col, rowIndex, colIndex)"
-                                    @mouseenter="onCellMouseEnter"
-                                    @mouseleave="onCellMouseLeave"
-                                >
+                                <td v-if="!shouldHideCell(row, col)" :key="colKeyGen(col)" v-bind="getTDProps(row, col, rowIndex, colIndex)">
                                     <component
                                         :is="col.customCell"
                                         v-if="col.customCell"
@@ -1385,21 +1380,35 @@ function onHeaderCellClick(e: MouseEvent, col: StkTableColumn<DT>) {
     emits('header-cell-click', e, col);
 }
 
-/** td mouseenter */
-function onCellMouseEnter(e: MouseEvent) {
-    const { row, col } = getCellEventData(e);
-    emits('cell-mouseenter', e, row, col);
-}
-
-/** td mouseleave */
-function onCellMouseLeave(e: MouseEvent) {
-    const { row, col } = getCellEventData(e);
-    emits('cell-mouseleave', e, row, col);
-}
-/** td mouseover event */
+/**
+ * Delegated mouseover on tbody: emits cell-mouseover, and simulates cell-mouseenter
+ * by checking if relatedTarget is outside the current td.
+ */
 function onCellMouseOver(e: MouseEvent) {
+    const td = (e.target as HTMLElement)?.closest('td');
+    if (!td) return;
     const { row, col } = getCellEventData(e);
     emits('cell-mouseover', e, row, col);
+    // Simulate cell-mouseenter: relatedTarget is outside this td
+    const related = e.relatedTarget as Node | null;
+    if (!related || !td.contains(related)) {
+        emits('cell-mouseenter', e, row, col);
+    }
+}
+
+/**
+ * Delegated mouseout on tbody: simulates cell-mouseleave
+ * by checking if relatedTarget is outside the current td.
+ */
+function onCellMouseOut(e: MouseEvent) {
+    const td = (e.target as HTMLElement)?.closest('td');
+    if (!td) return;
+    // Simulate cell-mouseleave: relatedTarget is outside this td
+    const related = e.relatedTarget as Node | null;
+    if (!related || !td.contains(related)) {
+        const { row, col } = getCellEventData(e);
+        emits('cell-mouseleave', e, row, col);
+    }
 }
 
 function onCellMouseDown(e: MouseEvent) {
