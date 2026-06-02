@@ -4,6 +4,7 @@
   - fix: remove outline from `.table-cell-wrapper` since it has `tabindex="-1"`.
 * Performance
   - perf: delegate `cell-mouseenter` / `cell-mouseleave` to `tbody` via `mouseover` / `mouseout`, eliminating per-td event listeners.
+  - perf: delegate triangle/fold icon click to `tbody` via `click` bubbling, removing per-row `@click` on `TreeNodeCell` and `TriangleIcon`.
   
 
 ## 0.11.12
