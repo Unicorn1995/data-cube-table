@@ -89,7 +89,7 @@ export function createFilter(option?: CreateFilterOption) {
                                 options: resolvedOptions.value,
                                 onChange: handleChange,
                             },
-                            [component ? h(component, props) : null],
+                            component ? { default: () => [h(component, props)] } : undefined,
                         );
                 },
             }),
