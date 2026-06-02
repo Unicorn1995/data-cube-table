@@ -196,11 +196,10 @@
                                         tabindex="-1"
                                         :col="col"
                                         :row="row"
-                                        @click="triangleClick($event, row, col)"
                                     ></TreeNodeCell>
                                     <div v-else class="table-cell-wrapper" tabindex="-1" :title="row[col.dataIndex] || ''">
                                         <DragHandle v-if="col.type === 'dragRow'" @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))" />
-                                        <TriangleIcon v-else-if="col.type === 'expand'" @click="triangleClick($event, row, col)" />
+                                        <TriangleIcon v-else-if="col.type === 'expand'" />
                                         <span v-if="row[col.dataIndex] != null">{{ row[col.dataIndex] }}</span>
                                     </div>
                                 </td>
@@ -1352,6 +1351,11 @@ function onCellClick(e: MouseEvent) {
     const colKey = getClosestColKey(e.target as HTMLElement);
     const col = tableHeaderLast.value.find(item => colKeyGen.value(item) === colKey);
     if (!col) return;
+    // Delegated triangle/fold icon click
+    if ((e.target as HTMLElement)?.closest('.stk-fold-icon')) {
+        triangleClick(e, row, col);
+        return;
+    }
     if (props.cellActive) {
         const cellKey = cellKeyGen(row, col);
         const result = { row, col, select: false, rowIndex };
