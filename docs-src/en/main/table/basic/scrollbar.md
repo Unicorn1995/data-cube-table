@@ -36,8 +36,9 @@ Built-in DOM-implemented scrollbar, enabled via `props.scrollbar`.
   :scrollbar="{ width: 10, height: 10 }" // [!code ++]
 ></StkTable>
 ```
-::: tip
-Effective only when using virtual scrolling (`virtual`).
+::: tip Note
+* Only effective when using virtual scrolling (`virtual`).
+* Not effective on mobile devices. (`^0.11.13`)
 :::
 
 <demo vue="basic/scrollbar-style/CustomScrollbar.vue"></demo>
