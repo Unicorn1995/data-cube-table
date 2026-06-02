@@ -52,6 +52,8 @@ export declare function transformWidthToStr(width?: string | number): string | u
 export declare function getBrowsersVersion(browserName: string): number;
 export declare function pureCellKeyGen(rowKey: UniqKey, colKey: UniqKey): string;
 export declare function getClosestTr(target: HTMLElement): HTMLTableRowElement | null;
+export declare function getClosestTh(target: HTMLElement): HTMLTableCellElement | null;
+export declare function getClosestTd(target: HTMLElement): HTMLTableCellElement | null;
 export declare function getClosestTrIndex(target: HTMLElement): number;
 export declare function getClosestColKey(target: HTMLElement): string | undefined;
 /**

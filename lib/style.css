@@ -218,6 +218,14 @@
 .stk-table.scrollbar-on{
   overflow:hidden;
 }
+@media (hover: none) and (pointer: coarse){
+  .stk-table.scrollbar-on{
+    overflow:auto;
+  }
+  .stk-table .stk-sb-thumb{
+    display:none !important;
+  }
+}
 .stk-table.headless.bordered{
   border-top:1px solid var(--border-color);
   background-image:var(--bg-border-right), var(--bg-border-bottom);
@@ -308,6 +316,7 @@
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+  outline:none;
 }
 .stk-table.header-text-overflow .table-header-cell-wrapper{
   white-space:nowrap;
@@ -463,6 +472,9 @@
 .stk-table .stk-table-main.fixed-mode{
   table-layout:fixed;
   flex:none;
+}
+.stk-table .table-cell-wrapper{
+  outline:none;
 }
 .stk-table .fixed-cell{
   background-color:inherit;
