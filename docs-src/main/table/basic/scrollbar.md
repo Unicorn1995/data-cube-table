@@ -37,7 +37,8 @@
 ></StkTable>
 ```
 ::: tip 注意
-仅在虚拟列表(virtual)下生效
+* 仅在虚拟列表(virtual)下生效。
+* 移动端不生效。(`^0.11.13`)
 :::
 
 <demo vue="basic/scrollbar-style/CustomScrollbar.vue"></demo>

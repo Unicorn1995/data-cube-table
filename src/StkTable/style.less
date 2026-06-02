@@ -130,6 +130,17 @@
         // }
     }
 
+    /** 移动端禁用自定义滚动条，恢复原生触摸滚动 */
+    @media (hover: none) and (pointer: coarse) {
+        &.scrollbar-on {
+            overflow: auto;
+        }
+
+        .stk-sb-thumb {
+            display: none !important;
+        }
+    }
+
     &.headless {
         &.bordered {
             border-top: 1px solid var(--border-color);

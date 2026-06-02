@@ -2,6 +2,12 @@ import { nextTick, onMounted, onBeforeUnmount, ref, Ref } from 'vue';
 import type { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 import { rafThrottle, throttle } from './utils/index';
 
+/** Detect if the primary pointer is a touch device (mobile/tablet). */
+function isTouchPrimaryDevice(): boolean {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+}
+
 export type ScrollbarOptions = {
     enabled?: boolean;
     /** scroll-y width */
@@ -41,13 +47,15 @@ export function useScrollbar(
 
     let resizeObserver: ResizeObserver | null = null;
     let currentDragHandler: ((e: MouseEvent | TouchEvent) => void) | undefined;
+    let isMobileDevice = false;
 
     const throttledUpdateScrollbar = throttle(() => updateCustomScrollbar(), 200);
     // Use requestAnimationFrame for smoother scrollbar dragging performance
     const rafUpdateVirtualScrollY = rafThrottle((scrollTop: number) => updateVirtualScrollY(scrollTop));
 
     onMounted(() => {
-        if (scrollbarOptions.value.enabled) {
+        isMobileDevice = isTouchPrimaryDevice();
+        if (scrollbarOptions.value.enabled && !isMobileDevice) {
             resizeObserver = new ResizeObserver(throttledUpdateScrollbar);
             resizeObserver.observe(containerRef.value!);
         }
@@ -62,7 +70,7 @@ export function useScrollbar(
     });
 
     function updateCustomScrollbar() {
-        if (!scrollbarOptions.value.enabled) return;
+        if (!scrollbarOptions.value.enabled || isMobileDevice) return;
         const { scrollHeight, scrollTop, containerHeight } = virtualScroll.value;
         const { scrollWidth, scrollLeft, containerWidth } = virtualScrollX.value;
 
