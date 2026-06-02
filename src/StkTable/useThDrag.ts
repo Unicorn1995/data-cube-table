@@ -1,14 +1,12 @@
 import { computed } from 'vue';
 import { ColKeyGen, StkTableColumn } from './types';
-import { isEmptyValue } from './utils';
+import { getClosestTh, isEmptyValue } from './utils';
 
 /**
  * 列顺序拖动
  * @returns
  */
 export function useThDrag(props: any, emits: any, colKeyGen: ColKeyGen) {
-    const findParentTH = (e: DragEvent) => (e.target as HTMLElement).closest('th');
-
     const dragConfig = computed(() => {
         const headerDrag = props.headerDrag;
         const draggable = headerDrag !== false; // true or object
@@ -22,7 +20,7 @@ export function useThDrag(props: any, emits: any, colKeyGen: ColKeyGen) {
 
     /** 开始拖动记录th位置 */
     function onThDragStart(e: DragEvent) {
-        const th = findParentTH(e);
+        const th = getClosestTh(e.target as HTMLElement);
         if (!th) return;
         const dragStartKey = th.dataset.colKey || '';
         const dt = e.dataTransfer;
@@ -35,7 +33,7 @@ export function useThDrag(props: any, emits: any, colKeyGen: ColKeyGen) {
     }
 
     function onThDragOver(e: DragEvent) {
-        const th = findParentTH(e);
+        const th = getClosestTh(e.target as HTMLElement);
         if (!th) return;
 
         const isHeaderDraggable = th.getAttribute('draggable') === 'true';
@@ -50,7 +48,7 @@ export function useThDrag(props: any, emits: any, colKeyGen: ColKeyGen) {
 
     /** th拖动释放时 */
     function onThDrop(e: DragEvent) {
-        const th = findParentTH(e);
+        const th = getClosestTh(e.target as HTMLElement);
         if (!th) return;
         const dragStartKey = e.dataTransfer?.getData('text');
         if (dragStartKey !== th.dataset.colKey) {
