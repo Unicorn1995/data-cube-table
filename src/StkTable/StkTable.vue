@@ -212,7 +212,7 @@
                 class="stk-sb-thumb vertical"
                 :style="`height:${scrollbar.h}px;transform:translateY(${scrollbar.t}px)`"
                 @mousedown="onVerticalScrollbarMouseDown"
-                @touchstart="onVerticalScrollbarMouseDown"
+                @touchstart.passive="onVerticalScrollbarMouseDown"
             ></div>
         </div>
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
@@ -224,7 +224,7 @@
             class="stk-sb-thumb horizontal"
             :style="`width:${scrollbar.w}px;transform:translateX(${scrollbar.l}px)`"
             @mousedown="onHorizontalScrollbarMouseDown"
-            @touchstart="onHorizontalScrollbarMouseDown"
+            @touchstart.passive="onHorizontalScrollbarMouseDown"
         ></div>
     </div>
 </template>
@@ -1439,7 +1439,7 @@ function onCellMouseDown(e: MouseEvent) {
     }
 }
 
-// isWheeling: true when wheel event is triggered, auto reset to false after 200ms
+// isWheeling: true when wheel event is triggered, auto reset to false after delay
 const [isWheeling, setIsWheeling] = useWheeling();
 
 /**
@@ -1447,8 +1447,6 @@ const [isWheeling, setIsWheeling] = useWheeling();
  * @param e
  */
 function onTableWheel(e: WheelEvent) {
-    // Mark wheel event as active, will reset to false after 200ms of inactivity
-
     if (props.smoothScroll) return;
     // if is resizing, not allow scroll
     if (isColResizing.value) {
@@ -1461,39 +1459,40 @@ function onTableWheel(e: WheelEvent) {
 
     if (virtual_on.value && deltaY && !shiftKey) {
         const { containerHeight, scrollTop, scrollHeight } = virtualScroll.value;
-        const isScrollBottom = scrollHeight - containerHeight - scrollTop < 10;
-        // If scrolling down and not at bottom, or at bottom but still actively wheeling
-        // If scrolling up and not at top, or at top but still actively wheeling
-        if ((deltaY > 0 && !isScrollBottom) || (deltaY < 0 && scrollTop > 0)) {
+        // overflow: hidden mode: manually control scroll, preventDefault to block parent scroll
+        const canScrollDown = scrollTop < scrollHeight - containerHeight - 1;
+        const canScrollUp = scrollTop > 1;
+
+        if ((deltaY > 0 && canScrollDown) || (deltaY < 0 && canScrollUp)) {
+            // Table can still scroll → mark wheeling & prevent parent
             setIsWheeling(true);
-            e.preventDefault(); // Prevent parent element scroll when actively wheeling at boundaries
-        }
-        if (isWheeling()) {
+            e.preventDefault();
+        } else if (isWheeling()) {
+            // At boundary but user is still actively wheeling → briefly prevent parent for smooth transition
             e.preventDefault();
         }
+        // At boundary + isWheeling expired → no preventDefault → browser scrolls parent naturally
+
         if (isExperimentalScrollY.value) {
             rafUpdateVirtualScrollYForWheel(scrollTop + deltaY);
             updateCustomScrollbar();
         } else {
             dom.scrollTop += deltaY;
         }
-
-        // dom.scrollTop += deltaY;
     }
     if (virtualX_on.value) {
         const { containerWidth, scrollLeft, scrollWidth } = virtualScrollX.value;
-        const isScrollRight = scrollWidth - containerWidth - scrollLeft < 10;
         let distance = deltaX;
         if (shiftKey && deltaY) {
             distance = deltaY;
         }
-        // If scrolling right and not at right, or at right but still actively wheeling
-        // If scrolling left and not at left, or at left but still actively wheeling
-        if ((distance > 0 && !isScrollRight) || (distance < 0 && scrollLeft > 0)) {
+        const canScrollRight = scrollLeft < scrollWidth - containerWidth - 1;
+        const canScrollLeft = scrollLeft > 1;
+
+        if ((distance > 0 && canScrollRight) || (distance < 0 && canScrollLeft)) {
             setIsWheeling(true);
-            e.preventDefault(); // Prevent parent element scroll when actively wheeling at boundaries
-        }
-        if (isWheeling()) {
+            e.preventDefault();
+        } else if (isWheeling()) {
             e.preventDefault();
         }
         dom.scrollLeft += distance;

@@ -84,7 +84,7 @@ export function useScrollbar(
     }
 
     function onVerticalScrollbarMouseDown(e: MouseEvent | TouchEvent) {
-        e.preventDefault();
+        if (e instanceof MouseEvent) e.preventDefault();
         isDraggingVertical = true;
         const { scrollTop } = virtualScroll.value;
         dragStartTop = scrollTop;
@@ -93,7 +93,7 @@ export function useScrollbar(
     }
 
     function onHorizontalScrollbarMouseDown(e: MouseEvent | TouchEvent) {
-        e.preventDefault();
+        if (e instanceof MouseEvent) e.preventDefault();
         isDraggingHorizontal = true;
         const { scrollLeft } = virtualScrollX.value;
         dragStartLeft = scrollLeft;
