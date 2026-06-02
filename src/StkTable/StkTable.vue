@@ -137,7 +137,8 @@
                     @click="onCellClick"
                     @mousedown="onCellMouseDown"
                     @mouseover="onCellMouseOver"
-                    @mouseout="onCellMouseOut"
+                    @mouseout="onTbodyMouseOut"
+                    @drop="onBodyDrop"
                 >
                     <tr v-if="!isExperimentalScrollY && virtual_on && !isSRBRActive" :style="paddingTopStyle" class="padding-top-tr">
                         <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
@@ -145,14 +146,7 @@
                             <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
                         </template>
                     </tr>
-                    <tr
-                        v-for="(row, rowIndex) in virtual_dataSourcePart"
-                        ref="trRef"
-                        :key="rowKeyGen(row)"
-                        v-bind="getTRProps(row, rowIndex)"
-                        @drop="onTrDrop($event, getAbsoluteRowIndex(rowIndex))"
-                        @mouseleave="onTrMouseLeave"
-                    >
+                    <tr v-for="(row, rowIndex) in virtual_dataSourcePart" ref="trRef" :key="rowKeyGen(row)" v-bind="getTRProps(row, rowIndex)">
                         <td v-if="virtualX_on" class="vt-x-left"></td>
                         <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
                             <div class="table-cell-wrapper" tabindex="-1">
@@ -248,7 +242,6 @@ export default {
  */
 import { computed, nextTick, onMounted, provide, ref, shallowRef, toRaw, toRef, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
-import type { FilterStatus } from './custom-cells/Filter/types';
 import SortIcon from './components/SortIcon.vue';
 import TreeNodeCell from './components/TreeNodeCell.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
@@ -260,6 +253,7 @@ import {
     DEFAULT_SORT_CONFIG,
     IS_LEGACY_MODE,
 } from './const';
+import type { FilterStatus } from './custom-cells/Filter/types';
 import { useAreaSelectionName } from './features';
 import { ON_DEMAND_FEATURE } from './registerFeature';
 import {
@@ -306,7 +300,7 @@ import { useIndexResolver } from './useIndexResolver';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
-import { getClosestColKey, getClosestTr, getClosestTrIndex, rafThrottle, transformWidthToStr } from './utils/index';
+import { getClosestColKey, getClosestTd, getClosestTr, getClosestTrIndex, rafThrottle, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -1390,7 +1384,7 @@ function onHeaderCellClick(e: MouseEvent, col: StkTableColumn<DT>) {
  * by checking if relatedTarget is outside the current td.
  */
 function onCellMouseOver(e: MouseEvent) {
-    const td = (e.target as HTMLElement)?.closest('td');
+    const td = getClosestTd(e.target as HTMLElement);
     if (!td) return;
     const { row, col } = getCellEventData(e);
     emits('cell-mouseover', e, row, col);
@@ -1402,18 +1396,39 @@ function onCellMouseOver(e: MouseEvent) {
 }
 
 /**
- * Delegated mouseout on tbody: simulates cell-mouseleave
- * by checking if relatedTarget is outside the current td.
+ * Delegated mouseout on tbody: handles both cell-mouseleave and tr-mouseleave.
+ * - cell-mouseleave: relatedTarget is outside the current td.
+ * - tr-mouseleave: relatedTarget is outside the current tr (simulates the old onTrMouseLeave).
  */
-function onCellMouseOut(e: MouseEvent) {
-    const td = (e.target as HTMLElement)?.closest('td');
-    if (!td) return;
-    // Simulate cell-mouseleave: relatedTarget is outside this td
+function onTbodyMouseOut(e: MouseEvent) {
+    const target = e.target as HTMLElement;
     const related = e.relatedTarget as Node | null;
-    if (!related || !td.contains(related)) {
+
+    // Cell mouseleave
+    const td = getClosestTd(target);
+    if (td && (!related || !td.contains(related))) {
         const { row, col } = getCellEventData(e);
         emits('cell-mouseleave', e, row, col);
     }
+
+    // Tr mouseleave
+    const tr = getClosestTr(target);
+    if (tr && (!related || !tr.contains(related))) {
+        currentHoverRow = null;
+        if (props.showTrHoverClass) {
+            currentHoverRowKey.value = null;
+        }
+        if (props.rowHover) {
+            updateHoverMergedCells(void 0);
+        }
+    }
+}
+
+/** Delegated drop on tbody: extracts rowIndex from the closest tr and calls onTrDrop. */
+function onBodyDrop(e: DragEvent) {
+    const trIndex = getClosestTrIndex(e.target as HTMLElement);
+    if (trIndex < 0) return;
+    onTrDrop(e, getAbsoluteRowIndex(trIndex));
 }
 
 function onCellMouseDown(e: MouseEvent) {
@@ -1545,17 +1560,6 @@ function onTrMouseOver(e: MouseEvent) {
     }
     if (props.rowHover) {
         updateHoverMergedCells(rowKey);
-    }
-}
-
-function onTrMouseLeave(e: MouseEvent) {
-    if ((e.target as HTMLElement).tagName !== 'TR') return;
-    currentHoverRow = null;
-    if (props.showTrHoverClass) {
-        currentHoverRowKey.value = null;
-    }
-    if (props.rowHover) {
-        updateHoverMergedCells(void 0);
     }
 }
 

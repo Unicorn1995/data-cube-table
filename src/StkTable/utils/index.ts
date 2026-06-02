@@ -242,8 +242,15 @@ export function pureCellKeyGen(rowKey: UniqKey, colKey: UniqKey) {
 }
 
 export function getClosestTr(target: HTMLElement) {
-    const tr = target?.closest('tr');
-    return tr;
+    return target?.closest('tr');
+}
+
+export function getClosestTh(target: HTMLElement) {
+    return target?.closest('th');
+}
+
+export function getClosestTd(target: HTMLElement) {
+    return target?.closest('td');
 }
 
 export function getClosestTrIndex(target: HTMLElement) {
@@ -253,7 +260,7 @@ export function getClosestTrIndex(target: HTMLElement) {
 }
 
 export function getClosestColKey(target: HTMLElement) {
-    return (target as HTMLElement)?.closest('td')?.dataset.colKey;
+    return getClosestTd(target as HTMLElement)?.dataset.colKey;
 }
 
 /**

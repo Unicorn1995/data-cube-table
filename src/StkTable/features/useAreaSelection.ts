@@ -10,7 +10,7 @@ import {
     AreaSelectionSetterOption,
 } from '../types';
 import { VirtualScrollStore, VirtualScrollXStore } from '../useVirtualScroll';
-import { getClosestColKey, getClosestTrIndex } from '../utils';
+import { getClosestColKey, getClosestTd, getClosestTr, getClosestTrIndex } from '../utils';
 import { getCalculatedColWidth } from '../utils/constRefUtils';
 import { MY_FN_NAME } from './const';
 
@@ -516,8 +516,8 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const el = document.elementFromPoint(x, y);
         if (!el) return;
 
-        const td = (el as HTMLElement).closest?.('td');
-        const tr = (el as HTMLElement).closest?.('tr');
+        const td = getClosestTd(el as HTMLElement);
+        const tr = getClosestTr(el as HTMLElement);
         if (!td || !tr) return;
 
         const rowIndex = getClosestTrIndex(tr);

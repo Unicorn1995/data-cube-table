@@ -5,6 +5,7 @@
 * Performance
   - perf: delegate `cell-mouseenter` / `cell-mouseleave` to `tbody` via `mouseover` / `mouseout`, eliminating per-td event listeners.
   - perf: delegate triangle/fold icon click to `tbody` via `click` bubbling, removing per-row `@click` on `TreeNodeCell` and `TriangleIcon`.
+  - perf: delegate `@drop` and `mouseleave` from each `tr` to `tbody` via `drop` bubbling and `mouseout` simulation.
   
 
 ## 0.11.12
