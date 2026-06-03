@@ -1784,14 +1784,6 @@ defineExpose({
      * @see {@link getSelectedArea}
      */
     getSelectedArea,
-    setAreaSelection,
-    /**
-     * 设置拖选选区
-     *
-     * en: Set cell selection range (areaSelection=true)
-     * @see {@link setAreaSelection}
-     */
-    setAreaSelection,
     /**
      * 设置拖选选区
      *
