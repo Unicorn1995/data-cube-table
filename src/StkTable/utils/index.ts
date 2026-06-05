@@ -43,7 +43,7 @@ export function insertToOrderedArray<T extends object>(
     const { emptyToBottom, customCompare, stringLocaleCompare } = { emptyToBottom: false, ...sortConfig };
 
     const targetVal: any = newItem[field];
-    if (emptyToBottom && isEmptyValue(targetVal)) {
+    if (emptyToBottom && isEmptyValue(targetVal, sortType === 'number')) {
         // 空值排在最下方
         data.push(newItem);
     } else {
