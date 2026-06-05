@@ -1,4 +1,8 @@
 
+## 0.11.14
+* Bugfix
+  - fix: `insertToOrderedArray` a new record will insert to the top when the value is NaN.
+
 ## 0.11.13
 * Bugfix
   - fix: remove outline from `.table-cell-wrapper` since it has `tabindex="-1"`.
