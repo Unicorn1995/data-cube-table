@@ -8,11 +8,12 @@ const props = defineProps<CustomCellProps<DataType>>();
 function handleClick() {
     emitter.emit('toggle-expand', props.row);
 }
+const BestText = t('Best');
 </script>
 <template>
     <div class="expand-cell" @click="handleClick">
         <span class="triangle-arrow" :class="{ expand: props.row._isExpand }"></span>
-        <span class="text">{{ t('Best') }}</span>
+        <span v-once class="text">{{ BestText }}</span>
     </div>
 </template>
 <style scoped lang="less">
