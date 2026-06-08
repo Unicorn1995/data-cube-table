@@ -235,7 +235,7 @@ function handleOptimizeScrollChange(v: boolean) {
 }
 
 function handleScroll(e: Event, { startIndex, endIndex }: any) {
-    console.log('scroll', startIndex, endIndex);
+    // console.log('scroll', startIndex, endIndex);
 }
 
 function handleRowSpan(v: boolean) {
