@@ -1,3 +1,8 @@
+---
+name: stk-table
+description: StkTable Vue 虚拟滚动表格组件的完整 API 参考与使用指南。当需要生成、修改 StkTable 相关代码，或回答 StkTable 的用法、Props、Events、Slots、Methods、类型定义等问题时使用。
+---
+
 # StkTable Vue 组件 - AI 使用指南
 
 > 本文档专为 AI 编码助手设计，帮助 AI 理解并生成 StkTable 相关代码。
@@ -17,7 +22,7 @@ npm install stk-table-vue
 
 ```typescript
 import { StkTable } from 'stk-table-vue';
-import type { StkTableColumn, Order, SortConfig, SortState } from 'stk-table-vue';
+import type { StkTableColumn, Order, SortConfig, SortState, SortOption } from 'stk-table-vue';
 import 'stk-table-vue/lib/style.css'; // 引入样式，一般在 main.js(全局) 引入一次。
 ```
 
@@ -26,9 +31,9 @@ import 'stk-table-vue/lib/style.css'; // 引入样式，一般在 main.js(全局
 ```typescript
 // 工具函数
 import { tableSort, insertToOrderedArray, strCompare, binarySearch } from 'stk-table-vue';
-// 按需特性
-import { useAreaSelection, registerFeature, createFilter } from 'stk-table-vue';
-import type { FilterStatus, CreateFilterOptions } from 'stk-table-vue';
+// 按需特性（Area Selection 需先注册再使用）
+import { useAreaSelection, registerFeature, createFilter, createEditableCell } from 'stk-table-vue';
+import type { FilterStatus, CreateFilterOptions, CreateEditableCellOptions } from 'stk-table-vue';
 ```
 
 ***
@@ -91,16 +96,16 @@ const dataSource = ref<RowData[]>([
 | ----------------- | ------------------------------------ | ------- | --------------------------------- |
 | `rowHeight`       | `number`                             | `28`    | 行高(px)。`autoRowHeight=true`时为期望行高 |
 | `autoRowHeight`   | `boolean \| AutoRowHeightConfig<DT>` | `false` | 可变行高                              |
-| `headerRowHeight` | `number \| string \| null`           | `28`    | 表头行高                              |
-| `footerRowHeight` | `number \| string \| null`           | `28`    | 表尾行高                              |
+| `headerRowHeight` | `number \| string`                   | `28`    | 表头行高                              |
+| `footerRowHeight` | `number \| string`                   | `28`    | 表尾行高                              |
 
 ### 行交互
 
 | Prop               | 类型                               | 默认值                                  | 说明             |
 | ------------------ | -------------------------------- | ------------------------------------ | -------------- |
 | `rowHover`         | `boolean`                        | `true`                               | hover 高亮行      |
-| `rowActive`        | `boolean \| RowActiveOption<DT>` | `true`  | 点击选中行高亮        |
-| `rowClassName`     | `(row: DT, i: number) => string` | `() => ''`                           | 行 className 回调 |
+| `rowActive`        | `boolean \| RowActiveOption<DT>` | `{ enabled: true, disabled: ()=>false, revokable: true }` | 点击选中行高亮 |
+| `rowClassName`     | `(row: DT, i: number) => string \| undefined` | `() => ''`                | 行 className 回调 |
 | `showTrHoverClass` | `boolean`                        | `false`                              | 行 hover class  |
 
 ### 单元格交互
@@ -119,7 +124,7 @@ const dataSource = ref<RowData[]>([
 | `dataSource`    | `DT[]`                            | `[]`        | **必填**。数据源                           |
 | `rowKey`        | `string \| ((row: DT) => string)` | `''`        | **推荐**。行唯一键                          |
 | `colKey`        | `string \| ((col) => string)`     | `undefined` | 列唯一键，默认取 `col.key` 或 `col.dataIndex` |
-| `emptyCellText` | `string \| ((option) => string)`  | `'--'`      | 空值展示文字                               |
+| `emptyCellText` | `string \| ((option: {row, col}) => string)` | `'--'` | 空值展示文字                      |
 
 ### 虚拟滚动
 
@@ -127,13 +132,13 @@ const dataSource = ref<RowData[]>([
 | ------------ | ------------------------- | ------- | -------------- |
 | `virtual`    | `boolean`                 | `false` | Y 轴虚拟滚动        |
 | `virtualX`   | `boolean`                 | `false` | X 轴虚拟滚动（横向虚拟滚动按需设置列宽） |
-| `autoResize` | `boolean \| (() => void)` | `true`  | 自动重算虚拟滚动尺寸     |
+| `autoResize` | `boolean \| (() => void)` | `true`  | 自动重算虚拟滚动尺寸（非响应式） |
 
 ### 固定列
 
 | Prop             | 类型                       | 默认值        | 说明      |
 | ---------------- | ------------------------ | ---------- | ------- |
-| `cellFixedMode`  | `'sticky' \| 'relative'` | `'sticky'` | 固定列实现方式 |
+| `cellFixedMode`  | `'sticky' \| 'relative'` | `'sticky'` | 固定列实现方式(非响应式) |
 | `fixedColShadow` | `boolean`                | `false`    | 固定列阴影   |
 
 ### 排序
@@ -141,7 +146,7 @@ const dataSource = ref<RowData[]>([
 | Prop              | 类型                    | 默认值     | 说明          |
 | ----------------- | --------------------- | ------- | ----------- |
 | `sortRemote`      | `boolean`             | `false` | 服务端排序(不排数据) |
-| `sortConfig`      | `SortConfig<DT>`      | 见下方     | 排序配置        |
+| `sortConfig`      | `SortConfig<DT>`      | `{ emptyToBottom: false, stringLocaleCompare: false, sortChildren: false }` | 排序配置 |
 | `hideHeaderTitle` | `boolean \| string[]` | `false` | 隐藏表头 title  |
 
 ### 拖拽与选区
@@ -159,17 +164,17 @@ const dataSource = ref<RowData[]>([
 | ----------------- | ------------------------------------- | ------------------------ | ---------------------- |
 | `seqConfig`       | `{ startIndex?: number }`             | `{}`                     | 序号列配置                  |
 | `expandConfig`    | `{ height?: number }`                 | `{}`                     | 展开行配置(虚拟模式下需指定 height) |
-| `dragRowConfig`   | `{ mode?: 'none'\|'insert'\|'swap' }` | `{}`                     | 行拖动配置                  |
+| `dragRowConfig`   | `DragRowConfig`                       | `{}`                     | 行拖动配置                  |
 | `treeConfig`      | `TreeConfig`                          | `{}`                     | 树形配置                   |
-| `highlightConfig` | `{ duration?: number; fps?: number }` | `{}`                     | 高亮配置(duration 秒)       |
+| `highlightConfig` | `HighlightConfig`                     | `{}`                     | 高亮配置(duration 秒)       |
 | `footerData`      | `DT[]`                                | `[]`                     | 底部合计行数据                |
-| `footerConfig`    | `{ position?: 'bottom'\|'top' }`      | `{ position: 'bottom' }` | 底部配置                   |
+| `footerConfig`    | `FooterConfig`                        | `{ position: 'bottom' }` | 底部配置                   |
 | `scrollRowByRow`  | `boolean \| 'scrollbar'`              | `false`                  | 整行滚动                   |
 | `smoothScroll`    | `boolean`                             | `chrome < 85 ? true : false` | 平滑滚动（低版本浏览器默认true）   |
 | `scrollbar`       | `boolean \| ScrollbarOptions`         | `false`                  | 自定义滚动条                 |
 | `showNoData`      | `boolean`                             | `true`                   | 显示暂无数据                 |
 | `noDataFull`      | `boolean`                             | `false`                  | 暂无数据撑满高度               |
-| `experimental`    | `{ scrollY?: boolean }`               | `{}`                     | 实验性功能                  |
+| `experimental`    | `ExperimentalConfig`                  | `{}`                     | 实验性功能                  |
 
 ***
 
@@ -206,18 +211,10 @@ type StkTableColumn<T> = {
   // 固定
   fixed?: 'left' | 'right' | null;
 
-  // 自定义渲染（返回 VNode，使用 h 函数）
-  customCell?: (props: {
-    row: T; col: StkTableColumn<T>; cellValue: any;
-    rowIndex: number; colIndex: number;
-  }) => VNode;
-  customHeaderCell?: (props: {
-    col: StkTableColumn<T>; rowIndex: number; colIndex: number;
-  }) => VNode;
-  customFooterCell?: (props: {
-    col: StkTableColumn<T>; row: T; cellValue: any;
-    rowIndex: number; colIndex: number;
-  }) => VNode;
+  // 自定义渲染（返回 VNode，使用 h 函数或 Vue SFC 组件）
+  customCell?: CustomCell<CustomCellProps<T>, T>;
+  customHeaderCell?: CustomCell<CustomHeaderCellProps<T>, T>;
+  customFooterCell?: CustomCell<CustomFooterCellProps<T>, T>;
 
   // 多级表头
   children?: StkTableColumn<T>[];
@@ -245,31 +242,31 @@ type StkTableColumn<T> = {
 
 | 事件名                     | 回调参数                             | 说明                 |
 | ----------------------- | -------------------------------- | ------------------ |
-| `sort-change`           | `(col, order, data, sortConfig)` | 排序变化               |
-| `row-click`             | `(ev, row, { rowIndex })`        | 行点击                |
-| `row-dblclick`          | `(ev, row, { rowIndex })`        | 行双击                |
-| `current-change`        | `(ev, row, { select })`          | 选中行变化              |
-| `cell-selected`         | `(ev, { select, row, col })`     | 选中单元格变化            |
-| `cell-click`            | `(ev, row, col, { rowIndex })`   | 单元格点击              |
-| `cell-mouseenter`       | `(ev, row, col)`                 | 单元格鼠标进入            |
-| `cell-mouseleave`       | `(ev, row, col)`                 | 单元格鼠标离开            |
-| `cell-mouseover`        | `(ev, row, col)`                 | 单元格悬浮              |
-| `cell-mousedown`        | `(ev, row, col, { rowIndex })`   | 单元格鼠标按下            |
-| `header-cell-click`     | `(ev, col)`                      | 表头单元格点击            |
-| `header-row-menu`       | `(ev)`                           | 表头右键               |
-| `row-menu`              | `(ev, row, { rowIndex })`        | 行右键                |
-| `scroll`                | `(ev, { startIndex, endIndex })` | 纵向滚动               |
-| `scroll-x`              | `(ev)`                           | 横向滚动               |
-| `col-order-change`      | `(dragStartKey, targetColKey)`   | 列拖拽排序完成            |
-| `th-drag-start`         | `(dragStartKey)`                 | 列拖拽开始              |
-| `th-drop`               | `(targetColKey)`                 | 列拖拽放下              |
-| `row-order-change`      | `(dragStartKey, targetRowKey)`   | 行拖拽排序完成            |
-| `col-resize`            | `(col)`                          | 列宽变化               |
-| `toggle-row-expand`     | `({ expanded, row, col })`       | 行展开/收起（col可能为null） |
-| `toggle-tree-expand`    | `({ expanded, row, col })`       | 树节点展开/收起（col可能为null） |
-| `area-selection-change` | `(range, { rows, cols })`        | 选区变化               |
-| `filter-change`         | `(status)`                       | 筛选变化(Beta)         |
-| `update:columns`        | `(cols)`                         | v-model:columns 更新 |
+| `sort-change`           | `(col: StkTableColumn<DT> \| null, order: Order, data: DT[], sortConfig: SortConfig<DT>)` | 排序变化 |
+| `row-click`             | `(ev: MouseEvent, row: DT, { rowIndex: number })`        | 行点击                |
+| `row-dblclick`          | `(ev: MouseEvent, row: DT, { rowIndex: number })`        | 行双击                |
+| `current-change`        | `(ev: MouseEvent \| null, row: DT \| undefined, { select: boolean })` | 选中行变化 |
+| `cell-selected`         | `(ev: MouseEvent \| null, { select: boolean, row: DT \| undefined, col: StkTableColumn<DT> \| undefined })` | 选中单元格变化 |
+| `cell-click`            | `(ev: MouseEvent, row: DT, col: StkTableColumn<DT>, { rowIndex: number })` | 单元格点击 |
+| `cell-mouseenter`       | `(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)`    | 单元格鼠标进入            |
+| `cell-mouseleave`       | `(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)`    | 单元格鼠标离开            |
+| `cell-mouseover`        | `(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)`    | 单元格悬浮              |
+| `cell-mousedown`        | `(ev: MouseEvent, row: DT, col: StkTableColumn<DT>, { rowIndex: number })` | 单元格鼠标按下 |
+| `header-cell-click`     | `(ev: MouseEvent, col: StkTableColumn<DT>)`             | 表头单元格点击            |
+| `header-row-menu`       | `(ev: MouseEvent)`                                     | 表头右键               |
+| `row-menu`              | `(ev: MouseEvent, row: DT, { rowIndex: number })`       | 行右键                |
+| `scroll`                | `(ev: Event, { startIndex: number, endIndex: number })` | 纵向滚动               |
+| `scroll-x`              | `(ev: Event)`                                          | 横向滚动               |
+| `col-order-change`      | `(dragStartKey: string, targetColKey: string)`          | 列拖拽排序完成            |
+| `th-drag-start`         | `(dragStartKey: string)`                                | 列拖拽开始              |
+| `th-drop`               | `(targetColKey: string)`                                | 列拖拽放下              |
+| `row-order-change`      | `(dragStartKey: string, targetRowKey: string)`          | 行拖拽排序完成            |
+| `col-resize`            | `(col: StkTableColumn<DT>)`                             | 列宽变化               |
+| `toggle-row-expand`     | `({ expanded: boolean, row: DT, col: StkTableColumn<DT> \| null })` | 行展开/收起 |
+| `toggle-tree-expand`    | `({ expanded: boolean, row: DT, col: StkTableColumn<DT> \| null })` | 树节点展开/收起 |
+| `area-selection-change` | `(ranges: AreaSelectionRange[])`                        | 选区变化               |
+| `filter-change`         | `(status: Record<UniqKey, FilterStatus>)`               | 筛选变化(Beta)         |
+| `update:columns`        | `(cols: StkTableColumn<DT>[])`                          | v-model:columns 更新 |
 
 ***
 
@@ -277,9 +274,9 @@ type StkTableColumn<T> = {
 
 | 插槽名            | 作用域            | 说明        |
 | -------------- | -------------- | --------- |
-| `tableHeader`  | `{ col }`      | 自定义表头单元格  |
+| `tableHeader`  | `{ col: StkTableColumn<DT> }` | 自定义表头单元格 |
 | `empty`        | 无              | 自定义空数据展示  |
-| `expand`       | `{ row, col }` | 展开行内容     |
+| `expand`       | `{ row: DT, col: StkTableColumn<DT> }` | 展开行内容 |
 | `customBottom` | 无              | 表格底部自定义区域 |
 
 ***
@@ -296,26 +293,29 @@ const tableRef = ref<InstanceType<typeof StkTable>>();
 | --------------------- | ----------------------------------------- | -------------------------------------------------- |
 | `initVirtualScroll`   | `() => void`                              | 重算虚拟滚动宽高                                           |
 | `initVirtualScrollX`  | `() => void`                              | 重算虚拟滚动宽度                                           |
-| `initVirtualScrollY`  | `() => void`                              | 重算虚拟滚动高度                                           |
-| `setCurrentRow`       | `(rowKeyOrRow, option?) => void`          | 选中行。option: `{ silent?: boolean; deep?: boolean }` |
-| `setSelectedCell`     | `(row?, col?, option?) => void`           | 选中单元格(cellActive=true)                             |
-| `setHighlightDimCell` | `(rowKey, colKey) => void`                | 高亮闪烁单元格                                            |
-| `setHighlightDimRow`  | `(rowKeys[]) => void`                     | 高亮闪烁行                                              |
-| `setSorter`           | `(dataIndex, order, option?) => void`     | 设排序。option: `{ append?: boolean }`(多列排序追加)         |
+| `initVirtualScrollY`  | `(height?: number) => void`               | 重算虚拟滚动高度，可指定高度                                    |
+| `setCurrentRow`       | `(rowKeyOrRow: string \| undefined \| DT, option?: { silent?: boolean; deep?: boolean }) => void` | 选中行 |
+| `setSelectedCell`     | `(row?: DT, col?: StkTableColumn<DT>, option?: { silent?: boolean }) => void` | 选中单元格(cellActive=true) |
+| `setHighlightDimCell` | `(rowKey: UniqKey, colKey: string, option?: HighlightDimCellOption) => void` | 高亮闪烁单元格 |
+| `setHighlightDimRow`  | `(rowKeys: UniqKey[], option?: HighlightDimRowOption) => void` | 高亮闪烁行 |
+| `setSorter`           | `(colKey: string, order: Order, option?: { append?: boolean; force?: boolean; silent?: boolean; sort?: boolean; sortOption?: SortOption<DT> }) => DT[]` | 设排序，返回排序后数据。option.append=true 时多列排序追加 |
 | `resetSorter`         | `() => void`                              | 重置排序                                               |
-| `getSortColumns`      | `() => { dataIndex, sortField, order }[]` | 获取排序信息                                             |
-| `scrollTo`            | `(top, left) => void`                     | 滚动到位置(null=不变)                                     |
+| `getSortColumns`      | `() => { key: keyof DT \| undefined, order: Order }[]` | 获取排序信息                                  |
+| `scrollTo`            | `(top?: number \| null, left?: number \| null) => void` | 滚动到位置(null=不变)                              |
 | `getTableData`        | `() => DT[]`                              | 获取排序/过滤后数据                                         |
-| `setRowExpand`        | `(row, col, expand?) => void`             | 设置行展开                                              |
-| `setAutoHeight`       | `(row, height) => void`                   | 更新可变行高                                             |
-| `clearAllAutoHeight`  | `() => void`                              | 清除行高缓存                                             |
-| `setTreeExpand`       | `(row, expanded) => void`                 | 设置树节点展开                                            |
-| `getSelectedArea`     | `() => { range, rows, cols } \| null`     | 获取选区信息                                             |
+| `getRowIndex`         | `(row: DT) => number`                     | 获取行索引                                              |
+| `getColumnIndex`      | `(column: PrivateStkTableColumn<DT>) => number` | 获取列索引                                        |
+| `setRowExpand`        | `(rowKeyOrRow: string \| undefined \| DT, expand?: boolean \| null, data?: { col?: StkTableColumn<DT>; silent?: boolean }) => void` | 设置行展开 |
+| `setAutoHeight`       | `(rowKey: UniqKey, height?: number \| null) => void` | 更新可变行高，传 null 则清除该行行高                          |
+| `clearAllAutoHeight`  | `() => void`                              | 清除所有行高缓存                                           |
+| `setTreeExpand`       | `(row: (UniqKey \| DT) \| (UniqKey \| DT)[], option?: { expand?: boolean }) => void` | 设置树节点展开 |
+| `getSelectedArea`     | `() => { rows: DT[], cols: StkTableColumn<DT>[], ranges: AreaSelectionRange[] } \| null` | 获取选区信息 |
+| `setAreaSelection`    | `(ranges?: AreaSelectionSetterRange<DT>, option?: { silent?: boolean; scrollToView?: boolean }) => AreaSelectionRange[]` | 设置选区范围 |
 | `clearSelectedArea`   | `() => void`                              | 清空选区                                               |
-| `copySelectedArea`    | `() => void`                              | 复制选区到剪贴板                                           |
-| `setFilter`           | `(status, option?) => void`               | 设置筛选。option: `{ remote?: boolean }`                |
-| `sortCol`             | `ComputedRef<SortState \| null>`          | 当前排序列状态(属性)                                        |
-| `sortStates`          | `Ref<SortState[]>`                        | 排序状态数组(属性)                                         |
+| `copySelectedArea`    | `() => string`                            | 复制选区到剪贴板，返回复制文本                                    |
+| `setFilter`           | `(status: Record<UniqKey, FilterStatus> \| null, option?: { remote?: boolean }) => void` | 设置筛选 |
+| `sortCol`             | `ComputedRef<keyof DT \| undefined>`      | 当前排序列 dataIndex(属性)                                 |
+| `sortStates`          | `Ref<SortState<DT>[]>`                    | 排序状态数组(属性)                                          |
 
 ***
 
@@ -326,22 +326,32 @@ type Order = null | 'asc' | 'desc';
 
 type DefaultSortConfig<T> = {
   key?: StkTableColumn<T>['key'];
-  dataIndex: string;
+  dataIndex: StkTableColumn<T>['dataIndex'];
   order: Order;
-  sortField?: keyof T;
-  sortType?: 'number' | 'string';
-  sorter?: boolean | ((data: T[], option: { order: Order; column: any }) => T[]);
+  sortField?: StkTableColumn<T>['sortField'];
+  sortType?: StkTableColumn<T>['sortType'];
+  sorter?: StkTableColumn<T>['sorter'];
   silent?: boolean;
 };
 
 type SortConfig<T> = {
   defaultSort?: DefaultSortConfig<T>;
-  emptyToBottom?: boolean;
-  stringLocaleCompare?: boolean;
-  sortChildren?: boolean;
-  multiSort?: boolean;
-  multiSortLimit?: number;
+  emptyToBottom?: boolean;          // 默认 false
+  stringLocaleCompare?: boolean;     // 默认 false
+  sortChildren?: boolean;            // 默认 false
+  multiSort?: boolean;               // 默认 false
+  multiSortLimit?: number;           // 默认 3
 };
+
+type SortState<T> = {
+  key?: any;
+  dataIndex: keyof T & string;
+  sortField?: keyof T;
+  sortType?: 'number' | 'string';
+  order: Order;
+};
+
+type SortOption<T> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
 
 type RowActiveOption<T> = {
   enabled?: boolean;
@@ -356,32 +366,42 @@ type TreeConfig = {
 };
 
 type AreaSelectionConfig<T> = {
-  /** 是否启用区域选择 */
-  enabled?: boolean;
-  /** 复制时的单元格文本格式化回调（配合 customCell 使用） */
+  enabled?: boolean;                  // 默认 true（当 areaSelection 为 true 时）
   formatCellForClipboard?: (row: T, col: StkTableColumn<T>, rawValue: any) => string;
-  /** 是否启用键盘控制选区移动（方向键/Tab，类似 Excel） */
-  keyboard?: boolean;
-  /** 是否启用 Ctrl/Cmd 多选不连续区域 */
-  ctrl?: boolean;
-  /** 是否启用 Shift 扩选功能 */
-  shift?: boolean;
-  /** 高亮配置 */
+  keyboard?: boolean;                 // 默认 false
+  ctrl?: boolean;                     // 默认 true
+  shift?: boolean;                    // 默认 true
   highlight?: {
-    /** 是否启用单元格高亮与选中边框（默认 true） */
-    cell?: boolean;
-    /** 是否启用行高亮（单元格跨越的整行高亮，默认 false） */
-    row?: boolean;
+    cell?: boolean;                   // 默认 true
+    row?: boolean;                    // 默认 false
   };
 };
 
+type AreaSelectionRange = {
+  index: {
+    x: [number, number];              // @deprecated
+    y: [number, number];              // @deprecated
+    begin: { row: number; col: number };
+    end: { row: number; col: number };
+  };
+};
+
+type AreaSelectionSetterRange<T> = {
+  begin: { row: number | T; col?: number | StkTableColumn<T> };
+  end?: { row: number | T; col?: number | StkTableColumn<T> };
+};
+
 type HeaderDragConfig<T> = {
-  mode?: 'none' | 'insert' | 'swap';
+  mode?: 'none' | 'insert' | 'swap';  // 默认 'insert'
   disabled?: (col: StkTableColumn<T>) => boolean;
 };
 
 type ColResizableConfig<T> = {
   disabled: (col: StkTableColumn<T>) => boolean;
+};
+
+type DragRowConfig = {
+  mode?: 'none' | 'insert' | 'swap';  // 默认 'insert'
 };
 
 type AutoRowHeightConfig<T> = {
@@ -390,24 +410,37 @@ type AutoRowHeightConfig<T> = {
 
 type ScrollbarOptions = {
   enabled?: boolean;
-  width?: number;
-  height?: number;
-  minWidth?: number;
-  minHeight?: number;
+  width?: number;      // 默认 8
+  height?: number;     // 默认 8
+  minWidth?: number;   // 默认 20
+  minHeight?: number;  // 默认 20
 };
 
 type HighlightConfig = {
-  duration?: number; // 秒
+  duration?: number;   // 秒
   fps?: number;
 };
 
-type FooterConfig = {
-  position?: 'bottom' | 'top';
+type HighlightDimCellOption = {
+  method?: 'animation' | 'css';   // 默认 'animation'
+  duration?: number;
+  className?: string;             // method='css' 时使用
+  keyframe?: Keyframe[];          // method='animation' 时自定义关键帧
 };
 
-type ExperimentalConfig = {
-  scrollY?: boolean;
+type HighlightDimRowOption = {
+  method?: 'animation' | 'css';   // 默认 'animation'
+  duration?: number;
+  className?: string;             // method='css' 时使用
+  keyframe?: Keyframe[];          // method='animation' 时自定义关键帧
 };
+
+type SeqConfig = { startIndex?: number };
+type ExpandConfig = { height?: number };
+type FooterConfig = { position?: 'bottom' | 'top' };
+type ExperimentalConfig = { scrollY?: boolean };
+
+type UniqKey = string | number;
 ```
 
 ***
@@ -421,8 +454,10 @@ StkTable 提供三种自定义单元格渲染方式：
 
 ### 类型定义
 
+> 注意：`CustomCellProps`、`CustomHeaderCellProps`、`CustomFooterCellProps` 类型未从 `stk-table-vue` 包导出，需自行定义或使用 `InstanceType` 推导。
+
 ```typescript
-// customCell props
+// customCell props（组件内部传入）
 type CustomCellProps<T> = {
     row: T;                    // 当前行数据
     col: StkTableColumn<T>;    // 列配置
@@ -537,10 +572,15 @@ export const columns: StkTableColumn<RowData>[] = [
 <!-- columns/YieldCell.vue -->
 <script lang="ts" setup>
 import { computed } from 'vue';
-import type { CustomCellProps } from 'stk-table-vue';
-import type { RowData } from './types';
 
-const props = defineProps<CustomCellProps<RowData>>();
+// 注意：CustomCellProps 未从包中导出，需自行定义 props
+const props = defineProps<{
+    row: RowData;
+    col: any;
+    cellValue: any;
+    rowIndex: number;
+    colIndex: number;
+}>();
 
 const displayValue = computed(() => {
     const val = props.cellValue * 100;
@@ -595,6 +635,27 @@ const columns: StkTableColumn<RowData>[] = [
 ];
 ```
 
+### 方式四：使用内置 createEditableCell 工厂函数
+
+快速创建可编辑单元格：
+
+```typescript
+import { createEditableCell } from 'stk-table-vue';
+import type { StkTableColumn } from 'stk-table-vue';
+
+const { EditableCell } = createEditableCell({
+    trigger: 'dblclick', // 触发编辑的事件，默认 'dblclick'，可选 'click'
+    onChange: (newValue, row, dataIndex) => {
+        console.log(`行 ${row.id} 的 ${dataIndex} 变更为 ${newValue}`);
+    },
+});
+
+const columns: StkTableColumn<RowData>[] = [
+    { title: '名称', dataIndex: 'name', customCell: EditableCell },
+    { title: '年龄', dataIndex: 'age', customCell: EditableCell },
+];
+```
+
 ### 重要注意事项
 
 1. **建议包裹元素**：`customCell` 返回的 VNode 建议用元素（div/span 等）包裹，否则 `TextNode` 作为 `<td>` 子节点可能导致布局问题。
@@ -603,57 +664,7 @@ const columns: StkTableColumn<RowData>[] = [
 
 3. **组件类型兼容**：`customCell` 类型直接定义 `Component<Props>` 时，如果 Props 属性为必选，则通过 `defineComponent` 创建的组件必须要定义所有的 Prop。建议将所有 Props 定义为可选，或使用函数式组件。
 
-4. **可编辑单元格**：实现单元格编辑功能时，需要配合 `cellActive` 和 `selectedCellRevokable` props 使用，通过双击或点击触发编辑状态。
-
-5. **选区复制格式化**：如果使用了 `customCell` 自定义渲染，应该配合 `areaSelection.formatCellForClipboard` 回调以确保复制内容与展示内容一致。
-
-### 可编辑单元格示例
-
-```vue
-<!-- EditCell.vue - 可编辑单元格组件 -->
-<script lang="ts" setup>
-import { ref, watch } from 'vue';
-import type { CustomCellProps } from 'stk-table-vue';
-
-interface RowData {
-    id: number;
-    name: string;
-    _isEditing?: boolean;
-}
-
-const props = defineProps<CustomCellProps<RowData>>();
-const isEditing = ref(false);
-const editValue = ref('');
-
-const startEdit = () => {
-    isEditing.value = true;
-    editValue.value = props.cellValue;
-};
-
-const saveEdit = () => {
-    props.row[props.col.dataIndex] = editValue.value;
-    isEditing.value = false;
-};
-
-const cancelEdit = () => {
-    isEditing.value = false;
-};
-</script>
-
-<template>
-    <div @dblclick="startEdit">
-        <input
-            v-if="isEditing"
-            v-model="editValue"
-            @keyup.enter="saveEdit"
-            @keyup.esc="cancelEdit"
-            @blur="cancelEdit"
-            ref="inputRef"
-        />
-        <span v-else>{{ cellValue }}</span>
-    </div>
-</template>
-```
+4. **选区复制格式化**：如果使用了 `customCell` 自定义渲染，应该配合 `areaSelection.formatCellForClipboard` 回调以确保复制内容与展示内容一致。
 
 ***
 
@@ -675,7 +686,7 @@ const cancelEdit = () => {
 </template>
 ```
 
-> 注意：父容器必须有固定高度，虚拟滚动才能生效。
+> 注意：虚拟滚动需要容器具有确定高度（通过父容器固定高度或组件自身 CSS 均可）。
 
 ### 2. 横向+纵向虚拟滚动
 
@@ -868,9 +879,9 @@ const columns = [
 ```
 
 ```typescript
-// 高亮单元格
+// 高亮单元格（支持第三个参数 option 自定义动画方式）
 tableRef.value?.setHighlightDimCell('row-key-1', 'age');
-// 高亮行
+// 高亮行（支持第二个参数 option 自定义动画方式）
 tableRef.value?.setHighlightDimRow(['row-key-1', 'row-key-2']);
 ```
 
@@ -888,14 +899,13 @@ tableRef.value?.setHighlightDimRow(['row-key-1', 'row-key-2']);
 </template>
 
 <script setup>
-// 禁用某些行的选中
-columns = [
+const columns = [
   { title: 'ID', dataIndex: 'id' },
   { title: '名称', dataIndex: 'name' },
   { title: '状态', dataIndex: 'status' },
 ];
 
-dataSource = [
+const dataSource = [
   { id: 1, name: '张三', status: 'active' },
   { id: 2, name: '李四', status: 'locked', locked: true }, // 此行不能被点击选中
 ];
@@ -907,12 +917,14 @@ function onCurrentChange(event, row, { select }) {
 </script>
 ```
 
-> **提示**: 
+> **提示**:
 > - `rowActive` 设为 `false` 仅隐藏内部样式，`tr` 上仍会添加 `active` 类，方便自定义样式。
 > - `rowActive.disabled` 禁用的行仍可通过 `setCurrentRow()` 方法选中。
 > - `revokable: true` 表示再次点击当前行可以取消选中。
 
 ### 13. 单元格选区(Area Selection)
+
+> 注意：Area Selection 是按需注册的特性，需先调用 `registerFeature(useAreaSelection)` 才能使用。
 
 ```vue
 <StkTable
@@ -935,15 +947,14 @@ function onCurrentChange(event, row, { select }) {
     ctrl: true,
     shift: true,
     formatCellForClipboard: (row, col, rawValue) => {
-      // 如果有 customCell 自定义渲染，需要提供此回调确保复制内容一致
       if (col.dataIndex === 'status') {
         return rawValue === 1 ? '正常' : '异常';
       }
       return String(rawValue);
     },
     highlight: {
-      cell: true,  // 单元格高亮与边框（默认 true）
-      row: false,  // 整行高亮（默认 false）
+      cell: true,
+      row: false,
     }
   }"
   :columns="columns"
@@ -962,8 +973,6 @@ function onCurrentChange(event, row, { select }) {
 | `formatCellForClipboard` | `Function` | `undefined` | 复制到剪贴板时的格式化回调 |
 | `highlight.cell` | `boolean` | `true` | 是否启用单元格高亮与选中边框 |
 | `highlight.row` | `boolean` | `false` | 是否启用整行高亮 |
-
-> **提示**: Area Selection 支持拖拽选区、Ctrl/Shift 多选单元格、键盘导航、复制选区到剪贴板等高级交互。
 
 ### 14. 序号列
 
@@ -1045,7 +1054,6 @@ const columns = [
 
 ```typescript
 async function onSortChange(col, order) {
-  // 服务端排序模式下，组件不排序数据，需自行请求
   const res = await fetch(`/api/data?sort=${col.dataIndex}&order=${order}`);
   dataSource.value = await res.json();
 }
@@ -1053,7 +1061,7 @@ async function onSortChange(col, order) {
 
 ### 21. CSS 变量自定义样式
 
-StkTable 支持通过 CSS 变量自定义表格的样式外观。可以在父容器或根元素上定义这些变量：
+StkTable 支持通过 CSS 变量自定义表格的样式外观：
 
 ```vue
 <template>
@@ -1068,72 +1076,50 @@ StkTable 支持通过 CSS 变量自定义表格的样式外观。可以在父容
 
 <style>
 .my-table-container {
-  /* 边框变量 */
-  --border-color: #e0e0e0;               /* 边框颜色 */
-  --border-width: 1px;                    /* 边框宽度 */
-
-  /* 单元格变量 */
-  --td-bgc: #ffffff;                     /* 单元格背景色 */
-  --td-hover-color: #f5f5f5;              /* 单元格悬停色 */
-  --td-active-color: #e3f2fd;            /* 单元格激活色 */
-
-  /* 表头/表尾变量 */
-  --th-bgc: #fafafa;                     /* 表头背景色 */
-  --tf-bgc: #f5f5f5;                     /* 表尾背景色 */
-  --th-color: #333333;                   /* 表头文字色 */
-
-  /* 行状态变量 */
-  --tr-hover-bgc: #f5f5f5;               /* 行悬停背景色 */
-  --tr-active-bgc: #e3f2fd;             /* 行激活背景色 */
-  --stripe-bgc: #fafafa;                 /* 斑马纹背景色 */
-
-  /* 排序箭头变量 */
-  --sort-arrow-color: #999999;           /* 排序箭头颜色 */
-  --sort-arrow-hover-color: #666666;      /* 排序箭头悬停色 */
-  --sort-arrow-active-color: #1890ff;   /* 排序箭头激活色 */
-  --sort-arrow-active-sub-color: #cccccc; /* 排序箭头激活次要颜色 */
-
-  /* 折叠图标变量 */
-  --fold-icon-color: #999999;            /* 折叠图标颜色 */
-  --fold-icon-hover-color: #666666;      /* 折叠图标悬停色 */
-
-  /* 列宽调整变量 */
-  --col-resize-indicator-color: #1890ff;  /* 列宽调整指示器颜色 */
-
-  /* 固定列变量 */
-  --fixed-col-shadow-color-from: rgba(0, 0, 0, 0.1);  /* 固定列阴影起始颜色 */
-  --fixed-col-shadow-color-to: rgba(0, 0, 0, 0);      /* 固定列阴影结束颜色 */
-
-  /* 拖拽变量 */
-  --drag-handle-hover-color: #d9d9d9;    /* 拖拽手柄悬停颜色 */
-
-  /* 滚动条变量 */
-  --sb-thumb-color: #c1c1c1;             /* 滚动条颜色 */
-  --sb-thumb-hover-color: #a8a8a8;       /* 滚动条悬停色 */
-
-  /* 选区变量 */
-  --cs-bgc: #d3eafd;                    /* 选区背景色 */
-  --cs-bc: #2196f3;                     /* 选区边框色 */
+  --border-color: #e0e0e0;
+  --border-width: 1px;
+  --td-bgc: #ffffff;
+  --td-hover-color: #f5f5f5;
+  --td-active-color: #e3f2fd;
+  --th-bgc: #fafafa;
+  --tf-bgc: #f5f5f5;
+  --th-color: #333333;
+  --tr-hover-bgc: #f5f5f5;
+  --tr-active-bgc: #e3f2fd;
+  --stripe-bgc: #fafafa;
+  --sort-arrow-color: #999999;
+  --sort-arrow-hover-color: #666666;
+  --sort-arrow-active-color: #1890ff;
+  --sort-arrow-active-sub-color: #cccccc;
+  --fold-icon-color: #999999;
+  --fold-icon-hover-color: #666666;
+  --col-resize-indicator-color: #1890ff;
+  --fixed-col-shadow-color-from: rgba(0, 0, 0, 0.1);
+  --fixed-col-shadow-color-to: rgba(0, 0, 0, 0);
+  --drag-handle-hover-color: #d9d9d9;
+  --sb-thumb-color: #c1c1c1;
+  --sb-thumb-hover-color: #a8a8a8;
+  --cs-bgc: #d3eafd;
+  --cs-bc: #2196f3;
 }
 </style>
 ```
 
-> 注意：行高（`rowHeight`、`headerRowHeight`、`footerRowHeight`）等尺寸相关配置请使用组件的 Props，详见上方 Props 参考中的「行高」章节，不要通过 CSS 变量来修改。其他样式相关的 CSS 变量可按需使用。
-
-> 提示：查看完整的 CSS 变量演示，可以访问组件的 CssVarsDemo 页面，那里提供了交互式的变量配置工具，可以实时预览效果并导出修改后的变量配置。
+> 注意：行高（`rowHeight`、`headerRowHeight`、`footerRowHeight`）等尺寸相关配置请使用组件的 Props，不要通过 CSS 变量来修改。
 
 ***
 
 ## 重要注意事项
 
-1. **虚拟滚动不需要固定高度的父容器**，直接修改 StkTable 组件的 style 即可调整高度。
+1. **虚拟滚动需要容器具有确定高度**，可通过父容器固定高度或组件自身 CSS 设置。
 2. **横向虚拟滚动(`virtualX`)建议为所有列设置** **`width`**，未设置时默认列宽为 100。
 3. **列宽拖拽(`colResizable`)和表头拖拽(`headerDrag`)需要配合** **`v-model:columns`** **使用**。
 4. **`rowKey`** **强烈建议设置**，大多数功能依赖行唯一标识。
-5. **`customCell`** **使用 Vue 的** **`h()`** **函数**返回 VNode，不是 JSX/模板。
+5. **`customCell`** **使用 Vue 的** **`h()`** **函数**返回 VNode，不是 JSX/模板（除非在 JSX 文件中）。
 6. **排序列需要设置** **`sorter: true`**，并推荐设置 `sortType: 'number' | 'string'`。
 7. **固定列(`fixed`)建议配合设置** **`width`**。
 8. **树形数据的子节点字段名为** **`children`**。
 9. **暗色主题使用** **`theme="dark"`**，组件内置了暗色样式。
 10. **展开行在虚拟滚动下需设置** **`expandConfig.height`** 指定展开区域高度。
-
+11. **Area Selection 需先注册**：`registerFeature(useAreaSelection)` 后再使用 `areaSelection` prop。
+12. **`CustomCellProps` 等类型未从包导出**，SFC 组件中需自行定义 props 或使用泛型推导。
