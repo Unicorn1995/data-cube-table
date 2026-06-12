@@ -179,7 +179,7 @@
                                         </template>
                                     </component>
                                     <div v-else-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="row[col.dataIndex] || ''">
-                                        {{ (row && row[col.dataIndex]) !== void 0 ? row && row[col.dataIndex] : getEmptyCellText(col, row) }}
+                                        {{ (row && row[col.dataIndex]) != null ? row && row[col.dataIndex] : getEmptyCellText(col, row) }}
                                     </div>
                                     <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
                                         {{ (props.seqConfig.startIndex || 0) + getAbsoluteRowIndex(rowIndex) + 1 }}

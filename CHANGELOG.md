@@ -1,4 +1,8 @@
 
+## 0.11.15
+* Bugfix:
+  - fix: if value is null ,not show emptyCellText `--`.
+
 ## 0.11.14
 * Bugfix
   - fix: `insertToOrderedArray` a new record will insert to the top when the value is NaN.
