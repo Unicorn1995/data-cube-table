@@ -35,3 +35,34 @@ type AutoRowHeightConfig<DT> = {
 
 ## 单列表
 请移步至[虚拟单列表-不等高](/demos/virtual-list.html#不等高)
+
+## 使用 Pretext 预计算行高
+
+当行高可以通过内容提前计算得出时，推荐使用 [@chenglou/pretext](https://github.com/chenglou/pretext) 进行预计算，避免运行时测量行高带来的性能开销。同时防止滚动条抖动。
+
+### 原理
+
+1. 开启 `auto-row-height` 和 `virtual`
+2. 使用 `prepare` 和 `layout` 方法计算文本高度
+3. 通过 `setAutoHeight(rowKey, height)` 设置每行的实际高度
+
+### 示例
+
+<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
+
+### API
+
+#### setAutoHeight(rowKey, height)
+
+手动设置指定行的行高。
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| rowKey | `string \| number` | 行的唯一标识，与 `row-key` 对应 |
+| height | `number` | 行高度 |
+
+::: tip 提示
+- 需要在数据加载完成后调用
+- 如果行高发生变化，需要重新调用此方法更新
+- 传入 `null` 或 `undefined` 可以清除已设置的行高，恢复自动测量
+:::

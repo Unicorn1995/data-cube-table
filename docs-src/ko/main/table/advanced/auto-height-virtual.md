@@ -4,7 +4,7 @@
 | 속성  | 타입  | 기본값 | 설명  |
 | ----- | ----- | ----- | ----- |
 | props.autoRowHeight | `boolean` \| `AutoRowHeightConfig<DT>` | false | 자동 행 높이 활성화 여부 |
-| props.rowHeight | `number` | -- | `props.autoRowHeight`가 `true`일 때,期望行高로 사용하여 계산합니다. 실제 행 높이에 영향을 주지 않습니다. |
+| props.rowHeight | `number` | -- | `props.autoRowHeight`가 `true`일 때, 기대 행 높이로 사용하여 계산합니다. 실제 행 높이에 영향을 주지 않습니다. |
 
 ### AutoRowHeightConfig&lt;DT&gt;
 ```ts
@@ -35,3 +35,34 @@ type AutoRowHeightConfig<DT> = {
 
 ## 단일 열 리스트
 자세한 내용은 [가상 단일 열 리스트 - 가변 높이](/ko/demos/virtual-list.html#가변-높이)를 참고하세요.
+
+## Pretext로 행 높이 사전 계산
+
+행 높이가 콘텐츠에서 사전에 계산 가능한 경우, [@chenglou/pretext](https://github.com/chenglou/pretext)를 사용하여 사전 계산하는 것을 권장합니다. 이렇게 하면 런타임에 행 높이를 측정하는 성능 오버헤드를 피할 수 있으며, 스크롤바 떨림을 방지할 수 있습니다.
+
+### 작동 원리
+
+1. `auto-row-height` 및 `virtual` 활성화
+2. `prepare`와 `layout` 메서드를 사용하여 텍스트 높이 계산
+3. `setAutoHeight(rowKey, height)`를 통해 실제 행 높이 설정
+
+### 예시
+
+<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
+
+### API
+
+#### setAutoHeight(rowKey, height)
+
+특정 행의 행 높이를 수동으로 설정합니다.
+
+| 매개변수 | 타입 | 설명 |
+| --- | --- | --- |
+| rowKey | `string \| number` | 행 고유 식별자, `row-key`에 해당 |
+| height | `number` | 행 높이 |
+
+::: tip 팁
+- 데이터 로드 후 호출해야 합니다
+- 행 높이가 변경되면 이 메서드를 다시 호출하여 업데이트해야 합니다
+- `null` 또는 `undefined`를 전달하면 설정된 행 높이를 제거하고 자동 측정으로 복원됩니다
+:::
