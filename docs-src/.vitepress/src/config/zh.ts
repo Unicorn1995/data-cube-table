@@ -105,7 +105,14 @@ export const zhConfig = defineConfig({
                                     { text: '自定义单元格', link: '/table/advanced/custom-cell', },
                                     { text: '自定义排序', link: '/table/advanced/custom-sort', },
                                     { text: 'Vue2 滚动优化', link: '/table/advanced/vue2-scroll-optimize', },
-
+                                    {
+                                        text: '自定义单元格内置扩展',
+                                        collapsed: true,
+                                        items: [
+                                            { text: 'EditableCell 可编辑单元格', link: '/table/advanced/custom-cells/editable-cell' },
+                                            { text: 'Filter 筛选', link: '/table/advanced/custom-cells/filter' },
+                                        ],
+                                    },
                                 ]
 
                             },

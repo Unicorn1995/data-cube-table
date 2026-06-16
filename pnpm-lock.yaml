@@ -72,8 +72,8 @@ importers:
         specifier: ^3.2.5
         version: 3.5.3
       stk-table-vue:
-        specifier: ^0.8.14
-        version: 0.8.14
+        specifier: ^0.11.15
+        version: 0.11.15
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -2636,8 +2636,8 @@ packages:
   std-env@3.9.0:
     resolution: {integrity: sha512-UGvjygr6F6tpH7o2qyqR6QYpwraIjKSdtzyBdyytFOHmPZY917kwdwLG0RbOjWOnKmnm3PeHjaoLLMie7kPLQw==}
 
-  stk-table-vue@0.8.14:
-    resolution: {integrity: sha512-RyUNey1Yz5naj4lp4Vk0NIZ6lacVmKEhR5NnAUmzCcdw0uygDEj4uMJLJgc++xQLTilu8f+oo2IZtZ3AetOaBA==}
+  stk-table-vue@0.11.15:
+    resolution: {integrity: sha512-gZZiCq5niWiF4DhkgFuGRBp4rgEjdmT7ps7TyklXd2LFd5JX9Br9ZPKl5AvSMtSwKh201B6gTPzRTkRnqtQ6fA==}
 
   string-argv@0.3.2:
     resolution: {integrity: sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==}
@@ -5713,7 +5713,7 @@ snapshots:
 
   std-env@3.9.0: {}
 
-  stk-table-vue@0.8.14: {}
+  stk-table-vue@0.11.15: {}
 
   string-argv@0.3.2: {}
 
