@@ -476,7 +476,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     "area-selection-change": (ranges: AreaSelectionRange[]) => void;
     "filter-change": (status: Record<UniqKey, FilterStatus>) => void;
     "update:columns": (cols: StkTableColumn<any>[]) => void;
-    "selectionChange": (data: any[]) => void;
+    selectionChange: (data: any[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     /** 表格宽度*/
     width?: string;
@@ -748,7 +748,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
     "onScroll-x"?: ((ev: Event) => any) | undefined;
     "onFilter-change"?: ((status: Record<UniqKey, FilterStatus>) => any) | undefined;
-    "onSelectionChange"?: ((data: any[]) => any) | undefined;
+    onSelectionChange?: ((data: any[]) => any) | undefined;
 }>, {
     width: string;
     minWidth: string;
