@@ -28,6 +28,7 @@ import { registerFeature, StkTable, StkTableColumn } from '../src/StkTable/index
 import FlyInAnimation from './FlyInAnimation.vue';
 
 type Row = {
+    selection: string;
     id: number;
     code: string;
     name: string;
@@ -38,11 +39,12 @@ type Row = {
 const stkTableRef = useTemplateRef('stkTableRef');
 
 const columns: StkTableColumn<Row>[] = [
-    { title: 'ID', dataIndex: 'id', width: 70, fixed: 'left' },
-    { title: 'Code', dataIndex: 'code', width: 120 },
-    { title: 'Name', dataIndex: 'name', width: 160 },
-    { title: 'Price', dataIndex: 'price', width: 120, align: 'right' },
-    { title: 'Volume', dataIndex: 'volume', width: 120, align: 'right' },
+    { label: '选择框', dataIndex: 'selection', type: 'selection', width: 70, fixed: 'left' },
+    { label: 'ID', dataIndex: 'id', width: 70, fixed: 'left' },
+    { label: 'Code', dataIndex: 'code', width: 120 },
+    { label: 'Name', dataIndex: 'name', width: 160 },
+    { label: 'Price', dataIndex: 'price', width: 120, align: 'right' },
+    { label: 'Volume', dataIndex: 'volume', width: 120, align: 'right' },
 ];
 
 const rows = Array.from({ length: 80 }, (_, index) => ({

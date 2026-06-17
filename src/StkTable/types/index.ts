@@ -71,12 +71,13 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * - expand 展开列
      * - dragRow 拖拽列(使用sktTableRef.getTableData 获取改变后的顺序)
      * - tree-node 树节点列，这一列前面有展开收起箭头
+     * - selection 选择列
      */
-    type?: 'seq' | 'expand' | 'dragRow' | 'tree-node';
+    type?: 'seq' | 'expand' | 'dragRow' | 'tree-node' | 'selection';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */
-    title?: string;
+    label?: string;
     /** 列内容对齐方式 */
     align?: 'right' | 'left' | 'center';
     /** 表头内容对齐方式 */
@@ -190,6 +191,8 @@ export type PrivateRowDT = {
     __EXP_R__?: any;
     /** expanded col */
     __EXP_C__?: StkTableColumn<any>;
+    /** checkbox */
+    __isChecked?: boolean;
     children?: any[];
 };
 

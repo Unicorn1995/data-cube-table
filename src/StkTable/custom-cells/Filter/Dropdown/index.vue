@@ -9,7 +9,7 @@ const checkedTempValueSet = reactive<Set<FilterOption['value']>>(new Set());
 
 const columns = ref<StkTableColumn<FilterOption>[]>([
     {
-        title: '',
+        label: '',
         dataIndex: 'value',
         width: 30,
         className: 'stk-filter-dropdown-checkbox',
@@ -19,7 +19,7 @@ const columns = ref<StkTableColumn<FilterOption>[]>([
                 checked: checkedTempValueSet.has(row.value),
             }),
     },
-    { title: '', dataIndex: 'label', customCell: ({ row }) => h('span', [row.label]) },
+    { label: '', dataIndex: 'label', customCell: ({ row }) => h('span', [row.label]) },
 ]);
 
 const visible = ref(false);

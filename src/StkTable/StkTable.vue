@@ -90,9 +90,12 @@
                                     :colIndex="colIndex"
                                     :rowIndex="rowIndex"
                                 />
+                                <div v-else-if="col.type === 'selection'" class="table-cell-wrapper" tabindex="-1">
+                                    <input type="checkbox" :checked="isCheckAll" :indeterminate="isCheckPartial" @change="onHeaderCheckboxChange" />
+                                </div>
                                 <template v-else>
                                     <slot name="tableHeader" :col="col">
-                                        <span class="table-header-title">{{ col.title }}</span>
+                                        <span class="table-header-title">{{ col.label }}</span>
                                     </slot>
                                 </template>
                                 <SortIcon v-if="col.sorter" class="table-header-sorter" />
@@ -183,6 +186,9 @@
                                     </div>
                                     <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
                                         {{ (props.seqConfig.startIndex || 0) + getAbsoluteRowIndex(rowIndex) + 1 }}
+                                    </div>
+                                    <div v-else-if="col.type === 'selection'" class="table-cell-wrapper" tabindex="-1">
+                                        <input type="checkbox" :checked="row.__isChecked" @change="onCellCheckboxChange(row)" />
                                     </div>
                                     <TreeNodeCell
                                         v-else-if="col.type === 'tree-node'"
@@ -678,6 +684,10 @@ const emits = defineEmits<{
      * v-model:columns col resize 时更新宽度
      */
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
+    /**
+     * 选中选择框变更事件
+     */
+    (e: 'selectionChange', data: DT[]): void;
 }>();
 
 // 仅支持vue3.3+
@@ -745,6 +755,30 @@ const rowActiveProp = computed<Required<RowActiveOption<DT>>>(() => {
 });
 
 const dataSourceCopy = shallowRef<DT[]>([]);
+
+//#region 选择框
+// 是否全选
+const isCheckAll = computed(() => {
+    return dataSourceCopy.value.length > 0 && checkedData.value.length === dataSourceCopy.value.length;
+})
+const checkedData = computed(() => {
+    return dataSourceCopy.value.filter(item => item.__isChecked);
+});
+// 是否部分全选
+const isCheckPartial = computed(() => {
+    const checkedCount = checkedData.value.length;
+    return checkedCount > 0 && checkedCount < dataSourceCopy.value.length;
+});
+function onHeaderCheckboxChange(e: Event) {
+    const checked = (e.target as HTMLInputElement).checked;
+    dataSourceCopy.value.forEach(item => (item.__isChecked = checked));
+    emits('selectionChange', checkedData.value);
+}
+function onCellCheckboxChange(row: any) {
+    row.__isChecked = !row.__isChecked;
+    emits('selectionChange', checkedData.value);
+}
+//#endregion
 
 const rowKeyGenComputed = computed(() => {
     const { rowKey } = props;
@@ -1008,6 +1042,7 @@ onMounted(() => {
     initVirtualScroll();
     updateFixedShadow();
     dealDefaultSorter();
+    emits('selectionChange', checkedData.value);
 });
 
 async function onDataSourceChange() {
@@ -1071,6 +1106,7 @@ function handleDealColumns() {
 }
 
 function updateDataSource(val: DT[]) {
+    emits('selectionChange', val);
     if (!Array.isArray(val)) {
         console.warn('invalid dataSource');
         return;
@@ -1168,7 +1204,7 @@ function getHeaderTitle(col: StkTableColumn<DT>): string {
     if (props.hideHeaderTitle === true || (Array.isArray(props.hideHeaderTitle) && props.hideHeaderTitle.includes(colKey))) {
         return '';
     }
-    return col.title || '';
+    return col.label || '';
 }
 
 function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
