@@ -59,9 +59,6 @@ function handleConfirm(value: FilterOption['value'][]) {
 
 <template>
     <div class="stk-filter" :class="[{ 'stk-filter--active': props.active }, `stk-filter--${theme}`]">
-        <slot>
-            <span>{{ props.col.label }}</span>
-        </slot>
         <svg class="stk-filter-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" @click="handleIconClick">
             <path
                 fill="currentColor"
