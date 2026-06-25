@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CustomHeaderCellProps } from '../../types';
+import { CustomHeaderCellProps, StkTableColumn } from '../../types';
 import { computed } from 'vue';
 import { getDropdownIns } from './Dropdown/index';
 import { FilterOption } from './types';
@@ -8,7 +8,10 @@ const props = defineProps<
     CustomHeaderCellProps<any> & {
         theme?: 'light' | 'dark';
         active?: boolean; // 是否激活筛选
-        options: FilterOption[]; // 自定义筛选选项
+        options?: FilterOption[]; // 自定义筛选选项
+        dataSource: any[];
+        col: StkTableColumn<any>;
+        colIndex: number;
     }
 >();
 
@@ -16,7 +19,7 @@ const props = defineProps<
 const theme = computed(() => props.theme || 'light');
 
 const emit = defineEmits<{
-    (e: 'change', value: FilterOption['value'][]): void;
+    (e: 'change', value: FilterOption['value'][], column: StkTableColumn<any>, colIndex: number): void;
 }>();
 
 function handleIconClick(e: MouseEvent) {
@@ -40,14 +43,17 @@ function handleIconClick(e: MouseEvent) {
                 y: rect.bottom + scrollTop,
                 height: rect.height,
             },
-            props.options,
+            props.options || [],
+            props.dataSource,
+            props.col,
+            props.colIndex,
             handleConfirm,
         );
     });
 }
 
 function handleConfirm(value: FilterOption['value'][]) {
-    emit('change', value);
+    emit('change', value, props.col, props.colIndex);
 }
 </script>
 

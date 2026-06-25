@@ -98,7 +98,21 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /** 固定列 */
     fixed?: 'left' | 'right' | null;
     /** 格式化 */
-    formatter?: (value: any, row: T, col: T) => any;
+    formatter?: (value: T, row: T, col: T, rowIndex: number, colIndex: number) => any;
+    /** 过滤 */
+    filterable?: boolean;
+    /** 过滤项 */
+    filterOptions?: {
+        label: string;
+        value: string;
+        selected: boolean;
+    }[];
+    /** 过滤方法 */
+    filter?: ({ row, cellValue, filterValues }: {
+        row: any;
+        cellValue: any;
+        filterValues: any;
+    }) => boolean;
     /** 是否隐藏列 */
     hidden?: boolean;
     /**

@@ -4,7 +4,7 @@ export declare function getDropdownIns(): Promise<import('vue').CreateComponentP
         x: number;
         y: number;
         height?: number;
-    }, opt: import('../types').FilterOption[], onConfirm: (values: import('../types').FilterOption["value"][]) => void) => Promise<void>;
+    }, filterOptions: import('../types').FilterOption[], data: any[], col: import('../../..').StkTableColumn<any>, colIndex: number, onConfirm: (values: import('../types').FilterOption["value"][]) => void) => Promise<void>;
     hide: () => void;
     setTheme: (t: "light" | "dark") => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, import('vue').PublicProps, {}, true, {}, {}, import('vue').GlobalComponents, import('vue').GlobalDirectives, string, {}, any, import('vue').ComponentProvideOptions, {
@@ -20,7 +20,7 @@ export declare function getDropdownIns(): Promise<import('vue').CreateComponentP
         x: number;
         y: number;
         height?: number;
-    }, opt: import('../types').FilterOption[], onConfirm: (values: import('../types').FilterOption["value"][]) => void) => Promise<void>;
+    }, filterOptions: import('../types').FilterOption[], data: any[], col: import('../../..').StkTableColumn<any>, colIndex: number, onConfirm: (values: import('../types').FilterOption["value"][]) => void) => Promise<void>;
     hide: () => void;
     setTheme: (t: "light" | "dark") => void;
 }, {}, {}, {}, {}>>;

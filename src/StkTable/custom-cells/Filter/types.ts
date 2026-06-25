@@ -1,4 +1,5 @@
 // Filter组件相关类型定义
+import { StkTableColumn } from '@/StkTable/types';
 
 /** 筛选选项接口 */
 export interface FilterOption {
@@ -19,6 +20,8 @@ export interface FilterStatus {
      * @returns 返回 true 保留记录，false 过滤掉
      */
     filter?: (args: { row: any; cellValue: any; filterValues: FilterOption['value'][] }) => boolean;
+    column: StkTableColumn<any>;
+    colIndex: number;
 }
 
 /** FilterComponent 配置接口 */

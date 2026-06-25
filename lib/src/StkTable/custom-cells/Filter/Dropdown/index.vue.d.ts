@@ -1,10 +1,11 @@
+import { StkTableColumn } from '../../../types';
 import { FilterOption } from '../types';
 
 declare function show(pos: {
     x: number;
     y: number;
     height?: number;
-}, opt: FilterOption[], onConfirm: (values: FilterOption['value'][]) => void): Promise<void>;
+}, filterOptions: FilterOption[], data: any[], col: StkTableColumn<any>, colIndex: number, onConfirm: (values: FilterOption['value'][]) => void): Promise<void>;
 declare function hide(): void;
 declare function setTheme(t: 'light' | 'dark'): void;
 declare const _default: import('vue').DefineComponent<{}, {

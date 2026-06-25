@@ -1,4 +1,4 @@
-import { CustomHeaderCellProps } from '../../types';
+import { CustomHeaderCellProps, StkTableColumn } from '../../types';
 import { FilterOption } from './types';
 
 declare function __VLS_template(): {
@@ -7,15 +7,21 @@ declare function __VLS_template(): {
 declare const __VLS_component: import('vue').DefineComponent<import('vue').ExtractPropTypes<__VLS_TypePropsToRuntimeProps<CustomHeaderCellProps<any> & {
     theme?: "light" | "dark";
     active?: boolean;
-    options: FilterOption[];
+    options?: FilterOption[];
+    dataSource: any[];
+    col: StkTableColumn<any>;
+    colIndex: number;
 }>>, {}, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
-    change: (value: any[]) => void;
+    change: (value: any[], column: StkTableColumn<any>, colIndex: number) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_TypePropsToRuntimeProps<CustomHeaderCellProps<any> & {
     theme?: "light" | "dark";
     active?: boolean;
-    options: FilterOption[];
+    options?: FilterOption[];
+    dataSource: any[];
+    col: StkTableColumn<any>;
+    colIndex: number;
 }>>> & Readonly<{
-    onChange?: ((value: any[]) => any) | undefined;
+    onChange?: ((value: any[], column: StkTableColumn<any>, colIndex: number) => any) | undefined;
 }>, {}, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, ReturnType<typeof __VLS_template>>;
 export default _default;

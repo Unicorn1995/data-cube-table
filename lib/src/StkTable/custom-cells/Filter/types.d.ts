@@ -1,3 +1,5 @@
+import { StkTableColumn } from '../../types';
+
 /** 筛选选项接口 */
 export interface FilterOption {
     label: string;
@@ -20,6 +22,8 @@ export interface FilterStatus {
         cellValue: any;
         filterValues: FilterOption['value'][];
     }) => boolean;
+    column: StkTableColumn<any>;
+    colIndex: number;
 }
 /** FilterComponent 配置接口 */
 export interface FilterComponentConfig {

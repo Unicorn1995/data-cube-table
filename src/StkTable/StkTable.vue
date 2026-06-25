@@ -99,18 +99,20 @@
                                     </slot>
                                 </template>
                                 <SortIcon v-if="col.sorter" class="table-header-sorter" />
-                            </div>
-                            <!-- <span>
-                                <Filter 
-                                    theme="dark" 
-                                    @change="(val) => console.log(val)" 
-                                    :col="col" 
-                                    :row-index="rowIndex" 
+                                <Filter
+                                    v-if="col.filterable"
+                                    :theme="theme"
+                                    :active="Boolean(filterStatus[col.dataIndex]?.value.length)"
+                                    :data-source="dataSource"
+                                    :options="col.filterOptions"
+                                    :col="col"
                                     :col-index="colIndex"
-                                    :data-source="dataSourceCopy"
-                                    :options="[{ label: '12', value: 1 }]">
+                                    :row="row"
+                                    :row-index="rowIndex"
+                                    @change="filterDataChange"
+                                >
                                 </Filter>
-                            </span> -->
+                            </div>
                             <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="onThResizeMouseDown($event, col)"></div>
                         </th>
                         <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
@@ -318,13 +320,13 @@ import { useTableColumns } from './useTableColumns';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
-// import Filter from './custom-cells/Filter/Filter.vue';
+import Filter from './custom-cells/Filter/Filter.vue';
 import { useIndexResolver } from './useIndexResolver';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTd, getClosestTr, getClosestTrIndex, rafThrottle, transformWidthToStr } from './utils/index';
-// import { createFilter } from '../StkTable/index.js';
+import { FilterOption } from './custom-cells/Filter/types.js';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -1066,6 +1068,7 @@ watch(
     () => updateFixedShadow(),
 );
 
+initFilter();
 handleDealColumns();
 initDataSource();
 updateMaxRowSpan();
@@ -1083,6 +1086,32 @@ async function onDataSourceChange() {
     updateCustomScrollbar();
 }
 
+/** 初始化过滤 */
+function initFilter() {
+    const columns = props.columns;
+    const status: Record<string, any> = {};
+    for (let i = 0; i < columns.length; i++) {
+        const column = columns[i];
+        const { filterable, filterOptions } = column;
+        if (!filterable || !filterOptions?.length) continue;
+        const filterValues = [];
+        for (let j = 0; j < filterOptions.length; j++) {
+            const option = filterOptions[j];
+            if (!option.selected) continue;
+            filterValues.push(option.value);
+        }
+        if (filterValues.length) {
+            status[column.dataIndex] = {
+                value: filterValues,
+                filter: column.filter,
+                column,
+                colIndex: i,
+            };
+        }
+    }
+    filterStatus.value = status;
+}
+
 function initDataSource(v = props.dataSource, option?: { forceSort?: boolean }) {
     let dataSourceTemp = v.slice(); // shallow copy
 
@@ -1096,6 +1125,18 @@ function initDataSource(v = props.dataSource, option?: { forceSort?: boolean }) 
     }
     dataSourceTemp = filterDataSource(dataSourceTemp);
     dataSourceCopy.value = dataSourceTemp;
+}
+
+function filterDataChange(value: FilterOption['value'][], column: StkTableColumn<any>, colIndex: number) {
+    const filter = {
+        [column.dataIndex]: {
+            value,
+            filter: column.filter,
+            column,
+            colIndex,
+        },
+    };
+    setFilter(filter);
 }
 
 function setFilter(
@@ -1117,32 +1158,23 @@ function filterDataSource(dataSource: DT[]) {
     if (!filterKeys?.length) return dataSource;
     let result = dataSource;
     for (const key of filterKeys) {
-        const { value, filter } = filterStatus.value[key];
+        const { value, filter, column, colIndex } = filterStatus.value[key];
         if (!value?.length) continue;
-        result = result.filter(row => {
-            const cellValue = row[key];
+        result = result.filter((row, rowIndex) => {
+            let cellValue = row[`__RAW__${key}`];
+            if (cellValue === undefined) {
+                if (column.formatter) {
+                    cellValue = column.formatter(cellValue, row, column, rowIndex, colIndex) || '-';
+                } else {
+                    cellValue = row[key];
+                }
+                row[`__RAW__${key}`] = cellValue;
+            }
             if (filter) {
                 return filter({ row, cellValue, filterValues: value });
             }
             return value.some(v => cellValue == v);
         });
-        // const { value, filter, column } = filterStatus.value[key];
-        // if (!value?.length) continue;
-        // result = result.filter(row => {
-        //     let cellValue = row[`__RAW__${[key]}`];
-        //     if (cellValue === undefined) {
-        //         if (column.formatter) {
-        //             cellValue = formatter(cellValue, row, column) || '-';
-        //         } else {
-        //             cellValue = row[key];
-        //         }
-        //         row[`__RAW__${[column.dataIndex]}`] = cellValue;
-        //     }
-        //     if (filter) {
-        //         return filter({ row, cellValue, filterValues: value });
-        //     }
-        //     return value.some(v => cellValue == v);
-        // });
     }
     return result;
 }
@@ -1155,7 +1187,7 @@ function handleDealColumns() {
 }
 
 function updateDataSource(val: DT[]) {
-    emits('selectionChange', val);
+    emits('selectionChange', []);
     if (!Array.isArray(val)) {
         console.warn('invalid dataSource');
         return;
