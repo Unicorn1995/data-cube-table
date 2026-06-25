@@ -1129,6 +1129,7 @@ function initDataSource(v = props.dataSource, option?: { forceSort?: boolean }) 
 
 function filterDataChange(value: FilterOption['value'][], column: StkTableColumn<any>, colIndex: number) {
     const filter = {
+        ...filterStatus.value,
         [column.dataIndex]: {
             value,
             filter: column.filter,
