@@ -102,6 +102,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     sortConfig?: Omit<SortConfig<T>, 'defaultSort'>;
     /** 固定列 */
     fixed?: 'left' | 'right' | null;
+    /** 格式化 */
+    formatter?: (value: any, row: T, col: T) => any;
     /** 是否隐藏列 */
     hidden?: boolean;
     /**

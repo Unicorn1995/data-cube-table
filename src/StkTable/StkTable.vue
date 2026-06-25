@@ -100,6 +100,17 @@
                                 </template>
                                 <SortIcon v-if="col.sorter" class="table-header-sorter" />
                             </div>
+                            <!-- <span>
+                                <Filter 
+                                    theme="dark" 
+                                    @change="(val) => console.log(val)" 
+                                    :col="col" 
+                                    :row-index="rowIndex" 
+                                    :col-index="colIndex"
+                                    :data-source="dataSourceCopy"
+                                    :options="[{ label: '12', value: 1 }]">
+                                </Filter>
+                            </span> -->
                             <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="onThResizeMouseDown($event, col)"></div>
                         </th>
                         <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
@@ -161,47 +172,52 @@
                         <template v-else>
                             <template v-for="(col, colIndex) in virtualX_columnPart">
                                 <td v-if="!shouldHideCell(row, col)" :key="colKeyGen(col)" v-bind="getTDProps(row, col, rowIndex, colIndex)">
-                                    <component
-                                        :is="col.customCell"
-                                        v-if="col.customCell"
-                                        class="table-cell-wrapper"
-                                        tabindex="-1"
-                                        :col="col"
-                                        :row="row"
-                                        :rowIndex="getAbsoluteRowIndex(rowIndex)"
-                                        :colIndex="colIndex"
-                                        :cellValue="row && row[col.dataIndex]"
-                                        :expanded="row && row.__EXP__"
-                                        :tree-expanded="row && row.__T_EXP__"
-                                    >
-                                        <template #stkFoldIcon>
-                                            <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
-                                        </template>
-                                        <template #stkDragIcon>
-                                            <DragHandle @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))" />
-                                        </template>
-                                    </component>
-                                    <div v-else-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="row[col.dataIndex] || ''">
-                                        {{ (row && row[col.dataIndex]) != null ? row && row[col.dataIndex] : getEmptyCellText(col, row) }}
-                                    </div>
-                                    <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
-                                        {{ (props.seqConfig.startIndex || 0) + getAbsoluteRowIndex(rowIndex) + 1 }}
-                                    </div>
-                                    <div v-else-if="col.type === 'selection'" class="table-cell-wrapper" tabindex="-1">
-                                        <input type="checkbox" :checked="row.__isChecked" @change="onCellCheckboxChange(row)" />
-                                    </div>
-                                    <TreeNodeCell
-                                        v-else-if="col.type === 'tree-node'"
-                                        class="table-cell-wrapper"
-                                        tabindex="-1"
-                                        :col="col"
-                                        :row="row"
-                                    ></TreeNodeCell>
-                                    <div v-else class="table-cell-wrapper" tabindex="-1" :title="row[col.dataIndex] || ''">
-                                        <DragHandle v-if="col.type === 'dragRow'" @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))" />
-                                        <TriangleIcon v-else-if="col.type === 'expand'" />
-                                        <span v-if="row[col.dataIndex] != null">{{ row[col.dataIndex] }}</span>
-                                    </div>
+                                    <template v-for="text in [getFormattedValue(row, col, rowIndex, colIndex)]" :key="text">
+                                        <component
+                                            :is="col.customCell"
+                                            v-if="col.customCell"
+                                            class="table-cell-wrapper"
+                                            tabindex="-1"
+                                            :col="col"
+                                            :row="row"
+                                            :rowIndex="getAbsoluteRowIndex(rowIndex)"
+                                            :colIndex="colIndex"
+                                            :cellValue="row && text"
+                                            :expanded="row && row.__EXP__"
+                                            :tree-expanded="row && row.__T_EXP__"
+                                        >
+                                            <template #stkFoldIcon>
+                                                <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
+                                            </template>
+                                            <template #stkDragIcon>
+                                                <DragHandle @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))" />
+                                            </template>
+                                        </component>
+                                        <div v-else-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="text || ''">
+                                            {{ (row && text) != null ? row && text : getEmptyCellText(col, row) }}
+                                        </div>
+                                        <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
+                                            {{ (props.seqConfig.startIndex || 0) + getAbsoluteRowIndex(rowIndex) + 1 }}
+                                        </div>
+                                        <div v-else-if="col.type === 'selection'" class="table-cell-wrapper" tabindex="-1">
+                                            <input type="checkbox" :checked="row.__isChecked" @change="onCellCheckboxChange(row)" />
+                                        </div>
+                                        <TreeNodeCell
+                                            v-else-if="col.type === 'tree-node'"
+                                            class="table-cell-wrapper"
+                                            tabindex="-1"
+                                            :col="col"
+                                            :row="row"
+                                        ></TreeNodeCell>
+                                        <div v-else class="table-cell-wrapper" tabindex="-1" :title="text || ''">
+                                            <DragHandle
+                                                v-if="col.type === 'dragRow'"
+                                                @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))"
+                                            />
+                                            <TriangleIcon v-else-if="col.type === 'expand'" />
+                                            <span v-if="text != null">{{ text }}</span>
+                                        </div>
+                                    </template>
                                 </td>
                             </template>
                         </template>
@@ -302,11 +318,13 @@ import { useTableColumns } from './useTableColumns';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
+// import Filter from './custom-cells/Filter/Filter.vue';
 import { useIndexResolver } from './useIndexResolver';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTd, getClosestTr, getClosestTrIndex, rafThrottle, transformWidthToStr } from './utils/index';
+// import { createFilter } from '../StkTable/index.js';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -831,6 +849,20 @@ const scrollbarOptions = computed(() => ({
     ...(typeof props.scrollbar === 'boolean' ? { enabled: props.scrollbar } : props.scrollbar),
 }));
 
+/**
+ * 统一获取和格式化单元格的值
+ */
+const getFormattedValue = (row: any, col: any, rowIndex: number, colIndex: number) => {
+    if (!row || !col) return null;
+    // 1. 基础取值（支持原有的普通取值，如果你的 dataIndex 支持 'echoMap.name' 这种深层路径，这里也可以用 lodash.get）
+    let value = row[col.dataIndex];
+    // 2. 如果配置了自定义格式化函数，执行 format
+    if (typeof col.formatter === 'function') {
+        value = col.formatter(value, row, col, rowIndex, colIndex);
+    }
+  return value;
+};
+
 const isExperimentalScrollY = computed(() => {
     if (scrollbarOptions.value?.enabled && props.scrollRowByRow) {
         return true;
@@ -1094,6 +1126,23 @@ function filterDataSource(dataSource: DT[]) {
             }
             return value.some(v => cellValue == v);
         });
+        // const { value, filter, column } = filterStatus.value[key];
+        // if (!value?.length) continue;
+        // result = result.filter(row => {
+        //     let cellValue = row[`__RAW__${[key]}`];
+        //     if (cellValue === undefined) {
+        //         if (column.formatter) {
+        //             cellValue = formatter(cellValue, row, column) || '-';
+        //         } else {
+        //             cellValue = row[key];
+        //         }
+        //         row[`__RAW__${[column.dataIndex]}`] = cellValue;
+        //     }
+        //     if (filter) {
+        //         return filter({ row, cellValue, filterValues: value });
+        //     }
+        //     return value.some(v => cellValue == v);
+        // });
     }
     return result;
 }
