@@ -264,7 +264,7 @@ export default {
 /**
  * @author japlus
  */
-import { computed, nextTick, onMounted, provide, ref, shallowRef, toRaw, toRef, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, provide, ref, shallowRef, toRaw, toRef, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TreeNodeCell from './components/TreeNodeCell.vue';
@@ -699,7 +699,7 @@ const emits = defineEmits<{
      *
      * ```(status: Record<UniqKey, FilterStatus>)```
      */
-    (e: 'filter-change', status: Record<UniqKey, FilterStatus>): void;
+    (e: 'filter-change', status: Record<UniqKey, FilterStatus | null>): void;
     /**
      * v-model:columns col resize 时更新宽度
      */
@@ -752,7 +752,7 @@ const currentHoverRowKey = ref<UniqKey | null>(null);
 
 const [tableHeaders, tableHeadersForCalc, dealColumns] = useTableColumns<DT>(props.virtualX, isRelativeMode);
 
-const filterStatus = ref<Record<UniqKey, FilterStatus>>({});
+const filterStatus = ref<Record<UniqKey, FilterStatus | null>>({});
 
 /** 最后一行的tableHeaders.内容是 props.columns 的引用集合  */
 const tableHeaderLast = computed(() => tableHeadersForCalc.value.slice(-1)[0] || []);
@@ -1080,6 +1080,10 @@ onMounted(() => {
     emits('selectionChange', checkedData.value);
 });
 
+onUnmounted(() => {
+    filterStatus.value = {};
+});
+
 async function onDataSourceChange() {
     await nextTick();
     initVirtualScrollY();
@@ -1128,20 +1132,24 @@ function initDataSource(v = props.dataSource, option?: { forceSort?: boolean }) 
 }
 
 function filterDataChange(value: FilterOption['value'][], column: StkTableColumn<any>, colIndex: number) {
-    const filter = {
-        ...filterStatus.value,
-        [column.dataIndex]: {
+    let payload = null;
+    if (value.length) {
+        payload = {
             value,
             filter: column.filter,
             column,
             colIndex,
-        },
+        };
+    }
+    const filter = {
+        ...filterStatus.value,
+        [column.dataIndex]: payload,
     };
     setFilter(filter);
 }
 
 function setFilter(
-    status: Record<UniqKey, FilterStatus> | null,
+    status: Record<UniqKey, FilterStatus | null> | null,
     option?: {
         remote?: boolean;
     },
@@ -1159,6 +1167,7 @@ function filterDataSource(dataSource: DT[]) {
     if (!filterKeys?.length) return dataSource;
     let result = dataSource;
     for (const key of filterKeys) {
+        if (!filterStatus.value[key]) continue;
         const { value, filter, column, colIndex } = filterStatus.value[key];
         if (!value?.length) continue;
         result = result.filter((row, rowIndex) => {

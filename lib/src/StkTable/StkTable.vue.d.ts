@@ -420,7 +420,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * en: Set filter status(Beta)
      * @see {@link setFilter}
      */
-    setFilter: (status: Record<UniqKey, FilterStatus> | null, option?: {
+    setFilter: (status: Record<UniqKey, FilterStatus | null> | null, option?: {
         remote?: boolean;
     }) => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
@@ -474,7 +474,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
         col: StkTableColumn<any> | null;
     }) => void;
     "area-selection-change": (ranges: AreaSelectionRange[]) => void;
-    "filter-change": (status: Record<UniqKey, FilterStatus>) => void;
+    "filter-change": (status: Record<UniqKey, FilterStatus | null>) => void;
     "update:columns": (cols: StkTableColumn<any>[]) => void;
     selectionChange: (data: any[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
@@ -747,7 +747,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     }) => any) | undefined;
     "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
     "onScroll-x"?: ((ev: Event) => any) | undefined;
-    "onFilter-change"?: ((status: Record<UniqKey, FilterStatus>) => any) | undefined;
+    "onFilter-change"?: ((status: Record<UniqKey, FilterStatus | null>) => any) | undefined;
     onSelectionChange?: ((data: any[]) => any) | undefined;
 }>, {
     width: string;
