@@ -34,6 +34,7 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             dataIndex: 'bondAbbreviation',
             title: t('abbreviation'),
             width: 130,
+            filterable: true,
             fixed: 'left',
         },
         { dataIndex: 'remainingPeriod', title: t('remainingPeriod') },
@@ -44,17 +45,18 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             align: 'right',
             headerAlign: 'right',
             sorter: true,
-            customHeaderCell: Filter(
-                {
-                    options: [
-                        { label: '3000', value: 3000 },
-                        { label: '4000', value: 4000 },
-                        { label: '2000', value: 2000 },
-                    ],
-                },
-                ({ col }: { col: StkTableColumn<DataType> }) =>
-                    h('span', {}, [col.title + `(${filterStatus.value.bestBuyVol?.value || '-'})`]),
-            ),
+            formatter: (value: number) => value.toLocaleString(),
+            // customHeaderCell: Filter(
+            //     {
+            //         options: [
+            //             { label: '3000', value: 3000 },
+            //             { label: '4000', value: 4000 },
+            //             { label: '2000', value: 2000 },
+            //         ],
+            //     },
+            //     ({ col }: { col: StkTableColumn<DataType> }) =>
+            //         h('span', {}, [col.label + `(${filterStatus.value.bestBuyVol?.value || '-'})`]),
+            // ),
         },
         {
             dataIndex: 'bestBuyPrice',
@@ -64,24 +66,24 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             headerAlign: 'right',
             sorter: true,
             sortType: 'number',
-            customHeaderCell: Filter({
-                options: [
-                    { label: '<1', value: 1 },
-                    { label: '1-2', value: 2 },
-                    { label: '>2', value: 3 },
-                ],
-                filter({ cellValue, filterValues }) {
-                    return filterValues.some(fv => {
-                        if (fv === 1) {
-                            return cellValue < 1;
-                        }
-                        if (fv === 2) {
-                            return cellValue >= 1 && cellValue < 2;
-                        }
-                        return cellValue >= 2;
-                    });
-                },
-            }),
+            // customHeaderCell: Filter({
+            //     options: [
+            //         { label: '<1', value: 1 },
+            //         { label: '1-2', value: 2 },
+            //         { label: '>2', value: 3 },
+            //     ],
+            //     // filter({ cellValue, filterValues }) {
+            //     //     return filterValues.some(fv => {
+            //     //         if (fv === 1) {
+            //     //             return cellValue < 1;
+            //     //         }
+            //     //         if (fv === 2) {
+            //     //             return cellValue >= 1 && cellValue < 2;
+            //     //         }
+            //     //         return cellValue >= 2;
+            //     //     });
+            //     // },
+            // }),
         },
         {
             dataIndex: 'bestSellPrice',
@@ -95,16 +97,26 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
         {
             dataIndex: 'bestSellVol',
             sortType: 'number',
-            title: t('sellVolume'),
+            label: t('sellVolume'),
             align: 'right',
             headerAlign: 'right',
             sorter: true,
-            customHeaderCell: Filter({
-                options: [
-                    { label: '5000', value: 5000 },
-                    { label: '4000', value: 4000 },
-                ],
-            }),
+            // formatter: (value, row) => value,
+            // filter: ({ cellValue, filterValues }) => {
+            //     return cellValue > 2000
+            // },
+            filterable: true,
+            // filterOptions: [
+
+            //     { label: '5000', value: 5000, selected: true },
+            //     { label: '4000', value: 4000 },
+            // ]
+            // customHeaderCell: Filter({
+            //     options: [
+            //         { label: '5000', value: 5000 },
+            //         { label: '4000', value: 4000 },
+            //     ],
+            // }),
         },
         {
             dataIndex: 'lastPrice',
@@ -114,6 +126,7 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             headerAlign: 'right',
             sortType: 'number',
             sorter: true,
+            filterable: true,
         },
         {
             dataIndex: 'couponRate',

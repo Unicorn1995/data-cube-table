@@ -601,9 +601,9 @@ const emits = defineEmits<{
     /**
      * 单元格点击事件
      *
-     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number })```
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number, colIndex: number })```
      */
-    (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number }): void;
+    (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number, colIndex: number }): void;
     /**
      * 单元格鼠标进入事件
      *
@@ -1471,7 +1471,8 @@ function onCellClick(e: MouseEvent) {
     const row = dataSourceCopy.value[rowIndex];
     if (!row) return;
     const colKey = getClosestColKey(e.target as HTMLElement);
-    const col = tableHeaderLast.value.find(item => colKeyGen.value(item) === colKey);
+    const colIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
+    const col = tableHeaderLast.value[colIndex]
     if (!col) return;
     // Delegated triangle/fold icon click
     if ((e.target as HTMLElement)?.closest('.stk-fold-icon')) {
@@ -1480,7 +1481,7 @@ function onCellClick(e: MouseEvent) {
     }
     if (props.cellActive) {
         const cellKey = cellKeyGen(row, col);
-        const result = { row, col, select: false, rowIndex };
+        const result = { row, col, select: false, rowIndex, colIndex };
         if (props.selectedCellRevokable && currentSelectedCellKey.value === cellKey) {
             currentSelectedCellKey.value = void 0;
         } else {
@@ -1489,7 +1490,7 @@ function onCellClick(e: MouseEvent) {
         }
         emits('cell-selected', e, result);
     }
-    emits('cell-click', e, row, col, { rowIndex });
+    emits('cell-click', e, row, col, { rowIndex, colIndex });
 }
 
 function getCellEventData(e: MouseEvent) {

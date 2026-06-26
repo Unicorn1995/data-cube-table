@@ -76,6 +76,8 @@ export function createFilter(option?: CreateFilterOption) {
                         filterStatus.value[colKey] = {
                             value,
                             filter: config?.filter ?? filterStatus.value[colKey]?.filter,
+                            column: props.col,
+                            colIndex: props.colIndex,
                         };
                         stkTableInstance?.exposed?.setFilter(filterStatus.value, option);
                     }
@@ -86,7 +88,7 @@ export function createFilter(option?: CreateFilterOption) {
                                 ...props,
                                 theme: theme.value,
                                 active: filterNumber.value > 0,
-                                options: resolvedOptions.value,
+                                dataSource: stkTableInstance?.props?.dataSource || [],
                                 onChange: handleChange,
                             },
                             component ? { default: () => [h(component, props)] } : undefined,

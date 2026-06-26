@@ -445,6 +445,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     }) => void;
     "cell-click": (ev: MouseEvent, row: any, col: StkTableColumn<any>, data: {
         rowIndex: number;
+        colIndex: number;
     }) => void;
     "cell-mouseenter": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
     "cell-mouseleave": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
@@ -738,6 +739,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     }) => any) | undefined;
     "onCell-click"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>, data: {
         rowIndex: number;
+        colIndex: number;
     }) => any) | undefined;
     "onCell-mouseenter"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
     "onCell-mouseleave"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
