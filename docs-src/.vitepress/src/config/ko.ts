@@ -62,7 +62,7 @@ export const koConfig = defineConfig({
                                     { text: '스크롤바', link: '/table/basic/scrollbar' },
                                     { text: 'table-layout: fixed', link: '/table/basic/fixed-mode' },
                                     { text: '행 단위 스크롤', link: '/table/basic/scroll-row-by-row' },
-                                    { text: '푸터 (✨NEW)', link: '/table/basic/footer' },
+                                    { text: '푸터', link: '/table/basic/footer' },
                                 ]
                             },
                             {
@@ -79,6 +79,14 @@ export const koConfig = defineConfig({
                                     { text: '커스텀 셀', link: '/table/advanced/custom-cell' },
                                     { text: '커스텀 정렬', link: '/table/advanced/custom-sort' },
                                     { text: 'Vue 2 스크롤 최적화', link: '/table/advanced/vue2-scroll-optimize' },
+                                    {
+                                        text: '커스텀 셀 내장 확장(✨NEW)',
+                                        collapsed: true,
+                                        items: [
+                                            { text: 'EditableCell 편집 가능 셀', link: '/table/advanced/custom-cells/editable-cell' },
+                                            { text: 'Filter 필터', link: '/table/advanced/custom-cells/filter' },
+                                        ],
+                                    },
                                 ]
                             },
                             {

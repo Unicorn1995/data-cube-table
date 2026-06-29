@@ -1,10 +1,10 @@
-# Filter 筛选(Beta)
+# Filter 필터(Beta)
 
-Filter 是一个内置的列头筛选组件，点击列头筛选图标即可弹出筛选面板，支持手动指定选项和自动从数据提取选项。
+Filter는 내장된 열 헤더 필터 컴포넌트입니다. 열 헤더의 필터 아이콘을 클릭하면 필터 패널이 열리며, 수동으로 옵션을 지정하거나 데이터에서 자동으로 옵션을 추출하는 것을 지원합니다.
 
-### 基础使用
+### 기본 사용법
 
-通过 `createFilter` 工厂函数创建 Filter 组件，并将其作为 `customHeaderCell` 使用。
+`createFilter` 팩토리 함수로 Filter 컴포넌트를 생성하고 `customHeaderCell`로 사용합니다.
 
 <demo vue="advanced/custom-cells/Filter/index.vue"></demo>
 
@@ -15,7 +15,7 @@ import { useI18n } from '../../hooks/useI18n';
 const { t } = useI18n();
 const { Filter, filterStatus } = createFilter();
 
-// 在 columns 中使用
+// columns에서 사용
 const columns: StkTableColumn<RowData>[] = [
     {
         title: t('name'),
@@ -30,23 +30,23 @@ const columns: StkTableColumn<RowData>[] = [
 ];
 ```
 
-### 自动提取选项
+### 옵션 자동 추출
 
-设置 `autoOptions: true`，Filter 会自动从当前列的数据中提取去重后的值作为筛选选项。
+`autoOptions: true`를 설정하면, Filter가 현재 열의 데이터에서 중복을 제거한 값을 자동으로 추출하여 필터 옵션으로 사용합니다.
 
 ```ts
 {
     title: t('city'),
     dataIndex: 'city',
     customHeaderCell: Filter({
-        autoOptions: true, // 自动从数据提取选项
+        autoOptions: true, // 데이터에서 자동으로 옵션 추출
     }),
 }
 ```
 
-### 自定义筛选逻辑
+### 필터 로직 커스터마이징
 
-通过 `filter` 参数可以自定义筛选逻辑：
+`filter` 매개변수를 통해 필터 로직을 커스터마이징할 수 있습니다:
 
 ```ts
 {
@@ -54,8 +54,8 @@ const columns: StkTableColumn<RowData>[] = [
     dataIndex: 'age',
     customHeaderCell: Filter({
         options: [
-            { label: '30岁以下', value: 'young' },
-            { label: '30岁以上', value: 'old' },
+            { label: '30세 미만', value: 'young' },
+            { label: '30세 이상', value: 'old' },
         ],
         filter: ({ row, cellValue, filterValues }) => {
             if (filterValues.includes('young')) {
@@ -70,9 +70,9 @@ const columns: StkTableColumn<RowData>[] = [
 }
 ```
 
-### 数据过滤
+### 데이터 필터링
 
-Filter 组件本身不自动过滤数据，它通过 `filterStatus` 响应式对象提供筛选状态，需要自行处理数据过滤：
+Filter 컴포넌트 자체는 데이터를 자동으로 필터링하지 않습니다. `filterStatus` 반응형 객체를 통해 필터 상태를 제공하므로, 데이터 필터링은 직접 처리해야 합니다:
 
 ```ts
 import { ref, computed } from 'vue';
@@ -80,9 +80,9 @@ import { createFilter } from 'stk-table-vue/src/StkTable/custom-cells/Filter';
 
 const { Filter, filterStatus } = createFilter();
 
-const rawData = ref([...]); // 原始数据
+const rawData = ref([...]); // 원본 데이터
 
-// 根据筛选状态过滤数据
+// 필터 상태에 따라 데이터 필터링
 const dataSource = computed(() => {
     const filters = filterStatus.value;
     const filterKeys = Object.keys(filters);
@@ -94,12 +94,12 @@ const dataSource = computed(() => {
             if (filter.value.length > 0) {
                 const cellValue = row[key as keyof typeof row];
                 if (filter.filter) {
-                    // 使用自定义过滤函数
+                    // 커스텀 필터 함수 사용
                     if (!filter.filter({ row, cellValue, filterValues: filter.value })) {
                         return false;
                     }
                 } else {
-                    // 默认过滤逻辑
+                    // 기본 필터 로직
                     if (!filter.value.includes(cellValue)) {
                         return false;
                     }
@@ -111,31 +111,31 @@ const dataSource = computed(() => {
 });
 ```
 
-### 配置选项
+### 설정 옵션
 
-`FilterComponent` 接受一个配置对象：
+`FilterComponent`는 설정 객체를 받습니다:
 
 ```ts
 interface FilterComponentConfig {
-    options?: FilterOption[];       // 筛选选项列表
-    filter?: (args) => boolean;     // 自定义筛选函数
-    autoOptions?: boolean;          // 是否自动从数据提取选项，默认 false
+    options?: FilterOption[];       // 필터 옵션 목록
+    filter?: (args) => boolean;     // 커스텀 필터 함수
+    autoOptions?: boolean;          // 데이터에서 자동으로 옵션 추출 여부, 기본값 false
 }
 
 interface FilterOption {
-    label: string;     // 显示文本
-    value: any;        // 筛选值
-    selected?: boolean; // 是否默认选中
+    label: string;     // 표시 텍스트
+    value: any;        // 필터 값
+    selected?: boolean; // 기본 선택 여부
 }
 ```
 
-### FilterStatus 类型
+### FilterStatus 타입
 
 ```ts
 interface FilterStatus {
-    /** 当前选中的筛选值数组 */
+    /** 현재 선택된 필터 값 배열 */
     value: any[];
-    /** 自定义筛选逻辑函数 */
+    /** 커스텀 필터 로직 함수 */
     filter?: (args: { row: any; cellValue: any; filterValues: any[] }) => boolean;
 }
 ```

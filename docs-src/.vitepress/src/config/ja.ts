@@ -62,7 +62,7 @@ export const jaConfig = defineConfig({
                                     { text: 'スクロールバー', link: '/table/basic/scrollbar' },
                                     { text: 'table-layout: fixed', link: '/table/basic/fixed-mode' },
                                     { text: '行単位スクロール', link: '/table/basic/scroll-row-by-row' },
-                                    { text: 'フッター（✨NEW）', link: '/table/basic/footer' },
+                                    { text: 'フッター', link: '/table/basic/footer' },
                                 ]
                             },
                             {
@@ -79,6 +79,14 @@ export const jaConfig = defineConfig({
                                     { text: 'カスタムセル', link: '/table/advanced/custom-cell' },
                                     { text: 'カスタムソート', link: '/table/advanced/custom-sort' },
                                     { text: 'Vue 2スクロール最適化', link: '/table/advanced/vue2-scroll-optimize' },
+                                    {
+                                        text: 'カスタムセル組み込み拡張(✨NEW)',
+                                        collapsed: true,
+                                        items: [
+                                            { text: 'EditableCell 編集可能セル', link: '/table/advanced/custom-cells/editable-cell' },
+                                            { text: 'Filter フィルター', link: '/table/advanced/custom-cells/filter' },
+                                        ],
+                                    },
                                 ]
                             },
                             {

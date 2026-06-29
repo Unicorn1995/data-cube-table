@@ -88,7 +88,7 @@ export const zhConfig = defineConfig({
                                     { text: '滚动条', link: '/table/basic/scrollbar', },
                                     { text: 'table-layout:fix', link: '/table/basic/fixed-mode', },
                                     { text: '按行滚动', link: '/table/basic/scroll-row-by-row', },
-                                    { text: '表尾数据(✨NEW)', link: '/table/basic/footer' },
+                                    { text: '表尾数据', link: '/table/basic/footer' },
                                 ]
                             },
                             {
@@ -106,7 +106,7 @@ export const zhConfig = defineConfig({
                                     { text: '自定义排序', link: '/table/advanced/custom-sort', },
                                     { text: 'Vue2 滚动优化', link: '/table/advanced/vue2-scroll-optimize', },
                                     {
-                                        text: '自定义单元格内置扩展',
+                                        text: '自定义单元格内置扩展(✨NEW)',
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell 可编辑单元格', link: '/table/advanced/custom-cells/editable-cell' },

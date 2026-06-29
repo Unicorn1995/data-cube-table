@@ -62,7 +62,7 @@ export const enConfig = defineConfig({
                                     { text: 'Scrollbar', link: '/table/basic/scrollbar' },
                                     { text: 'Table-layout: fixed', link: '/table/basic/fixed-mode' },
                                     { text: 'Row-by-Row Scrolling', link: '/table/basic/scroll-row-by-row' },
-                                    { text: 'Footer(✨NEW)', link: '/table/basic/footer' },
+                                    { text: 'Footer', link: '/table/basic/footer' },
                                 ]
                             },
                             {
@@ -79,6 +79,14 @@ export const enConfig = defineConfig({
                                     { text: 'Custom Cell', link: '/table/advanced/custom-cell' },
                                     { text: 'Custom Sorting', link: '/table/advanced/custom-sort' },
                                     { text: 'Vue 2 Scroll Optimization', link: '/table/advanced/vue2-scroll-optimize' },
+                                    {
+                                        text: 'Built-in Custom Cell Extensions (✨NEW)',
+                                        collapsed: true,
+                                        items: [
+                                            { text: 'EditableCell', link: '/table/advanced/custom-cells/editable-cell' },
+                                            { text: 'Filter', link: '/table/advanced/custom-cells/filter' },
+                                        ],
+                                    },
                                 ]
                             },
                             {

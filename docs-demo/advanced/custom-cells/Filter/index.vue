@@ -6,6 +6,9 @@
 import { computed, ref } from 'vue';
 import StkTable from '../../../StkTable.vue';
 import { createFilter, StkTableColumn } from 'stk-table-vue';
+import { useI18n } from '../../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const { Filter, filterStatus } = createFilter();
 
@@ -17,42 +20,42 @@ interface RowData {
 }
 
 const rawData = ref<RowData[]>([
-    { id: 1, name: '张三', city: '北京', department: '技术部' },
-    { id: 2, name: '李四', city: '上海', department: '产品部' },
-    { id: 3, name: '王五', city: '北京', department: '技术部' },
-    { id: 4, name: '赵六', city: '广州', department: '运营部' },
-    { id: 5, name: '孙七', city: '上海', department: '技术部' },
-    { id: 6, name: '周八', city: '深圳', department: '产品部' },
+    { id: 1, name: t('zhangSan'), city: t('beijing'), department: t('techDept') },
+    { id: 2, name: t('liSi'), city: t('shanghai'), department: t('productDept') },
+    { id: 3, name: t('wangWu'), city: t('beijing'), department: t('techDept') },
+    { id: 4, name: t('zhaoLiu'), city: t('guangzhou'), department: t('opsDept') },
+    { id: 5, name: t('sunQi'), city: t('shanghai'), department: t('techDept') },
+    { id: 6, name: t('zhouBa'), city: t('shenzhen'), department: t('productDept') },
 ]);
 
 const columns: StkTableColumn<RowData>[] = [
     { title: 'ID', dataIndex: 'id', width: 60 },
     {
-        title: '姓名',
+        title: t('name'),
         dataIndex: 'name',
         customHeaderCell: Filter({
             options: [
-                { label: '张三', value: '张三' },
-                { label: '李四', value: '李四' },
-                { label: '王五', value: '王五' },
+                { label: t('zhangSan'), value: t('zhangSan') },
+                { label: t('liSi'), value: t('liSi') },
+                { label: t('wangWu'), value: t('wangWu') },
             ],
         }),
     },
     {
-        title: '城市',
+        title: t('city'),
         dataIndex: 'city',
         customHeaderCell: Filter({
-            autoOptions: true, // 自动从数据提取选项
+            autoOptions: true,
         }),
     },
     {
-        title: '部门',
+        title: t('department'),
         dataIndex: 'department',
         customHeaderCell: Filter({
             options: [
-                { label: '技术部', value: '技术部' },
-                { label: '产品部', value: '产品部' },
-                { label: '运营部', value: '运营部' },
+                { label: t('techDept'), value: t('techDept') },
+                { label: t('productDept'), value: t('productDept') },
+                { label: t('opsDept'), value: t('opsDept') },
             ],
         }),
     },

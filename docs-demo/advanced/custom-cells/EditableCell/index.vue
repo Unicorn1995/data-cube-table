@@ -1,15 +1,18 @@
 <template>
-    <StkTable :columns="columns" :data-source="dataSource" row-key="id" />
+    <StkTable cell-active :columns="columns" :data-source="dataSource" row-key="id" />
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
 import StkTable from '../../../StkTable.vue';
 import { createEditableCell, StkTableColumn } from 'stk-table-vue';
+import { useI18n } from '../../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const { EditableCell } = createEditableCell({
     onChange: (newValue, row, dataIndex) => {
-        console.log('值变更:', { newValue, row, dataIndex });
+        console.log(t('valueChange'), { newValue, row, dataIndex });
     },
 });
 
@@ -22,14 +25,14 @@ interface RowData {
 
 const columns: StkTableColumn<RowData>[] = [
     { title: 'ID', dataIndex: 'id', width: 60 },
-    { title: '姓名', dataIndex: 'name', width: 100, customCell: EditableCell() },
-    { title: '年龄', dataIndex: 'age', width: 80, customCell: EditableCell() },
-    { title: '地址', dataIndex: 'address', customCell: EditableCell() },
+    { title: t('name'), dataIndex: 'name', width: 100, customCell: EditableCell() },
+    { title: t('age'), dataIndex: 'age', width: 80, customCell: EditableCell() },
+    { title: t('address'), dataIndex: 'address', customCell: EditableCell() },
 ];
 
 const dataSource = ref<RowData[]>([
-    { id: 1, name: '张三', age: 28, address: '北京市海淀区' },
-    { id: 2, name: '李四', age: 32, address: '上海市浦东新区' },
-    { id: 3, name: '王五', age: 25, address: '广州市天河区' },
+    { id: 1, name: t('zhangSan'), age: 28, address: t('haidian') },
+    { id: 2, name: t('liSi'), age: 32, address: t('pudong') },
+    { id: 3, name: t('wangWu'), age: 25, address: t('tianhe') },
 ]);
 </script>
