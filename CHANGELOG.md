@@ -2,6 +2,11 @@
 ## 1.0.0
 * Feature
   - feat: `HighlightDimBaseOption` add `ignoreInvisible` option. When set to `true`, if the corresponding DOM cannot be obtained, it will be discarded directly and not put into the store for loop calculation. If the key already exists in the store, it will also be deleted.
+  - feat `createFilter`
+    - feat: `createFilter` add `onChange` callback in `CreateFilterOption`, triggered when filter status changes with `{ colKey, status }` parameters.
+    - feat: `setFilter` add `silent` option. When set to `true`, the `filter-change` event will not be triggered.
+    - feat: add `filter-change` emit event, triggered when filter status changes via `setFilter`.
+  - feat `createEditableCell`
 
 ## 0.11.15
 * Bugfix:

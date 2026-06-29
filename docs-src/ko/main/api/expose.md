@@ -253,14 +253,15 @@ function copySelectedArea(): string
 ```
 
 ### setFilter(Beta)
-필터 상태 설정
+필터 상태 설정(Beta). 설정 후 `filter-change` 이벤트가 트리거됩니다.
 
 ```ts
 /**
  * 필터 상태 설정
- * @param colKey 열 고유 키 필드
- * @param filteredValue 필터 값, undefined는 필터 해제
- * @param option.silent true 설정 시 `@filter-change` 트리거 안함. 기본값:false
+ * @param status 필터 상태 객체, null 전달 시 모든 필터 해제
+ * @param option.remote true 설정 시 자동 데이터 필터링을 건너뜁니다. 원격 필터링에 적합
+ * @param option.silent true 설정 시 `filter-change` 이벤트를 트리거하지 않습니다, 기본값 false
  */
-function setFilter(colKey: string, filteredValue: any, option?: { silent?: boolean })
+function setFilter(status: Record<UniqKey, FilterStatus> | null, option?: { remote?: boolean; silent?: boolean })
 ```
+

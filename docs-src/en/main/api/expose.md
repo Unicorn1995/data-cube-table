@@ -254,14 +254,15 @@ function copySelectedArea(): string
 ```
 
 ### setFilter(Beta)
-Set filter state
+Set filter status(Beta). Triggers the `filter-change` event after setting.
 
 ```ts
 /**
- * Set filter state
- * @param colKey Column unique key field
- * @param filteredValue Filter value, undefined to clear filter
- * @param option.silent Set to true to not trigger `@filter-change`. Default: false
+ * Set filter status
+ * @param status Filter status object, pass null to clear all filters
+ * @param option.remote Set to true to skip automatic data filtering, suitable for remote filtering scenarios
+ * @param option.silent Set to true to not trigger `filter-change` event, default false
  */
-function setFilter(colKey: string, filteredValue: any, option?: { silent?: boolean })
+function setFilter(status: Record<UniqKey, FilterStatus> | null, option?: { remote?: boolean; silent?: boolean })
 ```
+

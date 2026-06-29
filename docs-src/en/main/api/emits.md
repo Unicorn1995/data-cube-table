@@ -162,6 +162,14 @@ Triggered when column width changes.
 (e: 'col-resize', col: StkTableColumn<DT>): void;
 ```
 
+### filter-change
+
+Triggered when filter status changes. This callback is only triggered when calling the `setFilter` method to set the filter status.
+
+```ts
+(e: 'filter-change', status: Record<UniqKey, FilterStatus>): void;
+```
+
 ### toggle-row-expand
 
 Triggered when expanding a row.

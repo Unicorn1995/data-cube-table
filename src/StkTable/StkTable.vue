@@ -1035,6 +1035,7 @@ function setFilter(
     status: Record<UniqKey, FilterStatus> | null,
     option?: {
         remote?: boolean;
+        silent?: boolean;
     },
 ) {
     status = status || {};
@@ -1042,7 +1043,9 @@ function setFilter(
     if (!option?.remote) {
         initDataSource();
     }
-    emits('filter-change', status);
+    if (!option?.silent) {
+        emits('filter-change', status);
+    }
 }
 
 function filterDataSource(dataSource: DT[]) {

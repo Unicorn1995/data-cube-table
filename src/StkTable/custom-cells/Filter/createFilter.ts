@@ -5,6 +5,7 @@ import type { CreateFilterOption, FilterComponentConfig, FilterOption, FilterSta
 
 /**
  * 从数据源提取筛选选项
+ *
  * @param dataSource 数据源
  * @param columnKey 列名
  * @returns 筛选选项数组
@@ -27,6 +28,9 @@ function extractFilterOptions(dataSource: any[], columnKey: string): FilterOptio
 
 /**
  * 表格筛选功能工厂函数 (BETA)
+ *
+ * Q: 为什么要通过 stkTableInstance 来设置筛选状态，而不是直接在 createFilter 中传入dataSource。
+ * A: 因为 createFilter 不一定有 dataSource的上下文，它可能在独立的js/ts 中使用，而非Vue SFC。而通过 stkTableInstance 可以获取到 dataSource
  * @beta
  * @returns
  */
@@ -77,6 +81,7 @@ export function createFilter(option?: CreateFilterOption) {
                             value,
                             filter: config?.filter ?? filterStatus.value[colKey]?.filter,
                         };
+                        option?.onChange?.({ colKey, status: filterStatus.value[colKey] });
                         stkTableInstance?.exposed?.setFilter(filterStatus.value, option);
                     }
                     return () =>

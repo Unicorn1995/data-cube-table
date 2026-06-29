@@ -8,27 +8,6 @@ EditableCell은 내장된 편집 가능 셀 컴포넌트입니다. 셀을 더블
 
 <demo vue="advanced/custom-cells/EditableCell/index.vue"></demo>
 
-```ts
-import { createEditableCell } from 'stk-table-vue/src/StkTable/custom-cells/EditableCell';
-import { useI18n } from '../../hooks/useI18n';
-
-const { t } = useI18n();
-
-const { EditableCell } = createEditableCell({
-    onChange: (newValue, row, dataIndex) => {
-        console.log(t('valueChange'), newValue, row, dataIndex);
-    },
-});
-
-// columns에서 사용
-const columns: StkTableColumn<RowData>[] = [
-    { title: 'ID', dataIndex: 'id', width: 60 },
-    { title: t('name'), dataIndex: 'name', width: 100, customCell: EditableCell() },
-    { title: t('age'), dataIndex: 'age', width: 80, customCell: EditableCell() },
-    { title: t('address'), dataIndex: 'address', customCell: EditableCell() },
-];
-```
-
 ### 설정 옵션
 
 `createEditableCell`은 설정 객체를 받습니다:

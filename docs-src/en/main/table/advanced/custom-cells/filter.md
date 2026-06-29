@@ -8,28 +8,6 @@ Create a Filter component via the `createFilter` factory function and use it as 
 
 <demo vue="advanced/custom-cells/Filter/index.vue"></demo>
 
-```ts
-import { createFilter } from 'stk-table-vue/src/StkTable/custom-cells/Filter';
-import { useI18n } from '../../hooks/useI18n';
-
-const { t } = useI18n();
-const { Filter, filterStatus } = createFilter();
-
-// Use in columns
-const columns: StkTableColumn<RowData>[] = [
-    {
-        title: t('name'),
-        dataIndex: 'name',
-        customHeaderCell: Filter({
-            options: [
-                { label: t('zhangSan'), value: t('zhangSan') },
-                { label: t('liSi'), value: t('liSi') },
-            ],
-        }),
-    },
-];
-```
-
 ### Auto Extract Options
 
 Set `autoOptions: true`, and Filter will automatically extract unique values from the current column's data as filter options.
@@ -110,6 +88,24 @@ const dataSource = computed(() => {
     });
 });
 ```
+
+### createFilter Options
+
+The `createFilter` factory function accepts a configuration object:
+
+```ts
+interface CreateFilterOption {
+    /** Whether to use remote filtering, default false */
+    remote?: boolean;
+    /** Triggered when filter status changes */
+    onChange?: (data: { colKey: UniqKey; status: FilterStatus }) => void;
+}
+```
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| remote | `boolean` | `false` | Whether to use remote filtering, when set to true, automatic data filtering will not be triggered |
+| onChange | `(data) => void` | - | Callback when filter status changes, parameters include `colKey` (column key) and `status` (current column filter status) |
 
 ### Configuration Options
 

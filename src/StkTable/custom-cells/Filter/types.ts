@@ -1,5 +1,7 @@
 // Filter组件相关类型定义
 
+import { UniqKey } from '@/StkTable/types';
+
 /** 筛选选项接口 */
 export interface FilterOption {
     label: string;
@@ -36,4 +38,6 @@ export interface FilterComponentConfig {
 export interface CreateFilterOption {
     /** 是否远程筛选 */
     remote?: boolean;
+    /** 筛选状态改变时触发 */
+    onChange?: (data: { colKey: UniqKey; status: FilterStatus }) => void;
 }
