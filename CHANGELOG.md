@@ -1,4 +1,8 @@
 
+## 1.0.0
+* Feature
+  - feat: `HighlightDimBaseOption` add `ignoreInvisible` option. When set to `true`, if the corresponding DOM cannot be obtained, it will be discarded directly and not put into the store for loop calculation. If the key already exists in the store, it will also be deleted.
+
 ## 0.11.15
 * Bugfix:
   - fix: if value is null ,not show emptyCellText `--`.

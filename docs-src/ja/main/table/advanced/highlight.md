@@ -136,6 +136,14 @@ setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: Highlight
 ```ts
 type HighlightDimBaseOption = {
     duration?: number;
+    /**
+     * 非表示要素を無視します。true の場合：
+     * - setHighlightDimRow を呼び出す際、対応する DOM を取得できない場合は直接破棄され、store のループ計算に入れられません；
+     * - store にその key が既に存在する場合も削除されます。
+     * - ループ計算中に、ある行の DOM が既に存在しない場合も store から削除され、計算が継続されません。 
+     * @version ^1.0.0
+     */
+    ignoreInvisible?: boolean;
 };
 
 type HighlightDimAnimationOption = HighlightDimBaseOption & {

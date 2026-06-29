@@ -137,6 +137,14 @@ setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: Highlight
 ```ts
 type HighlightDimBaseOption = {
     duration?: number;
+    /**
+     * 보이지 않는 요소를 무시합니다. true일 때:
+     * - setHighlightDimRow 호출 시 해당 DOM을 가져올 수 없으면 직접 폐기되어 store의 루프 계산에 들어가지 않습니다;
+     * - store에 해당 key가 이미 존재하는 경우에도 삭제됩니다.
+     * - 루프 계산 중에 어떤 행의 DOM이 더 이상 존재하지 않으면 store에서 삭제되어 더 이상 계산되지 않습니다.
+     * @version ^1.0.0
+     */
+    ignoreInvisible?: boolean;
 };
 
 type HighlightDimAnimationOption = HighlightDimBaseOption & {

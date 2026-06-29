@@ -13,6 +13,8 @@ type HighlightDimRowStore = {
     keyframe: Parameters<Animatable['animate']>['0'];
     /** 动画初始持续时间 */
     readonly duration: number;
+    /** 忽略不可见元素：获取不到dom时直接丢弃，不再循环计算 */
+    ignoreInvisible?: boolean;
 };
 
 /**
@@ -73,7 +75,10 @@ export function useHighlight(props: any, stkTableId: string, tableContainerRef: 
                         const { ts, duration } = store;
                         const timeOffset = nowTs - ts;
                         if (timeOffset < duration) {
-                            updateRowAnimation(rowKeyValue, store, timeOffset);
+                            const shouldDelete = updateRowAnimation(rowKeyValue, store, timeOffset);
+                            if (shouldDelete) {
+                                keysToDelete.push(rowKeyValue);
+                            }
                         } else {
                             keysToDelete.push(rowKeyValue);
                         }
@@ -136,15 +141,21 @@ export function useHighlight(props: any, stkTableId: string, tableContainerRef: 
             ...option,
         };
 
+        const ignoreInvisible = Boolean(option.ignoreInvisible);
         if (method === 'animation') {
             if (props.virtual) {
                 // -------- 用animation 接口实现动画
                 const nowTs = performance.now();
                 for (let i = 0; i < rowKeyValues.length; i++) {
                     const rowKeyValue = rowKeyValues[i];
-                    const store: HighlightDimRowStore = { ts: nowTs, visible: false, keyframe, duration };
-                    highlightDimRowsAnimation.set(rowKeyValue, store);
-                    updateRowAnimation(rowKeyValue, store, 0);
+                    const store: HighlightDimRowStore = { ts: nowTs, visible: false, keyframe, duration, ignoreInvisible };
+                    const shouldDelete = updateRowAnimation(rowKeyValue, store, 0);
+                    // ignoreInvisible: 获取不到dom则直接丢弃，不放入store；已存在也删除
+                    if (ignoreInvisible && shouldDelete) {
+                        highlightDimRowsAnimation.delete(rowKeyValue);
+                    } else {
+                        highlightDimRowsAnimation.set(rowKeyValue, store);
+                    }
                 }
                 calcRowHighlightLoop();
             } else {
@@ -223,15 +234,20 @@ export function useHighlight(props: any, stkTableId: string, tableContainerRef: 
      * @param rowKeyValue 行唯一键
      * @param store highlightDimRowStore 的引用对象
      * @param timeOffset 距动画开始经过的时长
+     * @returns 是否应该从store中删除（ignoreInvisible为true且DOM不存在时返回true）
      */
-    function updateRowAnimation(rowKeyValue: UniqKey, store: HighlightDimRowStore, timeOffset: number) {
+    function updateRowAnimation(rowKeyValue: UniqKey, store: HighlightDimRowStore, timeOffset: number): boolean {
         const rowEl = document.getElementById(stkTableId + '-' + String(rowKeyValue));
-        const { visible } = store;
+        const { visible, ignoreInvisible } = store;
         if (!rowEl) {
+            // ignoreInvisible: 获取不到dom则直接丢弃，不再循环计算
+            if (ignoreInvisible) {
+                return true;
+            }
             if (visible) {
                 store.visible = false; // 标记为不可见
             }
-            return;
+            return false;
         }
         const { keyframe, duration: initialDuration } = store;
         // 只有元素 不可见 -> 可见 时才需要更新
@@ -247,6 +263,7 @@ export function useHighlight(props: any, stkTableId: string, tableContainerRef: 
                 iterations: 1 - iterationStart,
             });
         }
+        return false;
     }
 
     return [highlightSteps, setHighlightDimRow, setHighlightDimCell] as const;
