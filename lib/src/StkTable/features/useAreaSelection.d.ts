@@ -7,7 +7,7 @@ import { VirtualScrollStore, VirtualScrollXStore } from '../useVirtualScroll';
  * 支持鼠标拖拽选择、键盘导航、复制粘贴等功能
  * en: Cell area selection feature with mouse drag, keyboard navigation, copy-paste, etc.
  */
-export declare function useAreaSelection<DT extends Record<string, any>>(props: any, emits: any, tableContainerRef: Ref<HTMLDivElement | undefined>, dataSourceCopy: ShallowRef<DT[]>, tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>, colKeyGen: ColKeyGen, cellKeyGen: CellKeyGen, scrollTo: (top: number | null, left: number | null) => void, virtualScroll: Ref<VirtualScrollStore>, virtualScrollX: Ref<VirtualScrollXStore>, getRowIndex: (row: DT) => number, getColumnIndex: (col: StkTableColumn<DT>) => number): {
+export declare function useAreaSelection<DT extends Record<string, any>>(props: any, emits: any, tableContainerRef: Ref<HTMLDivElement | undefined>, dataSourceCopy: ShallowRef<DT[]>, tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>, colKeyGen: ColKeyGen, cellKeyGen: CellKeyGen, scrollTo: (top: number | null, left: number | null) => void, virtualScroll: Ref<VirtualScrollStore>, virtualScrollX: Ref<VirtualScrollXStore>, getRowIndex: (row: DT) => number, getColumnIndex: (col: StkTableColumn<DT>) => number, selectionAreaOverlayRef: Ref<HTMLDivElement | undefined>): {
     config: import('vue').ComputedRef<AreaSelectionConfig>;
     isSelecting: Ref<boolean, boolean>;
     getClass: (cellKey: string, absoluteRowIndex: number, colKey: UniqKey) => string[];

@@ -237,7 +237,8 @@
                 :style="`height:${scrollbar.h}px;transform:translateY(${scrollbar.t}px)`"
                 @mousedown="onVerticalScrollbarMouseDown"
                 @touchstart.passive="onVerticalScrollbarMouseDown"
-            ></div>
+            />
+            <div ref="selectionAreaOverlayRef" class="selection-area-overlay" />
         </div>
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
             <slot name="empty">暂无数据</slot>
@@ -718,6 +719,7 @@ const emits = defineEmits<{
 //     empty(): void;
 // }>();
 
+const selectionAreaOverlayRef = ref<HTMLDivElement>();
 const tableContainerRef = ref<HTMLDivElement>();
 const colResizeIndicatorRef = ref<HTMLDivElement>();
 const trRef = ref<HTMLTableRowElement[]>();
@@ -987,6 +989,7 @@ const {
     virtualScrollX,
     getRowIndex,
     getColumnIndex,
+    selectionAreaOverlayRef,
 );
 
 /** 键盘箭头滚动 */

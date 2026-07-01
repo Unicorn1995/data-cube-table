@@ -32,6 +32,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
     virtualScrollX: Ref<VirtualScrollXStore>,
     getRowIndex: (row: DT) => number,
     getColumnIndex: (col: StkTableColumn<DT>) => number,
+    selectionAreaOverlayRef: Ref<HTMLDivElement | undefined>,
 ) {
     /**
      * 自动滚动：鼠标距容器边缘多少px开始触发
@@ -62,6 +63,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
     const CELL_RANGE_RIGHT = 'cell-range-r';
 
     const selectionRanges = ref<AreaSelectionRange[]>([]);
+    let selectionRangesCopy: AreaSelectionRange[] = [];
     const isSelecting = ref(false);
     /** start cell */
     let anchorCell: { rowIndex: number; colIndex: number } | null = null;
@@ -237,6 +239,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         if (changed) {
             selectionRanges.value = newRanges;
+            selectionRangesCopy = newRanges;
             emitSelectionChange();
         }
     });
@@ -389,20 +392,24 @@ export function useAreaSelection<DT extends Record<string, any>>(
                 ranges.push(shiftRange);
             }
             selectionRanges.value = ranges;
+            selectionRangesCopy = ranges;
         } else {
             anchorCell = { rowIndex, colIndex };
             if (ctrlKey && ctrlEnabled.value) {
                 // Ctrl multiple
                 selectionRanges.value = selectionRanges.value.concat([range]);
+                selectionRangesCopy = selectionRanges.value;
             } else {
                 // normal click
                 selectionRanges.value = [range];
+                selectionRangesCopy = selectionRanges.value;
             }
         }
 
         isSelecting.value = true;
         lastMouseClientX = e.clientX;
         lastMouseClientY = e.clientY;
+        updateSelectionBoxStyle(selectionRanges.value);
 
         // 防止拖选时选中文字
         // en: Prevent text selection during drag
@@ -438,6 +445,45 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         updateSelectionEnd(rowIndex, colIndex);
     }
+    function updateSelectionBoxStyle(ranges: AreaSelectionRange[]) {
+        if (!ranges.length) {
+            const overlay = selectionAreaOverlayRef.value;
+            if (!overlay) return;
+            overlay.style.display = 'none';
+            overlay.style.left = '0px';
+            overlay.style.top = '0px';
+            overlay.style.width = '0px';
+            overlay.style.height = '0px';
+            return;
+        }
+
+        const lastRange = ranges[ranges.length - 1];
+        const { minRow, maxRow, minCol, maxCol } = normalizeRange(lastRange);
+
+        // 2. 📍 计算 Left 和 Width (利用你组件里现有的 getColPosition)
+        // 选区最左侧那一列的绝对像素起始位置
+        const [calculatedLeft] = getColPosition(minCol);
+        // 选区最右侧那一列的绝对像素结束位置
+        const [lastColLeft, lastColWidth] = getColPosition(maxCol);
+        // 整个选区的像素宽度 = 最右侧列的结束位置 - 最左侧列的起始位置
+        const calculatedWidth = lastColLeft + lastColWidth - calculatedLeft;
+        // 3. 📍 计算 Top 和 Height (基于你的行高配置)
+        // 假设你的行高是固定行高（比如从 props.rowHeight 或 virtualScroll.value.rowHeight 获取）
+        const rowHeight = virtualScroll.value.rowHeight || 40;
+        // 选区最上面那一行的绝对像素起始位置
+        const calculatedTop = (minRow + 1) * rowHeight;
+        // 整个选区的像素高度 = 总行数 * 单行行高
+        const calculatedHeight = (maxRow - minRow + 1) * rowHeight;
+
+        if (selectionAreaOverlayRef.value) {
+            const overlay = selectionAreaOverlayRef.value;
+            overlay.style.display = 'block';
+            overlay.style.left = `${calculatedLeft}px`;
+            overlay.style.top = `${calculatedTop}px`;
+            overlay.style.width = `${calculatedWidth}px`;
+            overlay.style.height = `${calculatedHeight}px`;
+        }
+    }
 
     /** 更新最后一个选区的终点（拖拽过程中） */
     function updateSelectionEnd(endRowIndex: number, endColIndex: number) {
@@ -449,7 +495,9 @@ export function useAreaSelection<DT extends Record<string, any>>(
         } else {
             ranges.push(newRange);
         }
-        selectionRanges.value = ranges;
+        // selectionRanges.value = ranges;
+        selectionRangesCopy = ranges;
+        updateSelectionBoxStyle(ranges);
     }
 
     // ---- 边界自动滚动 ----
@@ -543,9 +591,11 @@ export function useAreaSelection<DT extends Record<string, any>>(
         isSelecting.value = false;
         stopAutoScroll();
 
+        selectionRanges.value = selectionRangesCopy;
+        selectionRangesCopy = [];
         document.removeEventListener('mousemove', onDocumentMouseMove);
         document.removeEventListener('mouseup', onDocumentMouseUp);
-
+        updateSelectionBoxStyle(selectionRangesCopy);
         // 发出事件
         emitSelectionChange();
     }
@@ -658,6 +708,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         if (!selectionRanges.value.length) {
             anchorCell = { rowIndex: 0, colIndex: 0 };
             selectionRanges.value = [makeRange(0, 0, 0, 0)];
+            selectionRangesCopy = selectionRanges.value;
             emitSelectionChange();
             scrollToCell(0, 0);
             return;
@@ -683,6 +734,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
             ranges[ranges.length - 1] = makeRange(begin.row, begin.col, newEndRow, newEndCol);
             selectionRanges.value = ranges;
+            selectionRangesCopy = selectionRanges.value;
 
             scrollToCell(newEndRow, newEndCol);
         } else {
@@ -712,6 +764,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
             // 更新锚点和选区（移动单格时清空其他区域，仅保留新位置）
             anchorCell = { rowIndex: newRow, colIndex: newCol };
             selectionRanges.value = [makeRange(newRow, newCol, newRow, newCol)];
+            selectionRangesCopy = selectionRanges.value;
 
             scrollToCell(newRow, newCol);
         }
@@ -874,6 +927,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
     function clearSelectedArea() {
         selectionRanges.value = [];
+        selectionRangesCopy = selectionRanges.value;
         isSelecting.value = false;
     }
 
@@ -923,6 +977,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         endCol = clamp(endCol, 0, maxCol);
 
         selectionRanges.value = [makeRange(beginRow, beginCol, endRow, endCol)];
+        selectionRangesCopy = selectionRanges.value;
         anchorCell = { rowIndex: beginRow, colIndex: beginCol };
         isSelecting.value = false;
 
