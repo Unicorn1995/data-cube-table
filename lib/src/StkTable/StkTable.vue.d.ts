@@ -422,6 +422,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      */
     setFilter: (status: Record<UniqKey, FilterStatus> | null, option?: {
         remote?: boolean;
+        silent?: boolean;
     }) => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;

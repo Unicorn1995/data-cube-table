@@ -72,14 +72,14 @@
     "prettier": "^3.2.5",
     "stk-table-vue": "^0.11.15",
     "typescript": "^5.8.3",
-    "vite": "^8.0.0",
+    "vite": "^8.1.2",
     "vite-plugin-banner": "^0.8.1",
     "vite-plugin-dts": "3.9.1",
     "vitepress": "^1.6.4",
     "vitepress-demo-plugin": "^1.5.1",
-    "vitepress-plugin-llms": "^1.11.1",
-    "vitest": "^4.1.0",
-    "vue": "^3.5.22",
+    "vitepress-plugin-llms": "^1.13.2",
+    "vitest": "^4.1.9",
+    "vue": "^3.5.39",
     "vue-eslint-parser": "^9.4.2"
   }
 }
