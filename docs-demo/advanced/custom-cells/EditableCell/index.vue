@@ -1,5 +1,14 @@
 <template>
-    <StkTable cell-active :columns="columns" :data-source="dataSource" row-key="id" />
+    <StkTable
+        cell-hover
+        cell-active
+        :selected-cell-revokable="false"
+        :row-active="false"
+        :row-hover="false"
+        :columns="columns"
+        :data-source="dataSource"
+        row-key="id"
+    />
 </template>
 
 <script lang="ts" setup>
