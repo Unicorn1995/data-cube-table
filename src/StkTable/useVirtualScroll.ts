@@ -5,6 +5,18 @@ import { ScrollbarOptions } from './useScrollbar';
 import { binarySearch } from './utils';
 import { getCalculatedColWidth } from './utils/constRefUtils';
 
+/** tbody 渲染项类型枚举 */
+export const TbodyRenderItemType = {
+    Col: 1,
+    Spacer: 2,
+} as const;
+export type TbodyRenderItemType = (typeof TbodyRenderItemType)[keyof typeof TbodyRenderItemType];
+
+/** tbody 渲染项：列或占位符 */
+export type TbodyRenderItem<T extends Record<string, any>> =
+    | { col: PrivateStkTableColumn<T>; colIndex: number }
+    | { type: typeof TbodyRenderItemType.Spacer; colSpan?: number; width?: number; className?: string };
+
 /** 暂存纵向虚拟滚动的数据 */
 export type VirtualScrollStore = {
     /** 容器高度 */
@@ -167,17 +179,86 @@ export function useVirtualScroll(
         );
     });
 
+    /** 是否多级表头 */
+    const isMultiLevelHeader = computed(() => tableHeaders.value.length > 1);
+
+    /**
+     * 多级表头横向虚拟滚动参数：以顶层列组为单位计算开始/结束位置。
+     * - 只有整个顶层组完全滚出视口时才移除（避免 colSpan 变化导致抖动）。
+     * - 单级表头时退化为与 tbody 相同的参数。
+     */
+    const theadVirtualX = computed(() => {
+        if (!virtualX_on.value || !isMultiLevelHeader.value) {
+            return {
+                startIndex: virtualScrollX.value.startIndex,
+                endIndex: virtualScrollX.value.endIndex,
+                offsetLeft: virtualScrollX.value.offsetLeft,
+            };
+        }
+        const { scrollLeft, containerWidth } = virtualScrollX.value;
+        const topLevelCols = tableHeaders.value[0];
+        const totalLeafCount = tableHeaderLast.value.length;
+
+        let theadStartIndex = 0;
+        let theadEndIndex = totalLeafCount;
+        let theadOffsetLeft = 0;
+        let cumLeft = 0;
+        let foundStart = false;
+
+        for (let i = 0, len = topLevelCols.length; i < len; i++) {
+            const col = topLevelCols[i];
+            if (col.fixed === 'left' || col.fixed === 'right') continue;
+
+            const groupWidth = col.__W__ || getCalculatedColWidth(col);
+            const groupRight = cumLeft + groupWidth;
+
+            if (!foundStart) {
+                if (groupRight <= scrollLeft) {
+                    cumLeft = groupRight;
+                } else {
+                    foundStart = true;
+                    theadStartIndex = col.__LEAF_START__ ?? 0;
+                    theadOffsetLeft = cumLeft;
+                    cumLeft = groupRight;
+                }
+            } else {
+                cumLeft = groupRight;
+            }
+
+            if (foundStart && cumLeft - theadOffsetLeft >= containerWidth) {
+                theadEndIndex = col.__LEAF_END__ ?? totalLeafCount;
+                break;
+            }
+            theadEndIndex = col.__LEAF_END__ ?? totalLeafCount;
+        }
+
+        if (!foundStart) {
+            theadStartIndex = totalLeafCount;
+            theadOffsetLeft = cumLeft;
+        }
+
+        return { startIndex: theadStartIndex, endIndex: theadEndIndex, offsetLeft: theadOffsetLeft };
+    });
+
     const virtualX_columnPart = computed(() => {
         const tableHeaderLastValue = tableHeaderLast.value;
         if (virtualX_on.value) {
-            // 虚拟横向滚动，固定列要一直保持存在
-            const leftCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
-            const rightCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
             const { startIndex, endIndex } = virtualScrollX.value;
             // 将索引钳制到列数组范围内，防止列数减少时越界
             const maxIndex = tableHeaderLastValue.length;
             const validEndIndex = Math.min(endIndex, maxIndex);
             const validStartIndex = Math.min(startIndex, maxIndex);
+
+            // 多级表头：不重排固定列，保持原始顺序，依赖 sticky CSS 定位固定列
+            if (isMultiLevelHeader.value) {
+                return tableHeaderLastValue.filter((col, i) => {
+                    return col.fixed || (i >= validStartIndex && i < validEndIndex);
+                });
+            }
+
+            // 单级表头：保持原有重排逻辑（向后兼容）
+            const leftCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
+            const rightCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
 
             // 左侧固定列，如果在左边不可见区。则需要拿出来放在前面
             for (let i = 0; i < validStartIndex; i++) {
@@ -197,11 +278,112 @@ export function useVirtualScroll(
         return tableHeaderLastValue;
     });
 
+    /**
+     * 表头横向虚拟滚动：
+     * - 单级表头：最后一行使用 virtualX_columnPart，其他行原样返回。
+     * - 多级表头：按顶层组粒度过滤（整个组滚出才移除），保持 colSpan 稳定。
+     */
+    const virtualX_tableHeaders = computed(() => {
+        if (!virtualX_on.value) return tableHeaders.value;
+        if (isMultiLevelHeader.value) {
+            const { startIndex, endIndex } = theadVirtualX.value;
+            return tableHeaders.value.map(row => {
+                return row.filter(col => {
+                    if (col.fixed === 'left' || col.fixed === 'right') return true;
+                    const leafStart = col.__LEAF_START__ ?? 0;
+                    const leafEnd = col.__LEAF_END__ ?? leafStart + 1;
+                    return leafEnd > startIndex && leafStart < endIndex;
+                });
+            });
+        }
+        // 单级：最后一行用 virtualX_columnPart
+        const headers = tableHeaders.value;
+        return headers.map((row, i) => (i === headers.length - 1 ? virtualX_columnPart.value : row));
+    });
+
+    /**
+     * tbody/tfoot 统一渲染项：将列和占位符混合在一个数组中，供模板 v-for 使用。
+     * - 无虚拟滚动：全部列。
+     * - 单级表头 + virtualX：vt-x-left + virtualX_columnPart + vt-x-right（保持原逻辑）。
+     * - 多级表头 + virtualX：
+     *   thead 按顶层组虚拟滚动，tbody 按单列虚拟滚动。
+     *   tbody 通过 vt-x-spacer(colspan) 对齐 thead 多出的列。
+     */
+    const tbodyRenderItems = computed<TbodyRenderItem<PrivateRowDT>[]>(() => {
+        if (!virtualX_on.value) {
+            return tableHeaderLast.value.map((col, i) => ({ col, colIndex: i }));
+        }
+        if (isMultiLevelHeader.value) {
+            const cols = tableHeaderLast.value;
+            const { startIndex: tbodyStart, endIndex: tbodyEnd } = virtualScrollX.value;
+            const { startIndex: theadStart, endIndex: theadEnd, offsetLeft: theadOffsetLeft } = theadVirtualX.value;
+            const items: TbodyRenderItem<PrivateRowDT>[] = [];
+
+            // 1. vt-x-left：与 thead 相同的偏移
+            items.push({ type: TbodyRenderItemType.Spacer, width: theadOffsetLeft, className: 'vt-x-left' });
+
+            // 2. 固定左列（始终渲染，保持网格对齐）
+            for (let i = 0; i < cols.length; i++) {
+                if (cols[i].fixed === 'left') {
+                    items.push({ col: cols[i], colIndex: i });
+                } else {
+                    break;
+                }
+            }
+
+            // 3. vt-x-spacer：tbody 开始位置比 thead 靠右时，用 colSpan 对齐
+            const spacerColspan = Math.max(0, tbodyStart - theadStart);
+            if (spacerColspan > 0) {
+                items.push({ type: TbodyRenderItemType.Spacer, colSpan: spacerColspan, width: 0, className: 'vt-x-spacer' });
+            }
+
+            // 4. 非固定列：从 tbodyStart 渲染到 theadEnd（扩展以对齐 thead）
+            const renderEnd = Math.min(Math.max(tbodyEnd, theadEnd), cols.length);
+            for (let i = tbodyStart; i < renderEnd; i++) {
+                if (cols[i].fixed === 'right') continue; // 右固定列单独处理
+                items.push({ col: cols[i], colIndex: i });
+            }
+
+            // 5. 固定右列（始终渲染）
+            for (let i = 0; i < cols.length; i++) {
+                if (cols[i].fixed === 'right') {
+                    items.push({ col: cols[i], colIndex: i });
+                }
+            }
+
+            // 6. vt-x-right
+            items.push({ type: TbodyRenderItemType.Spacer, className: 'vt-x-right' });
+
+            return items;
+        }
+        // 单级表头：保持原有 vt-x-left + virtualX_columnPart + vt-x-right 结构
+        const items: TbodyRenderItem<PrivateRowDT>[] = [];
+        items.push({ type: TbodyRenderItemType.Spacer, className: 'vt-x-left' });
+        virtualX_columnPart.value.forEach((col, i) => {
+            items.push({ col, colIndex: i });
+        });
+        items.push({ type: TbodyRenderItemType.Spacer, className: 'vt-x-right' });
+        return items;
+    });
+
+    /** 展开行 colspan：等于 tbodyRenderItems 中所有项占用的列数之和 */
+    const expandRowColspan = computed(() => {
+        let count = 0;
+        const items = tbodyRenderItems.value;
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            count += item.type === TbodyRenderItemType.Spacer ? item.colSpan || 1 : 1;
+        }
+        return count;
+    });
+
     const virtualX_offsetRight = computed(() => {
         if (!virtualX_on.value) return 0;
+        // 多级表头使用 theadEndIndex，单级使用 body endIndex
+        const endIndex = isMultiLevelHeader.value ? theadVirtualX.value.endIndex : virtualScrollX.value.endIndex;
         let width = 0;
         const tableHeaderLastValue = tableHeaderLast.value;
-        for (let i = virtualScrollX.value.endIndex; i < tableHeaderLastValue.length; i++) {
+        for (let i = endIndex; i < tableHeaderLastValue.length; i++) {
             const col = tableHeaderLastValue[i];
             if (col.fixed !== 'right') {
                 width += getCalculatedColWidth(col);
@@ -482,9 +664,10 @@ export function useVirtualScroll(
         const { nonFixedCols, leftFixedCols } = getColWidthCache(tableHeaderLastValue);
 
         if (nonFixedCols.length > 0 && sLeft > 0) {
-            // 二分查找：找到第一个累计宽度 >= sLeft 的非固定列
+            // 二分查找：找到第一个累计宽度 > sLeft 的非固定列
+            // 使用 <= 确保当列右边缘恰好等于 sLeft 时（列完全滚出视口），不再将其作为起始列
             const found = binarySearch(nonFixedCols, mid => {
-                return nonFixedCols[mid].cumWidth < sLeft ? -1 : 1;
+                return nonFixedCols[mid].cumWidth <= sLeft ? -1 : 1;
             });
             const idx = Math.min(found, nonFixedCols.length - 1);
             startIndex = nonFixedCols[idx].index;
@@ -539,7 +722,6 @@ export function useVirtualScroll(
         virtual_dataSourcePart,
         virtual_offsetBottom,
         virtualX_on,
-        virtualX_columnPart,
         virtualX_offsetRight,
         tableHeaderHeight,
         initVirtualScroll,
@@ -550,5 +732,9 @@ export function useVirtualScroll(
         setAutoHeight,
         clearAllAutoHeight,
         clearColWidthCache,
+        virtualX_tableHeaders,
+        tbodyRenderItems,
+        expandRowColspan,
+        theadVirtualX,
     ] as const;
 }

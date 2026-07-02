@@ -156,6 +156,16 @@ export type PrivateStkTableColumn<T extends Record<string, any>> = StkTableColum
      * @private
      */
     __W__?: number;
+    /**
+     * 当前列在 tableHeaderLast 中的起始叶子索引（含）。用于多级表头横向虚拟滚动。
+     * @private
+     */
+    __LEAF_START__?: number;
+    /**
+     * 当前列在 tableHeaderLast 中的结束叶子索引（不含）。用于多级表头横向虚拟滚动。
+     * @private
+     */
+    __LEAF_END__?: number;
 };
 /** private row keys */
 export type PrivateRowDT = {

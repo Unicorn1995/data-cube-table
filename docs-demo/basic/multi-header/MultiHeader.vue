@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
+import CheckItem from '../../components/CheckItem.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import { useI18n } from '../../hooks/useI18n';
+
 const { t } = useI18n();
+const virtual = ref(true);
+const virtualX = ref(true);
 const columns: StkTableColumn<any>[] = [
     {
         dataIndex: 'Basic',
@@ -37,7 +42,7 @@ const columns: StkTableColumn<any>[] = [
     {
         dataIndex: 'other',
         title: t('other'),
-        children: new Array(2).fill(0).map((it, i) => {
+        children: new Array(6).fill(0).map((it, i) => {
             return {
                 dataIndex: 'other' + i,
                 title: t('other') + ' ' + i,
@@ -65,11 +70,14 @@ const dataSource = new Array(50).fill(0).map((it, i) => {
 });
 </script>
 <template>
+    <CheckItem v-model="virtual" text="virtual"></CheckItem>
+    <CheckItem v-model="virtualX" text="virtual-x"></CheckItem>
     <StkTable
         style="height: 200px"
         row-key="id"
         fixed-col-shadow
-        virtual
+        :virtual="virtual"
+        :virtual-x="virtualX"
         :columns="columns"
         :data-source="dataSource"
     >
