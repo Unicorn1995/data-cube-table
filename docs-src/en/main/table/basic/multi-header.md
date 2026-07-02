@@ -1,8 +1,8 @@
 # Multi-Level Headers
 ## Configuration
 `StkTableColumn['children']` configures multi-level headers
-::: warning
-Multi-header tables do not support **horizontal virtual lists** (`props.virtualX`) yet.
+::: tip
+Multi-header tables support **horizontal virtual lists** (`props.virtualX`). In multi-header mode, fixed columns are not reordered and rely on sticky CSS positioning.
 :::
 
 ```ts 

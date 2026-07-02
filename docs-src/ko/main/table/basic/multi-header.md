@@ -1,8 +1,8 @@
 # 멀티 레벨 헤더
 ## 설정
 `StkTableColumn['children']`으로 멀티 레벨 헤더 설정
-::: warning
-멀티 레벨 헤더는 현재 **가로 방향 가상 리스트**(`props.virtualX`)를 지원하지 않습니다.
+::: tip
+멀티 레벨 헤더는 **가로 방향 가상 리스트**(`props.virtualX`)를 지원합니다. 멀티 헤더 모드에서는 고정 열이 재정렬되지 않고 sticky CSS 배치에 의존합니다.
 :::
 
 ```ts 

@@ -1,8 +1,8 @@
 # 多级表头
 ## 配置
 `StkTableColumn['children']` 配置多级表头
-::: warning
-多级表头暂不支持**横向虚拟列表**(`props.virtualX`)。
+::: tip
+多级表头支持**横向虚拟列表**(`props.virtualX`)。多级表头场景下固定列不重排，依赖 sticky CSS 定位。
 :::
 
 ```ts 

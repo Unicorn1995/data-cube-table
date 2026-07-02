@@ -302,79 +302,19 @@ export function useVirtualScroll(
     });
 
     /**
-     * tbody/tfoot 统一渲染项：将列和占位符混合在一个数组中，供模板 v-for 使用。
-     * - 无虚拟滚动：全部列。
-     * - 单级表头 + virtualX：vt-x-left + virtualX_columnPart + vt-x-right（保持原逻辑）。
-     * - 多级表头 + virtualX：
-     *   thead 按顶层组虚拟滚动，tbody 按单列虚拟滚动。
-     *   tbody 通过 vt-x-spacer(colspan) 对齐 thead 多出的列。
+     * vt-x-spacer colspan：多级表头时 tbody 比 thead 多出的列数，用于对齐。
+     * - 多级表头：theadStart（顶层组粒度）可能小于 tbodyStart（叶子列粒度），差值即为 spacer 占用的列数。
+     * - 单级表头：thead 与 tbody 起始位置一致，无需 spacer。
      */
-    const tbodyRenderItems = computed<TbodyRenderItem<PrivateRowDT>[]>(() => {
-        if (!virtualX_on.value) {
-            return tableHeaderLast.value.map((col, i) => ({ col, colIndex: i }));
-        }
-        if (isMultiLevelHeader.value) {
-            const cols = tableHeaderLast.value;
-            const { startIndex: tbodyStart, endIndex: tbodyEnd } = virtualScrollX.value;
-            const { startIndex: theadStart, endIndex: theadEnd, offsetLeft: theadOffsetLeft } = theadVirtualX.value;
-            const items: TbodyRenderItem<PrivateRowDT>[] = [];
-
-            // 1. vt-x-left：与 thead 相同的偏移
-            items.push({ type: TbodyRenderItemType.Spacer, width: theadOffsetLeft, className: 'vt-x-left' });
-
-            // 2. 固定左列（始终渲染，保持网格对齐）
-            for (let i = 0; i < cols.length; i++) {
-                if (cols[i].fixed === 'left') {
-                    items.push({ col: cols[i], colIndex: i });
-                } else {
-                    break;
-                }
-            }
-
-            // 3. vt-x-spacer：tbody 开始位置比 thead 靠右时，用 colSpan 对齐
-            const spacerColspan = Math.max(0, tbodyStart - theadStart);
-            if (spacerColspan > 0) {
-                items.push({ type: TbodyRenderItemType.Spacer, colSpan: spacerColspan, width: 0, className: 'vt-x-spacer' });
-            }
-
-            // 4. 非固定列：从 tbodyStart 渲染到 theadEnd（扩展以对齐 thead）
-            const renderEnd = Math.min(Math.max(tbodyEnd, theadEnd), cols.length);
-            for (let i = tbodyStart; i < renderEnd; i++) {
-                if (cols[i].fixed === 'right') continue; // 右固定列单独处理
-                items.push({ col: cols[i], colIndex: i });
-            }
-
-            // 5. 固定右列（始终渲染）
-            for (let i = 0; i < cols.length; i++) {
-                if (cols[i].fixed === 'right') {
-                    items.push({ col: cols[i], colIndex: i });
-                }
-            }
-
-            // 6. vt-x-right
-            items.push({ type: TbodyRenderItemType.Spacer, className: 'vt-x-right' });
-
-            return items;
-        }
-        // 单级表头：保持原有 vt-x-left + virtualX_columnPart + vt-x-right 结构
-        const items: TbodyRenderItem<PrivateRowDT>[] = [];
-        items.push({ type: TbodyRenderItemType.Spacer, className: 'vt-x-left' });
-        virtualX_columnPart.value.forEach((col, i) => {
-            items.push({ col, colIndex: i });
-        });
-        items.push({ type: TbodyRenderItemType.Spacer, className: 'vt-x-right' });
-        return items;
+    const virtualX_spacerColspan = computed(() => {
+        if (!virtualX_on.value || !isMultiLevelHeader.value) return 0;
+        return Math.max(0, virtualScrollX.value.startIndex - theadVirtualX.value.startIndex);
     });
 
-    /** 展开行 colspan：等于 tbodyRenderItems 中所有项占用的列数之和 */
+    /** 展开行 colspan：虚拟滚动时等于所有 spacer + virtualX_columnPart 占用的列数之和 */
     const expandRowColspan = computed(() => {
-        let count = 0;
-        const items = tbodyRenderItems.value;
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            count += item.type === TbodyRenderItemType.Spacer ? item.colSpan || 1 : 1;
-        }
-        return count;
+        if (!virtualX_on.value) return tableHeaderLast.value.length;
+        return (virtualX_spacerColspan.value > 0 ? 1 : 0) + 2 + virtualX_columnPart.value.length;
     });
 
     const virtualX_offsetRight = computed(() => {
@@ -733,8 +673,9 @@ export function useVirtualScroll(
         clearAllAutoHeight,
         clearColWidthCache,
         virtualX_tableHeaders,
-        tbodyRenderItems,
+        virtualX_spacerColspan,
         expandRowColspan,
         theadVirtualX,
+        virtualX_columnPart,
     ] as const;
 }

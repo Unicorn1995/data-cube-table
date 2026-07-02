@@ -42,7 +42,7 @@ const columns: StkTableColumn<any>[] = [
     {
         dataIndex: 'other',
         title: t('other'),
-        children: new Array(6).fill(0).map((it, i) => {
+        children: new Array(10).fill(0).map((it, i) => {
             return {
                 dataIndex: 'other' + i,
                 title: t('other') + ' ' + i,
