@@ -1141,8 +1141,13 @@ const cellStyleMap = computed(() => {
         for (let i = 0, colsLen = cols.length; i < colsLen; i++) {
             const col = cols[i];
             const width = virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
+            const minWidthStr = transformWidthToStr(col.minWidth);
+            const maxWidthStr = transformWidthToStr(col.maxWidth);
             // en: Use string instead of object to reduce patchStyle overhead
-            const styleStr = `--cw:${width};min-width:${transformWidthToStr(col.minWidth)};max-width:${transformWidthToStr(col.maxWidth)}`;
+            let styleStr = '';
+            if (width) styleStr += `--cw:${width}`;
+            if (minWidthStr) styleStr += `;min-width:${minWidthStr}`;
+            if (maxWidthStr) styleStr += `;max-width:${maxWidthStr}`;
             const colKey = colKeyGenValue(col);
             thMap.set(colKey, styleStr + ';' + getFixedStyle(TagType.TH, col, depth));
             tdMap.set(colKey, styleStr + ';' + getFixedStyle(TagType.TD, col, depth));
