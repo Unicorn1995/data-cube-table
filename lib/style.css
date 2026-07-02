@@ -171,6 +171,7 @@
   --sb-thumb-color:#c1c1d7;
   --sb-thumb-hover-color:#a8a8c1;
   --cs-bgc:#d3eafd;
+  --acs-bgc:rgba(211,234,253,0.4);
   --cs-bc:#2196f3;
   --rs-bgc:#e8f3ff;
   --rs-bc:#2a7ee4;
@@ -694,5 +695,6 @@
   position:absolute;
   border:1px solid var(--cs-bc);
   pointer-events:none;
+  background-color:var(--acs-bgc);
   z-index:1000;
 }
