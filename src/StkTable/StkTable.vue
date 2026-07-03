@@ -62,14 +62,18 @@
                 @mouseover="onTrMouseOver"
             >
                 <thead v-if="!headless">
-                    <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="onHeaderMenu($event)">
+                    <tr
+                        v-for="(row, rowIndex) in virtualX_on ? virtualX_tableHeaders : tableHeaders"
+                        :key="rowIndex"
+                        @contextmenu="onHeaderMenu($event)"
+                    >
                         <th
                             v-if="virtualX_on"
                             class="vt-x-left"
-                            :style="`min-width:${virtualScrollX.offsetLeft}px;width:${virtualScrollX.offsetLeft}px`"
+                            :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
                         ></th>
                         <th
-                            v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
+                            v-for="(col, colIndex) in row"
                             :key="colKeyGen(col)"
                             v-bind="getTHProps(col)"
                             @click="e => onHeaderCellClick(e, col)"
@@ -82,7 +86,7 @@
                                 class="table-header-resizer left"
                                 @mousedown="onThResizeMouseDown($event, col, true)"
                             ></div>
-                            <div class="table-header-cell-wrapper" :style="virtualX_on ? null : col.__R_SP__ ? `--row-span:${col.__R_SP__}` : null">
+                            <div class="table-header-cell-wrapper" :style="col.__R_SP__ ? `--row-span:${col.__R_SP__}` : null">
                                 <component
                                     :is="col.customHeaderCell"
                                     v-if="col.customHeaderCell"
@@ -110,24 +114,32 @@
                     :style="isFooterTop ? `top:${tableHeaderHeight}px` : ''"
                 >
                     <tr v-for="(footRow, footRowIndex) in footerData" :key="footRowIndex">
-                        <td v-if="virtualX_on" class="vt-x-left"></td>
-                        <td v-for="(col, colIndex) in virtualX_columnPart" :key="colKeyGen(col)" v-bind="getTFProps(col)">
-                            <component
-                                :is="col.customFooterCell"
-                                v-if="col.customFooterCell"
-                                class="table-cell-wrapper"
-                                tabindex="-1"
-                                :col="col"
-                                :row="footRow"
-                                :rowIndex="footRowIndex"
-                                :colIndex="colIndex"
-                                :cellValue="footRow[col.dataIndex]"
-                            />
-                            <div class="table-cell-wrapper" tabindex="-1" :title="footRow[col.dataIndex] || ''">
-                                <span v-if="footRow[col.dataIndex] != null">{{ footRow[col.dataIndex] }}</span>
-                            </div>
-                        </td>
-                        <td v-if="virtualX_on" class="vt-x-right"></td>
+                        <td
+                            v-if="virtualX_on"
+                            class="vt-x-left"
+                            :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
+                        ></td>
+                        <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
+                            <template v-if="col.type === 'spacer'">
+                                <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
+                            </template>
+                            <td v-else v-bind="getTFProps(col)">
+                                <component
+                                    :is="col.customFooterCell"
+                                    v-if="col.customFooterCell"
+                                    class="table-cell-wrapper"
+                                    tabindex="-1"
+                                    :col="col"
+                                    :row="footRow"
+                                    :rowIndex="footRowIndex"
+                                    :cellValue="footRow[col.dataIndex]"
+                                />
+                                <div class="table-cell-wrapper" tabindex="-1" :title="footRow[col.dataIndex] || ''">
+                                    <span v-if="footRow[col.dataIndex] != null">{{ footRow[col.dataIndex] }}</span>
+                                </div>
+                            </td>
+                        </template>
+                        <td v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></td>
                     </tr>
                 </component>
 
@@ -141,14 +153,27 @@
                     @drop="onBodyDrop"
                 >
                     <tr v-if="!isExperimentalScrollY && virtual_on && !isSRBRActive" :style="paddingTopStyle" class="padding-top-tr">
-                        <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                         <template v-if="fixedMode && headless">
-                            <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
+                            <td
+                                v-if="virtualX_on"
+                                class="vt-x-left"
+                                :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
+                            ></td>
+                            <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
+                                <template v-if="col.type === 'spacer'">
+                                    <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
+                                </template>
+                                <td v-else :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
+                            </template>
+                            <td
+                                v-if="virtualX_on"
+                                class="vt-x-right"
+                                :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"
+                            ></td>
                         </template>
                     </tr>
                     <tr v-for="(row, rowIndex) in virtual_dataSourcePart" ref="trRef" :key="rowKeyGen(row)" v-bind="getTRProps(row, rowIndex)">
-                        <td v-if="virtualX_on" class="vt-x-left"></td>
-                        <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
+                        <td v-if="row && row.__EXP_R__" :colspan="expandRowColspan">
                             <div class="table-cell-wrapper" tabindex="-1">
                                 <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
                                     {{ (row.__EXP_R__ && row.__EXP_C__ && row.__EXP_R__[row.__EXP_C__.dataIndex]) || '' }}
@@ -156,8 +181,15 @@
                             </div>
                         </td>
                         <template v-else>
-                            <template v-for="(col, colIndex) in virtualX_columnPart">
-                                <td v-if="!shouldHideCell(row, col)" :key="colKeyGen(col)" v-bind="getTDProps(row, col, rowIndex, colIndex)">
+                            <td v-if="virtualX_on" class="vt-x-left"></td>
+                            <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
+                                <template v-if="col.type === 'spacer'">
+                                    <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
+                                </template>
+                                <td
+                                    v-else-if="!shouldHideCell(row, col)"
+                                    v-bind="getTDProps(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LEAF_START__ ?? 0)"
+                                >
                                     <component
                                         :is="col.customCell"
                                         v-if="col.customCell"
@@ -166,7 +198,7 @@
                                         :col="col"
                                         :row="row"
                                         :rowIndex="getAbsoluteRowIndex(rowIndex)"
-                                        :colIndex="colIndex"
+                                        :colIndex="(col as PrivateStkTableColumn<DT>).__LEAF_START__ ?? 0"
                                         :cellValue="row && row[col.dataIndex]"
                                         :expanded="row && row.__EXP__"
                                         :tree-expanded="row && row.__T_EXP__"
@@ -198,8 +230,8 @@
                                     </div>
                                 </td>
                             </template>
+                            <td v-if="virtualX_on" class="vt-x-right"></td>
                         </template>
-                        <td v-if="virtualX_on" class="vt-x-right"></td>
                     </tr>
                     <template v-if="!isExperimentalScrollY">
                         <tr v-if="virtual_on && !isSRBRActive" :style="offsetBottomStyle"></tr>
@@ -831,7 +863,6 @@ const [
     virtual_dataSourcePart,
     virtual_offsetBottom,
     virtualX_on,
-    virtualX_columnPart,
     virtualX_offsetRight,
     tableHeaderHeight,
     initVirtualScroll,
@@ -842,6 +873,10 @@ const [
     setAutoHeight,
     clearAllAutoHeight,
     clearColWidthCache,
+    virtualX_tableHeaders,
+    expandRowColspan,
+    theadVirtualX,
+    virtualX_columnPart,
 ] = useVirtualScroll(
     props,
     tableContainerRef,
@@ -1141,8 +1176,13 @@ const cellStyleMap = computed(() => {
         for (let i = 0, colsLen = cols.length; i < colsLen; i++) {
             const col = cols[i];
             const width = virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
+            const minWidthStr = transformWidthToStr(col.minWidth);
+            const maxWidthStr = transformWidthToStr(col.maxWidth);
             // en: Use string instead of object to reduce patchStyle overhead
-            const styleStr = `--cw:${width};min-width:${transformWidthToStr(col.minWidth)};max-width:${transformWidthToStr(col.maxWidth)}`;
+            let styleStr = '';
+            if (width) styleStr += `--cw:${width}`;
+            if (minWidthStr) styleStr += `;min-width:${minWidthStr}`;
+            if (maxWidthStr) styleStr += `;max-width:${maxWidthStr}`;
             const colKey = colKeyGenValue(col);
             thMap.set(colKey, styleStr + ';' + getFixedStyle(TagType.TH, col, depth));
             tdMap.set(colKey, styleStr + ';' + getFixedStyle(TagType.TD, col, depth));
@@ -1216,7 +1256,7 @@ function getTHProps(col: PrivateStkTableColumn<DT>) {
     return {
         'data-col-key': colKey,
         draggable: Boolean(isHeaderDraggable(col)),
-        rowspan: virtualX_on.value ? 1 : col.__R_SP__,
+        rowspan: col.__R_SP__,
         colspan: col.__C_SP__,
         style: cellStyleMap.value[TagType.TH].get(colKey),
         title: getHeaderTitle(col),
@@ -1294,7 +1334,7 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
         'data-col-key': colKey,
         style: cellStyleMap.value[TagType.TD].get(colKey),
         class: classList,
-        ...mergeCellsWrapper(row, col, rowIndex, colIndex),
+        ...mergeCellsWrapper(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LEAF_START__ ?? 0),
     };
 }
 

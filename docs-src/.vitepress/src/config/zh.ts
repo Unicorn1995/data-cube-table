@@ -81,7 +81,7 @@ export const zhConfig = defineConfig({
                                     { text: '无头', link: '/table/basic/headless', },
                                     { text: '行展开', link: '/table/basic/expand-row', },
                                     { text: '树形', link: '/table/basic/tree', },
-                                    { text: '多级表头', link: '/table/basic/multi-header', },
+                                    { text: '多级表头(✨Update)', link: '/table/basic/multi-header', },
                                     { text: '序号列', link: '/table/basic/seq', },
                                     { text: '空数据', link: '/table/basic/empty' },
                                     { text: '行、列唯一键', link: '/table/basic/key', },

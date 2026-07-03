@@ -55,7 +55,7 @@ export const enConfig = defineConfig({
                                     { text: 'Headless', link: '/table/basic/headless' },
                                     { text: 'Row Expansion', link: '/table/basic/expand-row' },
                                     { text: 'Tree', link: '/table/basic/tree' },
-                                    { text: 'Multi-level Header', link: '/table/basic/multi-header' },
+                                    { text: 'Multi-level Header(✨Update)', link: '/table/basic/multi-header' },
                                     { text: 'Sequence Column', link: '/table/basic/seq' },
                                     { text: 'Empty Data', link: '/table/basic/empty' },
                                     { text: 'Row & Column Unique Keys', link: '/table/basic/key' },

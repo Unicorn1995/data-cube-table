@@ -34,6 +34,8 @@ defineExpose({
         baseStkTableRef.value?.setAutoHeight(...p),
     clearAllAutoHeight: (...p: Parameters<BaseStkTableType['clearAllAutoHeight']>) =>
         baseStkTableRef.value?.clearAllAutoHeight(...p),
+    scrollTo: (...p: Parameters<BaseStkTableType['scrollTo']>) =>
+        baseStkTableRef.value?.scrollTo(...p),
 });
 </script>
 <template>

@@ -57,14 +57,13 @@ export function useTableColumns<DT extends Record<string, any>>(virtualX: boolea
 
         const maxDeep = howDeepTheHeader(copyColumn);
 
-        if (maxDeep > 0 && virtualX) {
-            console.error('StkTableVue:多级表头不支持横向虚拟滚动!');
-        }
-
         for (let i = 0; i <= maxDeep; i++) {
             tableHeadersTemp[i] = [];
             tableHeadersForCalcTemp[i] = [];
         }
+
+        /** 叶子列索引计数器，用于标注每个列在 tableHeaderLast 中的叶子范围 */
+        let leafIndex = 0;
 
         /**
          * flat columns
@@ -81,6 +80,7 @@ export function useTableColumns<DT extends Record<string, any>>(virtualX: boolea
                 const col = arr[i];
                 if (col.hidden) continue;
                 col.__P__ = parent;
+                col.__LEAF_START__ = leafIndex;
 
                 /** 一列中的子节点数量 */
                 let colChildrenLen = 1;
@@ -95,6 +95,7 @@ export function useTableColumns<DT extends Record<string, any>>(virtualX: boolea
                     tableHeadersForCalcTemp[depth].push(col);
                 } else {
                     colWidth = getColWidth(col);
+                    leafIndex++;
                     for (let j = depth; j <= maxDeep; j++) {
                         // 如有rowSpan 向下复制一个表头col，用于计算固定列
                         tableHeadersForCalcTemp[j].push(col);
@@ -102,6 +103,7 @@ export function useTableColumns<DT extends Record<string, any>>(virtualX: boolea
                 }
 
                 // 回溯
+                col.__LEAF_END__ = leafIndex;
                 col.__W__ = colWidth;
                 tableHeadersTemp[depth].push(col);
                 const rowSpan = col.children ? 1 : maxDeep - depth + 1;

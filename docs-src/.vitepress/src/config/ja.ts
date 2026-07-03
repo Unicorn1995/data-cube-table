@@ -55,7 +55,7 @@ export const jaConfig = defineConfig({
                                     { text: 'ヘッダーレス', link: '/table/basic/headless' },
                                     { text: '行展開', link: '/table/basic/expand-row' },
                                     { text: 'ツリー', link: '/table/basic/tree' },
-                                    { text: 'マルチレベルヘッダー', link: '/table/basic/multi-header' },
+                                    { text: 'マルチレベルヘッダー(✨Update)', link: '/table/basic/multi-header' },
                                     { text: 'シーケンス列', link: '/table/basic/seq' },
                                     { text: '空データ', link: '/table/basic/empty' },
                                     { text: '行・列の一意キー', link: '/table/basic/key' },

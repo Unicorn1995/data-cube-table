@@ -1,10 +1,6 @@
 # 멀티 레벨 헤더
 ## 설정
 `StkTableColumn['children']`으로 멀티 레벨 헤더 설정
-::: warning
-멀티 레벨 헤더는 현재 **가로 방향 가상 리스트**(`props.virtualX`)를 지원하지 않습니다.
-:::
-
 ```ts 
 const columns: StkTableColumn<any>[] = [
     {
@@ -29,6 +25,16 @@ const columns: StkTableColumn<any>[] = [
 
 
 <demo vue="basic/multi-header/MultiHeader.vue"></demo>
+
+## 가로 방향 가상 리스트(✨NEW)<Badge type="tip" text="^1.0.0" />
+AI의 도움으로 멀티 레벨 헤더가 마침내 가로 방향 가상 리스트를 지원하게 되었습니다!
+
+`props.virtualX`를 설정하면 됩니다.
+<demo vue="basic/multi-header/MultiHeaderVirtualX.vue"></demo>
+
+::: tip
+부모 헤더 노드에 자식 노드가 많은 경우, 가상 스크롤 성능 향상을 위해 헤더를 분할해 보세요.
+:::
 
 
 ## 열 고정
@@ -77,9 +83,14 @@ const columns: StkTableColumn<any>[] = [
 <demo vue="basic/multi-header/MultiHeaderFixed.vue"></demo>
 
 ### 리프 노드만 고정 설정
+
 <demo vue="basic/multi-header/MultiHeaderLeavesFixed.vue"></demo>
+::: warning 가로 방향 가상 리스트(`props.virtualX`)는 이 모드를 아직 지원하지 않습니다.
+:::
 
 ### 임의 고정 설정
 <demo vue="basic/multi-header/MultiHeaderAnyFixed.vue"></demo>
+::: warning 가로 방향 가상 리스트(`props.virtualX`)는 이 모드를 아직 지원하지 않습니다.
+:::
 
 매우 흥미롭지 않나요? 이것도 sticky의 특성에 기인합니다.
