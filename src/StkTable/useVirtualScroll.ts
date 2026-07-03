@@ -5,18 +5,6 @@ import { ScrollbarOptions } from './useScrollbar';
 import { binarySearch } from './utils';
 import { getCalculatedColWidth } from './utils/constRefUtils';
 
-/** tbody 渲染项类型枚举 */
-export const TbodyRenderItemType = {
-    Col: 1,
-    Spacer: 2,
-} as const;
-export type TbodyRenderItemType = (typeof TbodyRenderItemType)[keyof typeof TbodyRenderItemType];
-
-/** tbody 渲染项：列或占位符 */
-export type TbodyRenderItem<T extends Record<string, any>> =
-    | { col: PrivateStkTableColumn<T>; colIndex: number }
-    | { type: typeof TbodyRenderItemType.Spacer; colSpan?: number; width?: number; className?: string };
-
 /** 暂存纵向虚拟滚动的数据 */
 export type VirtualScrollStore = {
     /** 容器高度 */
@@ -219,12 +207,11 @@ export function useVirtualScroll(
             }
             cumLeft = groupRight;
 
+            theadEndIndex = col.__LEAF_END__ ?? totalLeafCount;
             if (foundStart && groupRight >= scrollLeft + containerWidth) {
                 // find end
-                theadEndIndex = col.__LEAF_END__ ?? totalLeafCount;
                 break;
             }
-            theadEndIndex = col.__LEAF_END__ ?? totalLeafCount;
         }
 
         if (!foundStart) {
