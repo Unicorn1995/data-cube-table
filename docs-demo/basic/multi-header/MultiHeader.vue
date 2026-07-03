@@ -71,7 +71,7 @@ const dataSource = new Array(50).fill(0).map((it, i) => {
 </script>
 <template>
     <CheckItem v-model="virtual" text="virtual"></CheckItem>
-    <CheckItem v-model="virtualX" text="virtual-x"></CheckItem>
+    <CheckItem v-model="virtualX" text="virtual-x(^1.0.0)"></CheckItem>
     <StkTable
         style="height: 200px"
         row-key="id"

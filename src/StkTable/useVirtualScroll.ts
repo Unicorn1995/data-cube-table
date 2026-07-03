@@ -212,20 +212,15 @@ export function useVirtualScroll(
             const groupWidth = col.__W__ || getCalculatedColWidth(col);
             const groupRight = cumLeft + groupWidth;
 
-            if (!foundStart) {
-                if (groupRight <= scrollLeft) {
-                    cumLeft = groupRight;
-                } else {
-                    foundStart = true;
-                    theadStartIndex = col.__LEAF_START__ ?? 0;
-                    theadOffsetLeft = cumLeft;
-                    cumLeft = groupRight;
-                }
-            } else {
-                cumLeft = groupRight;
+            if (!foundStart && groupRight > scrollLeft) {
+                foundStart = true;
+                theadStartIndex = col.__LEAF_START__ ?? 0;
+                theadOffsetLeft = cumLeft;
             }
+            cumLeft = groupRight;
 
-            if (foundStart && cumLeft - theadOffsetLeft >= containerWidth) {
+            if (foundStart && groupRight >= scrollLeft + containerWidth) {
+                // find end
                 theadEndIndex = col.__LEAF_END__ ?? totalLeafCount;
                 break;
             }

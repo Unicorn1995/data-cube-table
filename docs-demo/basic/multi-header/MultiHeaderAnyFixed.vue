@@ -71,9 +71,7 @@ const dataSource = new Array(50).fill(0).map((it, i) => {
 });
 
 onMounted(() => {
-    window.setTimeout(() => {
-        (stkTableRef.value as any)?.scrollTo(0, 100);
-    });
+    stkTableRef.value?.scrollTo(0, 100);
 });
 </script>
 <template>
