@@ -10,10 +10,10 @@
 ## 예시
 
 ### 기본 전개
-<demo vue="basic/expand-row/ExpandRow.vue"></demo>
+<demo vue="basic/expand-row/ExpandRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/expand-row/ExpandRow.vue"></demo>
 
 ### 커스텀 전개 셀
-<demo vue="basic/expand-row/CustomExpandRow.vue"></demo>
+<demo vue="basic/expand-row/CustomExpandRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/expand-row/CustomExpandRow.vue"></demo>
 
 ## API
 ### StkTableColumn설정

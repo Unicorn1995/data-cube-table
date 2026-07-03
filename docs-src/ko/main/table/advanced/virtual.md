@@ -18,7 +18,7 @@ props:
 ```vue
 <StkTable virtual></StkTable>
 ```
-<demo vue="advanced/virtual/VirtualY.vue"></demo>
+<demo vue="advanced/virtual/VirtualY.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/virtual/VirtualY.vue"></demo>
 
 ## 가로 방향 가상 리스트
 ::: warning
@@ -28,7 +28,7 @@ props:
 ```vue
 <StkTable virtual-x></StkTable>
 ```
-<demo vue="advanced/virtual/VirtualX.vue"></demo>
+<demo vue="advanced/virtual/VirtualX.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/virtual/VirtualX.vue"></demo>
 
 ## 가시 영역 자동 재계산 autoResize
 많은 상황에서 가상 리스트 영역의 높이와 너비가 다양한 이유로 인해 변경되며, 이때 가시 영역을 다시 계산해야 합니다.

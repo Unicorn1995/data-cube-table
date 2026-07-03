@@ -10,4 +10,4 @@
 このモードは `StkTableColumn['width']` にのみ影響します
 :::
 
-<demo vue="basic/fixed-mode/FixedMode.vue"></demo>
+<demo vue="basic/fixed-mode/FixedMode.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed-mode/FixedMode.vue"></demo>

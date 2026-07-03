@@ -19,7 +19,7 @@ stkTableRef.value?.setHighlightDimRow(['id0']);
 // Highlight cell
 stkTableRef.value?.setHighlightDimCell('id1', 'age');
 ```
-<demo vue="advanced/highlight/Highlight.vue"></demo>
+<demo vue="advanced/highlight/Highlight.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/Highlight.vue"></demo>
 
 ## Global Highlight Configuration
 `props.highlightConfig`
@@ -64,7 +64,7 @@ stkTableRef.value?.setHighlightDimCell('id1', 'age', {
 });
 ```
 
-<demo vue="advanced/highlight/HighlightAnimation.vue"></demo>
+<demo vue="advanced/highlight/HighlightAnimation.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/HighlightAnimation.vue"></demo>
 
 ## Custom Highlight Animation via CSS
 This API is an older animation implementation method. It is still retained due to the advantages of `css` animations such as **convenience**, **good compatibility**, and **ease of understanding**.
@@ -88,7 +88,7 @@ Here `duration` is set to `2000` to clear the `class` from the element after the
 }
 
 ```
-<demo vue="advanced/highlight/HighlightCss.vue"></demo>
+<demo vue="advanced/highlight/HighlightCss.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/HighlightCss.vue"></demo>
 
 ## ~~Custom Highlight Animation via JS~~ (deprecated in `v0.7.0`)
 <details>

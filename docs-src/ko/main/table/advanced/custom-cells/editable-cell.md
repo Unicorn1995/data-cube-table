@@ -6,7 +6,7 @@ EditableCell은 내장된 편집 가능 셀 컴포넌트입니다. 셀을 더블
 
 `createEditableCell` 팩토리 함수로 EditableCell 컴포넌트를 생성하고 `customCell`로 사용합니다.
 
-<demo vue="advanced/custom-cells/EditableCell/index.vue"></demo>
+<demo vue="advanced/custom-cells/EditableCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/EditableCell/index.vue"></demo>
 
 ### 설정 옵션
 

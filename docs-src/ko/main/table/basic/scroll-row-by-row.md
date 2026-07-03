@@ -11,4 +11,4 @@
 
 아래 표를 스크롤하면 표 행의 위치가 기본적으로 변하지 않는 것을 볼 수 있습니다.
 
-<demo vue="basic/scroll-row-by-row/ScrollRowByRow.vue"></demo>
+<demo vue="basic/scroll-row-by-row/ScrollRowByRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scroll-row-by-row/ScrollRowByRow.vue"></demo>

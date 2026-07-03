@@ -24,7 +24,7 @@ type AutoRowHeightConfig<DT> = {
 
 ## 示例
 
-<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
+<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
 
 如果你你想控制单元格上下的padding，可以通过覆盖css变量实现：
 ```css
@@ -48,7 +48,7 @@ type AutoRowHeightConfig<DT> = {
 
 ### 示例
 
-<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
+<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
 
 ### API
 

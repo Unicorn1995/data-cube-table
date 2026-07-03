@@ -6,7 +6,7 @@ EditableCell is a built-in editable cell component. Double-click a cell to enter
 
 Create an EditableCell component via the `createEditableCell` factory function and use it as `customCell`.
 
-<demo vue="advanced/custom-cells/EditableCell/index.vue"></demo>
+<demo vue="advanced/custom-cells/EditableCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/EditableCell/index.vue"></demo>
 
 ### Configuration Options
 

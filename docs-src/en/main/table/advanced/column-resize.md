@@ -17,7 +17,7 @@
 After enabling column width adjustment, columns will not fill the container by default. The table's `width` will be set to `fit-content`. If there are any issues, please check if `props.width` is passed in.
 :::
 
-<demo vue="advanced/column-resize/ColResizable.vue"></demo>
+<demo vue="advanced/column-resize/ColResizable.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/column-resize/ColResizable.vue"></demo>
 
 
 ## Change Column Width via Event
@@ -40,7 +40,7 @@ Then replace `width` with `minWidth` for a column, and this column will automati
 Disable width adjustment for the last column via `props.colResizable.disabled`.
 
 The demo below sets minWidth for the last column.
-<demo vue="advanced/column-resize/ColResizableFullHack.vue"></demo>
+<demo vue="advanced/column-resize/ColResizableFullHack.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/column-resize/ColResizableFullHack.vue"></demo>
 
 
 ## API

@@ -1,7 +1,7 @@
 # 行、单元格选中/悬浮
 
 ## demo
-<demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
+<demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
 
 ## 禁用行选中
 使用 `rowActive.disabled` 可以禁用特定行的选中功能。

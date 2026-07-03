@@ -9,10 +9,10 @@ Currently, if expandable rows are configured, the virtual list calculates the to
 ## Example
 
 ### Basic Expansion
-<demo vue="basic/expand-row/ExpandRow.vue"></demo>
+<demo vue="basic/expand-row/ExpandRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/expand-row/ExpandRow.vue"></demo>
 
 ### Custom Expansion Cell
-<demo vue="basic/expand-row/CustomExpandRow.vue"></demo>
+<demo vue="basic/expand-row/CustomExpandRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/expand-row/CustomExpandRow.vue"></demo>
 
 ## API
 ### StkTableColumn Configuration

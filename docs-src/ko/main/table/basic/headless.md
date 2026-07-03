@@ -10,7 +10,7 @@
 
 ## 예시
 ### 세로 테이블 예시
-<demo vue="basic/headless/Headless.vue"></demo>
+<demo vue="basic/headless/Headless.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/headless/Headless.vue"></demo>
 
 ### 가상 단일 열 리스트
 헤더리스를 설정하면 단일 열 리스트를实现할 수 있습니다. [가상 단일 열 리스트 예시](/ko/demos/virtual-list) 보기

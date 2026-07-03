@@ -10,4 +10,4 @@
 
 滚动下面表格，可以看到表格行的位置基本不变。
 
-<demo vue="basic/scroll-row-by-row/ScrollRowByRow.vue"></demo>
+<demo vue="basic/scroll-row-by-row/ScrollRowByRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scroll-row-by-row/ScrollRowByRow.vue"></demo>

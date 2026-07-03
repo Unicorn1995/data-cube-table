@@ -2,7 +2,7 @@
 
 ## デフォルト
 
-<demo vue="basic/empty/Default.vue"></demo>
+<demo vue="basic/empty/Default.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/empty/Default.vue"></demo>
 
 ## 全高空状態（no-data-full）
 
@@ -10,7 +10,7 @@
 `no-data-full` プロパティを設定することで実現します。
 :::
 
-<demo vue="basic/empty/NoDataFull.vue"></demo>
+<demo vue="basic/empty/NoDataFull.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/empty/NoDataFull.vue"></demo>
 
 ## カスタムコンテンツスロット（#empty）
 
@@ -21,4 +21,4 @@
 `i18n` 国際化もスロット介して実装する必要があります。
 :::
 
-<demo vue="basic/empty/Slot.vue"></demo>
+<demo vue="basic/empty/Slot.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/empty/Slot.vue"></demo>

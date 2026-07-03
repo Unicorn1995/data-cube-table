@@ -66,7 +66,7 @@ export type DataType = {
 ```
 :::
 
-<demo vue="advanced/custom-cell/CustomCell/index.vue"></demo>
+<demo vue="advanced/custom-cell/CustomCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cell/CustomCell/index.vue"></demo>
 
 ### 通过渲染函数h使用
 简单的修改，直接使用渲染函数会比较方便。

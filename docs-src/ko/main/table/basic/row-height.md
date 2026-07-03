@@ -17,7 +17,7 @@
 **가상 리스트** 모드에서, 행 높이는 항상 설정된 값입니다.
 :::
 
-<demo vue="basic/row-height/RowHeight.vue"></demo>
+<demo vue="basic/row-height/RowHeight.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-height/RowHeight.vue"></demo>
 
 가상 리스트를开启하면 스크롤 시 열 너비가 변경되는데, 이는 열 너비가 설정되지 않았기 때문입니다.
 
@@ -36,7 +36,7 @@
 ```
 
 아래 높이 조절기를 드래그하면 탄성 행 높이를 볼 수 있습니다.
-<demo vue="basic/row-height/RowHeightFull.vue"></demo>
+<demo vue="basic/row-height/RowHeightFull.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-height/RowHeightFull.vue"></demo>
 **행 수가 고정된** 테이블에 유용합니다.
 
 ::: info

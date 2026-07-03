@@ -16,7 +16,7 @@
 `StkTableColumn['width']`를 설정하면 동시에 `StkTableColumn['minWidth']`와 `StkTableColumn['maxWidth']`도 설정됩니다.
 :::
 
-<demo vue="basic/column-width/ColumnWidth.vue"></demo>
+<demo vue="basic/column-width/ColumnWidth.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/column-width/ColumnWidth.vue"></demo>
 
 
 ## 테이블 전체 채우지 않기
@@ -24,7 +24,7 @@
 
 채우지 않으려면, CSS 선택자 `.stk-table-main`에 `flex: none`을 설정하여 구현할 수 있습니다.
 
-<demo vue="basic/column-width/TableWidthFit.vue"></demo>
+<demo vue="basic/column-width/TableWidthFit.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/column-width/TableWidthFit.vue"></demo>
 
 ## 가로 가상 리스트
 일반(비가상 리스트) 모드와 가상 리스트 모드에서 열 너비 제어 동작이 다릅니다.

@@ -6,7 +6,7 @@
 
 오른쪽 상단 테마 전환 버튼을 클릭하여 효과를 확인하세요.
 
-<demo vue="basic/stripe/Stripe.vue"></demo>
+<demo vue="basic/stripe/Stripe.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/stripe/Stripe.vue"></demo>
 
 ## CSS 변수
 
@@ -16,7 +16,7 @@ StkTable 은 풍부한 CSS 변수를 제공하여 테이블 스타일을 커스�
 
 다음은 CSS 변수를 실시간으로 조정하고 효과를 확인할 수 있는 인터랙티브 데모입니다:
 
-<demo vue="basic/theme/CssVarsDemo.vue"></demo>
+<demo vue="basic/theme/CssVarsDemo.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/theme/CssVarsDemo.vue"></demo>
 
 ### 사용 예시
 

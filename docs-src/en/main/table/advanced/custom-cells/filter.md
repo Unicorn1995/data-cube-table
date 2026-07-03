@@ -6,7 +6,7 @@ Filter is a built-in column header filter component. Click the filter icon in th
 
 Create a Filter component via the `createFilter` factory function and use it as `customHeaderCell`.
 
-<demo vue="advanced/custom-cells/Filter/index.vue"></demo>
+<demo vue="advanced/custom-cells/Filter/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/Filter/index.vue"></demo>
 
 ### Auto Extract Options
 

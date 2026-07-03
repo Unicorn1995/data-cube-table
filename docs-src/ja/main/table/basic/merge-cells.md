@@ -19,10 +19,10 @@ function mergeCells(data: {
 `{ colspan: number, rowspan: number }` を返してマージするセル数を示し、`colspan` は列用、`rowspan` は行用です。
 
 ## 列マージ
-<demo vue="basic/merge-cells/MergeCellsCol.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
 ## 行マージ
-<demo vue="basic/merge-cells/MergeCellsRow.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>
 
 ::: tip
 テーブルデータが変更されると、`mergeCells` 関数が再度呼び出されて再計算されます。
@@ -30,7 +30,7 @@ function mergeCells(data: {
 
 ### 仮想リストでの行マージ <Badge type="tip" text="^0.8.4" /> 
 #### シンプルマージ
-<demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
 コードでは、行の `rowspan` フィールドをマージ数として使用するように `mergeCells` 関数が定義されています。
 ```ts
 function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
@@ -55,4 +55,4 @@ rowspanが非常に大きい場合（例如：1000行）、マージセルはそ
 :::
 
 #### 不規則マージ
-<demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>

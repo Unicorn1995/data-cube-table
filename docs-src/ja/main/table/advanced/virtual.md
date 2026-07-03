@@ -18,7 +18,7 @@ props:
 ```vue
 <StkTable virtual></StkTable>
 ```
-<demo vue="advanced/virtual/VirtualY.vue"></demo>
+<demo vue="advanced/virtual/VirtualY.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/virtual/VirtualY.vue"></demo>
 
 ## 横方向仮想リスト
 ::: warning
@@ -28,7 +28,7 @@ props:
 ```vue
 <StkTable virtual-x></StkTable>
 ```
-<demo vue="advanced/virtual/VirtualX.vue"></demo>
+<demo vue="advanced/virtual/VirtualX.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/virtual/VirtualX.vue"></demo>
 
 ## 可視領域の再計算 autoResize
 多くの場合、仮想リスト領域の幅と高さはさまざまな理由で変化し、可視領域を再計算する必要があります。

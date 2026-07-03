@@ -24,7 +24,7 @@ const footerData = ref<Data[]>([
 </template>
 ```
 
-<demo vue="basic/footer/Footer.vue"></demo>
+<demo vue="basic/footer/Footer.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/footer/Footer.vue"></demo>
 
 ## 上部に吸着
 
@@ -37,13 +37,13 @@ const footerData = ref<Data[]>([
 ></StkTable>
 ```
 
-<demo vue="basic/footer/FooterTop.vue"></demo>
+<demo vue="basic/footer/FooterTop.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/footer/FooterTop.vue"></demo>
 
 ## マルチレベルヘッダーサポート
 
 フッターはマルチレベルヘッダーの下で正しく位置合わせされます：
 
-<demo vue="basic/footer/FooterMultiHeader.vue"></demo>
+<demo vue="basic/footer/FooterMultiHeader.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/footer/FooterMultiHeader.vue"></demo>
 
 ## API
 

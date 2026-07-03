@@ -24,7 +24,7 @@ const footerData = ref<Data[]>([
 </template>
 ```
 
-<demo vue="basic/footer/Footer.vue"></demo>
+<demo vue="basic/footer/Footer.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/footer/Footer.vue"></demo>
 
 
 ## 상단에 고정하기
@@ -38,13 +38,13 @@ const footerData = ref<Data[]>([
 ></StkTable>
 ```
 
-<demo vue="basic/footer/FooterTop.vue"></demo>
+<demo vue="basic/footer/FooterTop.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/footer/FooterTop.vue"></demo>
 
 ## 다중 헤더 지원
 
 푸터는 다중 헤더 아래에 올바르게 위치할 수 있습니다:
 
-<demo vue="basic/footer/FooterMultiHeader.vue"></demo>
+<demo vue="basic/footer/FooterMultiHeader.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/footer/FooterMultiHeader.vue"></demo>
 
 ## API
 

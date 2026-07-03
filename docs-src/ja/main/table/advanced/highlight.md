@@ -19,7 +19,7 @@ stkTableRef.value?.setHighlightDimRow(['id0']);
 // セルをハイライト
 stkTableRef.value?.setHighlightDimCell('id1', 'age');
 ```
-<demo vue="advanced/highlight/Highlight.vue"></demo>
+<demo vue="advanced/highlight/Highlight.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/Highlight.vue"></demo>
 
 ## グローバルハイライト設定
 `props.highlightConfig`
@@ -63,7 +63,7 @@ stkTableRef.value?.setHighlightDimCell('id1', 'age', {
 });
 ```
 
-<demo vue="advanced/highlight/HighlightAnimation.vue"></demo>
+<demo vue="advanced/highlight/HighlightAnimation.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/HighlightAnimation.vue"></demo>
 
 ## CSS を通じたカスタムハイライトアニメーション
 このAPIは古いアニメーション実装方法です。**便利さ**、**良い互換性**、**理解のしやすさ**などの利点があり、まだ保持されています。
@@ -86,7 +86,7 @@ stkTableRef.value?.setHighlightDimRow(['id1'], {
     animation: my-highlight-row 2s linear;
 }
 ```
-<demo vue="advanced/highlight/HighlightCss.vue"></demo>
+<demo vue="advanced/highlight/HighlightCss.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/HighlightCss.vue"></demo>
 
 ## ~~JS を通じたカスタムハイライトアニメーション~~（`v0.7.0` で非推奨）
 <details>

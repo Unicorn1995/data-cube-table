@@ -14,7 +14,7 @@ If you want to customize cells, please use the `StkTableColumn['customCell']` pr
 
 ## customBottom
 
-<demo vue="api/slots/CustomBottom.vue"></demo>
+<demo vue="api/slots/CustomBottom.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/api/slots/CustomBottom.vue"></demo>
 
 ::: tip
 `customBottom` can be used to add an element at the bottom of the table, using `IntersectionObserver` to monitor whether the table bottom is scrolled to.

@@ -4,7 +4,7 @@
 列設定で `StkTableColumn['sorter']` を `true` に設定して排序を有効にします。
 
 テーブルヘッダーをクリックして排序をトリガーします。
-<demo vue="basic/sort/Sort.vue"></demo>
+<demo vue="basic/sort/Sort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/Sort.vue"></demo>
 
 ## カスタム排序
 列設定で `StkTableColumn['sorter']` を関数に設定できます。
@@ -20,7 +20,7 @@
 | order | `'desc'` \| `'asc'` \| `null` | 現在の排序方向。|
 
 以下の表では、`レート` 列フィールドのサイズ排序ルールをカスタマイズしています。
-<demo vue="basic/sort/CustomSort.vue"></demo>
+<demo vue="basic/sort/CustomSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/CustomSort.vue"></demo>
 
 より詳細な排序方法については、[カスタム排序](/ja/main/table/advanced/custom-sort) を参照してください。
 
@@ -28,14 +28,14 @@
 一部のフィールドでは、年、月、日フィールドなど、独立したフィールドを排序に使用場合があります。この場合、最小単位（日）に変換されたフィールド（例如：年*12+月）を提供できるため、排序が容易になります。`sortField` を通じてこの排序フィールドを指定します。
 
 以下の表の `期間` 列では `期間番号` を排序フィールドとして指定しています。
-<demo vue="basic/sort/SortField.vue"></demo>
+<demo vue="basic/sort/SortField.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortField.vue"></demo>
 
 ## 空フィールドを排序から除外
 `props.sortConfig.emptyToBottom` を設定すると、空のフィールドは常にリストの下部に配置されます
 ```vue
 <StkTable :sort-config="{emptyToBottom: true}"></StkTable>
 ```
-<demo vue="basic/sort/SortEmptyValue.vue"></demo>
+<demo vue="basic/sort/SortEmptyValue.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortEmptyValue.vue"></demo>
 
 ## デフォルト排序列を指定
 `props.sortConfig.defaultSort` を設定してデフォルト排序を制御します。
@@ -44,7 +44,7 @@
 
 以下の表の `名前` 列をクリックして、その動作を確認してください。
 :::
-<demo vue="basic/sort/DefaultSort.vue"></demo>
+<demo vue="basic/sort/DefaultSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/DefaultSort.vue"></demo>
 
 ## String.prototype.localCompare を使用した文字列排序
 `props.sortConfig.stringLocaleCompare = true` を設定すると、文字列は [`String.prototype.localeCompare`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare) を使用して排序されます。
@@ -60,12 +60,12 @@
 ```vue
 <StkTable sort-remote></StkTable>
 ```
-<demo vue="basic/sort/SortRemote.vue"></demo>
+<demo vue="basic/sort/SortRemote.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortRemote.vue"></demo>
 
 ## ツリーノードの深い排序
 `props.sortConfig.sortChildren = true` を設定すると、テーブルヘッダーをクリックして排序”时に、`children` サブノードも排序されます。
 
-<demo vue="basic/sort/SortChildren.vue"></demo>
+<demo vue="basic/sort/SortChildren.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortChildren.vue"></demo>
 
 ## 複数列排序 <Badge type="tip" text="^0.11.2" />
 
@@ -78,7 +78,7 @@
 - 3回目のクリックでその列の排序がキャンセルされます
 - `props.sortConfig.multiSortLimit` で最大排序列数を制限できます（デフォルト3）
 
-<demo vue="basic/sort/MultiSort.vue"></demo>
+<demo vue="basic/sort/MultiSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/MultiSort.vue"></demo>
 
 ## API
 ### StkTableColumn 設定

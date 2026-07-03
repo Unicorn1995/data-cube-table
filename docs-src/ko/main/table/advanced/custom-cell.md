@@ -66,7 +66,7 @@ export type DataType = {
 ```
 :::
 
-<demo vue="advanced/custom-cell/CustomCell/index.vue"></demo>
+<demo vue="advanced/custom-cell/CustomCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cell/CustomCell/index.vue"></demo>
 
 ### 렌더링 함수 h를 사용하여
 간단한 수정은 직접 렌더링 함수를 사용하는 것이 더 편리합니다.

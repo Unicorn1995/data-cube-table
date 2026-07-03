@@ -69,6 +69,6 @@ onBeforeUnmount(() => {
 ```
 
 Running Result
-<demo vue="start/Start.vue"></demo>
+<demo vue="start/Start.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/start/Start.vue"></demo>
 
 

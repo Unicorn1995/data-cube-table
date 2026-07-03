@@ -24,7 +24,7 @@ type AutoRowHeightConfig<DT> = {
 
 ## 예시
 
-<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
+<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
 
 셀 상하 패딩을 제어하려면 CSS 변수를 오버라이드하여 구현할 수 있습니다:
 ```css
@@ -48,7 +48,7 @@ type AutoRowHeightConfig<DT> = {
 
 ### 예시
 
-<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
+<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
 
 ### API
 

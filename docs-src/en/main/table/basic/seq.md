@@ -18,7 +18,7 @@ const columns: StkTableColumn<any>[] = [
 
 Here you can see that the `dataIndex` of the `seq` column is empty. This is because `dataIndex` is not only used as a value field but also as a key for v-for rendering. Since the sequence column does not need a key, it is left empty. **Be careful not to duplicate it**.
 
-<demo vue="basic/seq/Seq.vue"></demo>
+<demo vue="basic/seq/Seq.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/seq/Seq.vue"></demo>
 
 
 ## Custom Sequence
@@ -26,5 +26,5 @@ You can configure `props.seqConfig.startIndex` to specify the starting value of 
 
 This is particularly useful for pagination.
 
-<demo vue="basic/seq/SeqStartIndex.vue"></demo>
+<demo vue="basic/seq/SeqStartIndex.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/seq/SeqStartIndex.vue"></demo>
 

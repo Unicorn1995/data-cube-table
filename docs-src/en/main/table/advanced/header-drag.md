@@ -13,7 +13,7 @@
 
 Try dragging the headers
 
-<demo vue="advanced/header-drag/HeaderDrag.vue"></demo>
+<demo vue="advanced/header-drag/HeaderDrag.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/header-drag/HeaderDrag.vue"></demo>
 
 ## Change Order via Event
 ```ts

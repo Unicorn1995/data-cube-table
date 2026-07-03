@@ -18,7 +18,7 @@ const columns: StkTableColumn<any>[] = [
 
 这里可以看到`seq`列的 `dataIndex` 为空，因为 `dataIndex` 除了作为取值字段之外，也用作v-for 渲染依赖的key，而序号列不需要key, 所以为空，**注意不要重复了**。
 
-<demo vue="basic/seq/Seq.vue"></demo>
+<demo vue="basic/seq/Seq.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/seq/Seq.vue"></demo>
 
 
 ## 自定义序号
@@ -26,5 +26,5 @@ const columns: StkTableColumn<any>[] = [
 
 在分页下比较有用。
 
-<demo vue="basic/seq/SeqStartIndex.vue"></demo>
+<demo vue="basic/seq/SeqStartIndex.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/seq/SeqStartIndex.vue"></demo>
 

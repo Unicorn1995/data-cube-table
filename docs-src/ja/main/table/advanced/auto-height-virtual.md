@@ -24,7 +24,7 @@ type AutoRowHeightConfig<DT> = {
 
 ## 例
 
-<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
+<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
 
 セルの上下のパディングを制御したい場合は、CSS変数をオーバーライドすることで行うことができます：
 ```css
@@ -48,7 +48,7 @@ type AutoRowHeightConfig<DT> = {
 
 ### 例
 
-<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
+<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
 
 ### API
 

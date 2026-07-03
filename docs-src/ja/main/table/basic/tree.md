@@ -27,29 +27,29 @@ export const getDataSource = () => [
 
 ## シンプルツリー
 
-<demo vue="basic/tree/Tree.vue"></demo>
+<demo vue="basic/tree/Tree.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/Tree.vue"></demo>
 
 ## デフォルト展開ノード
 
 ### すべて展開
 `treeConfig.defaultExpandAll = true`
 
-<demo vue="basic/tree/TreeDefaultExpandAll.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandAll.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandAll.vue"></demo>
 
 ### 特定レベルまで展開
 `treeConfig.defaultExpandLevel = 1`
 
-<demo vue="basic/tree/TreeDefaultExpandLevel.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandLevel.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandLevel.vue"></demo>
 
 ### 特定ノードを展開
 `treeConfig.defaultExpandedKeys = ['アジア', '中国', '浙江']`
 
-<demo vue="basic/tree/TreeDefaultExpandKeys.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandKeys.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandKeys.vue"></demo>
 
 
 ## 仮想リスト
 
-<demo vue="basic/tree/TreeVirtualList.vue"></demo>
+<demo vue="basic/tree/TreeVirtualList.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeVirtualList.vue"></demo>
 
 ::: warning 注意
 コンポーネントは各行のdataSourceに `__T_EXP__` フィールドを注入して、展開されているかどうかを制御します。行のデータを更新するときにこのフィールドを変更しないでください。因此、例ではObject.assignを使用してデータを更新しています。

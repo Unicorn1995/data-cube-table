@@ -17,4 +17,4 @@ const columns:StkTableColumn<any>[] = [
 ]
 ```
 
-<demo vue="basic/align/Align.vue"></demo>
+<demo vue="basic/align/Align.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/align/Align.vue"></demo>

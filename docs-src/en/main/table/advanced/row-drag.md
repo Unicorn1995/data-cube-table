@@ -9,11 +9,11 @@ Use built-in drag with `StkTableColumn['type']="dragRow"`
 `dataIndex` is not specified in the column configuration for `dragRow` because the unique key is overridden by `props.colKey`, and the `StkTableColumn['key']` field is prioritized.
 :::
 
-<demo vue="advanced/row-drag/RowDrag.vue"></demo>
+<demo vue="advanced/row-drag/RowDrag.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/row-drag/RowDrag.vue"></demo>
 
 You can also implement it yourself using the native draggable API, here's a reference:
 
-<demo vue="advanced/row-drag/RowDragCustom.vue"></demo>
+<demo vue="advanced/row-drag/RowDragCustom.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/row-drag/RowDragCustom.vue"></demo>
 
 ## API
 

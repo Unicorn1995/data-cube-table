@@ -29,7 +29,7 @@ To calculate the adsorption position of **fixed columns** using column widths, a
 As in the table above, all columns before the `Gender` column must have widths set. The same applies to fixed right columns.
 :::
 
-<demo vue="basic/fixed/Fixed.vue"></demo>
+<demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>
 
 You can see that when scrolling horizontally, the `Gender` column automatically adsorbs to the left.
 
@@ -48,7 +48,7 @@ By default, fixed columns have no shadow effect. If you want a shadow effect, yo
 ## Virtual List Column Fixing
 
 
-<demo vue="basic/fixed/FixedVirtual.vue"></demo>
+<demo vue="basic/fixed/FixedVirtual.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/FixedVirtual.vue"></demo>
 
 ::: warning
 When `props.virtual-x` (horizontal virtual list) is set, columns without specified widths will be forced to 100px

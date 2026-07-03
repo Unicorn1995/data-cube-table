@@ -10,7 +10,7 @@
 ```ts
 stkTableRef.value?.setSorter('rate', 'desc');
 ```
-<demo vue="advanced/custom-sort/CustomSort/index.vue"></demo>
+<demo vue="advanced/custom-sort/CustomSort/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-sort/CustomSort/index.vue"></demo>
 
 ### パラメータ説明
 
@@ -116,4 +116,4 @@ export function insertToOrderedArray<T extends object>(
 ### 例
 以下の例は `tableSort` と `insertToOrderedArray` の使用方法を示しています。クリックして行を挿入し、挿入排序の效果を確認してください。
 
-<demo vue="advanced/custom-sort/InsertSort.vue"></demo>
+<demo vue="advanced/custom-sort/InsertSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-sort/InsertSort.vue"></demo>

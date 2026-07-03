@@ -24,7 +24,7 @@ const footerData = ref<Data[]>([
 </template>
 ```
 
-<demo vue="basic/footer/Footer.vue"></demo>
+<demo vue="basic/footer/Footer.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/footer/Footer.vue"></demo>
 
 
 ## 吸附在顶部
@@ -38,13 +38,13 @@ const footerData = ref<Data[]>([
 ></StkTable>
 ```
 
-<demo vue="basic/footer/FooterTop.vue"></demo>
+<demo vue="basic/footer/FooterTop.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/footer/FooterTop.vue"></demo>
 
 ## 多行表头支持
 
 表尾能够正确地定位在多行表头下方：
 
-<demo vue="basic/footer/FooterMultiHeader.vue"></demo>
+<demo vue="basic/footer/FooterMultiHeader.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/footer/FooterMultiHeader.vue"></demo>
 
 ## API
 

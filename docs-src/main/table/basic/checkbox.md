@@ -4,7 +4,7 @@
 StkTable 组件本身**没有内置的多选框功能**，但可以通过 `customCell` 和 `customHeaderCell` 配置项来自定义实现多选框功能。这种方式非常灵活，可以满足不同的业务需求。
 ## 示例
 
-<demo vue="basic/checkbox/Checkbox.vue" />
+<demo vue="basic/checkbox/Checkbox.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/checkbox/Checkbox.vue"></demo>
 
 ## 代码实现
 

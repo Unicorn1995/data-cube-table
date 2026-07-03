@@ -15,7 +15,7 @@
 `StkTableColumn['width']` を設定すると、`StkTableColumn['minWidth']` と `StkTableColumn['maxWidth']` も設定されます。
 :::
 
-<demo vue="basic/column-width/ColumnWidth.vue"></demo>
+<demo vue="basic/column-width/ColumnWidth.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/column-width/ColumnWidth.vue"></demo>
 
 
 ## テーブルが全幅ではない場合
@@ -23,7 +23,7 @@
 
 コンテナを埋めたくない場合は、`.stk-table-main` を `flex: none` に設定できます。
 
-<demo vue="basic/column-width/TableWidthFit.vue"></demo>
+<demo vue="basic/column-width/TableWidthFit.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/column-width/TableWidthFit.vue"></demo>
 
 ## 横方向仮想リスト
 列幅制御の動作は、通常の（非仮想リスト）モードと仮想リストモードで異なります。

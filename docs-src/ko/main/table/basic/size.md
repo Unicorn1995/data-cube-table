@@ -10,7 +10,7 @@
 `style`을 통해 테이블 너비와 높이를 제어합니다.
 :::
 
-<demo vue="basic/size/Default.vue"></demo>
+<demo vue="basic/size/Default.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/size/Default.vue"></demo>
 
 ## Flex 레이아웃
 
@@ -18,4 +18,4 @@
 외부 `flex`弹性盒의 높이를 제어하면 테이블 높이가 자동으로 조정됩니다.
 :::
 
-<demo vue="basic/size/Flex.vue"></demo>
+<demo vue="basic/size/Flex.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/size/Flex.vue"></demo>

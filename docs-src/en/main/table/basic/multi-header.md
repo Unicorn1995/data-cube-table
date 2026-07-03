@@ -23,13 +23,13 @@ const columns: StkTableColumn<any>[] = [
 ```
 
 
-<demo vue="basic/multi-header/MultiHeader.vue"></demo>
+<demo vue="basic/multi-header/MultiHeader.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeader.vue"></demo>
 
 ## Horizontal Virtual List(✨NEW)<Badge type="tip" text="^1.0.0" />
 With the help of AI, multi-level headers finally support horizontal virtual list!
 
 Configure `props.virtualX` to enable it.
-<demo vue="basic/multi-header/MultiHeaderVirtualX.vue"></demo>
+<demo vue="basic/multi-header/MultiHeaderVirtualX.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeaderVirtualX.vue"></demo>
 
 ::: tip
 If a parent header has many child nodes, try splitting the headers for better virtual scrolling performance.
@@ -79,15 +79,15 @@ const columns: StkTableColumn<any>[] = [
     },
 ]
 ```
-<demo vue="basic/multi-header/MultiHeaderFixed.vue"></demo>
+<demo vue="basic/multi-header/MultiHeaderFixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeaderFixed.vue"></demo>
 ### Only Configure Leaf Node Fixing
 
-<demo vue="basic/multi-header/MultiHeaderLeavesFixed.vue"></demo>
+<demo vue="basic/multi-header/MultiHeaderLeavesFixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeaderLeavesFixed.vue"></demo>
 ::: warning Horizontal virtual list (`props.virtualX`) does not support this mode yet.
 :::
 
 ### Configure Arbitrary Fixing
-<demo vue="basic/multi-header/MultiHeaderAnyFixed.vue"></demo>
+<demo vue="basic/multi-header/MultiHeaderAnyFixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeaderAnyFixed.vue"></demo>
 ::: warning Horizontal virtual list (`props.virtualX`) does not support this mode yet.
 :::
 

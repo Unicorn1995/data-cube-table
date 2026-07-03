@@ -17,7 +17,7 @@
 列幅調整を有効にすると、列はデフォルトでコンテナを埋めることはありません。テーブルの `width` は `fit-content` に設定されます。問題がある場合は、`props.width` が渡されているかどうかを確認してください。
 :::
 
-<demo vue="advanced/column-resize/ColResizable.vue"></demo>
+<demo vue="advanced/column-resize/ColResizable.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/column-resize/ColResizable.vue"></demo>
 
 
 ## イベントで列幅を変更
@@ -40,7 +40,7 @@
 `props.colResizable.disabled` を介して最後の列の列幅調整を無効にします。
 
 以下のデモでは、最後の列に minWidth を設定しています。
-<demo vue="advanced/column-resize/ColResizableFullHack.vue"></demo>
+<demo vue="advanced/column-resize/ColResizableFullHack.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/column-resize/ColResizableFullHack.vue"></demo>
 
 
 ## API

@@ -24,7 +24,7 @@ Estimated height of a row, used to calculate how many rows can fit within the cu
 
 ## Example
 
-<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
+<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
 
 If you want to control the top and bottom padding of cells, you can do so by overriding CSS variables:
 ```css
@@ -48,7 +48,7 @@ When row height can be calculated from content in advance, it is recommended to 
 
 ### Example
 
-<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
+<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
 
 ### API
 

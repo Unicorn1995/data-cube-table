@@ -1,7 +1,7 @@
 # Row, Cell Hover and Select
 
 ## demo
-<demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
+<demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
 
 ## Disabling Row Selection
 You can use `rowActive.disabled` to disable the selection function for specific rows.

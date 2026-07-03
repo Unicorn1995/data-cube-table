@@ -13,4 +13,4 @@ Configure `bordered` to implement table borders, with values `true` | `false` | 
 ::: tip
 Due to scrollbar influence, the right and bottom borders of the table are implemented by cell's `border-right` and `border-bottom`, which may disappear. You can add custom CSS as needed.
 :::
-<demo vue="basic/border/Default.vue"></demo>
+<demo vue="basic/border/Default.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/border/Default.vue"></demo>

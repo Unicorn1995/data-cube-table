@@ -29,7 +29,7 @@ const columns: StkTableColumn<any>[] = [
 上記のテーブルのように、`性別` 列より前のすべての列はwidthが設定されている必要があります。右固定列也同样です。
 :::
 
-<demo vue="basic/fixed/Fixed.vue"></demo>
+<demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>
 
 横スクロールすると、`性別` 列が自動的に左に吸着するのがわかります。
 
@@ -48,7 +48,7 @@ const columns: StkTableColumn<any>[] = [
 ## 仮想リスト列固定
 
 
-<demo vue="basic/fixed/FixedVirtual.vue"></demo>
+<demo vue="basic/fixed/FixedVirtual.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/FixedVirtual.vue"></demo>
 
 ::: warning
 `props.virtual-x`（横方向仮想リスト）が設定されている場合、widthが指定されていない列は強制的に100pxになります
