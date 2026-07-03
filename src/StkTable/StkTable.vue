@@ -120,21 +120,26 @@
                             :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
                         ></td>
                         <td v-if="virtualX_on && virtualX_spacerColspan" class="vt-x-spacer" :colspan="virtualX_spacerColspan"></td>
-                        <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" v-bind="getTFProps(col)">
-                            <component
-                                :is="col.customFooterCell"
-                                v-if="col.customFooterCell"
-                                class="table-cell-wrapper"
-                                tabindex="-1"
-                                :col="col"
-                                :row="footRow"
-                                :rowIndex="footRowIndex"
-                                :cellValue="footRow[col.dataIndex]"
-                            />
-                            <div class="table-cell-wrapper" tabindex="-1" :title="footRow[col.dataIndex] || ''">
-                                <span v-if="footRow[col.dataIndex] != null">{{ footRow[col.dataIndex] }}</span>
-                            </div>
-                        </td>
+                        <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
+                            <template v-if="col.type === 'spacer'">
+                                <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
+                            </template>
+                            <td v-else v-bind="getTFProps(col)">
+                                <component
+                                    :is="col.customFooterCell"
+                                    v-if="col.customFooterCell"
+                                    class="table-cell-wrapper"
+                                    tabindex="-1"
+                                    :col="col"
+                                    :row="footRow"
+                                    :rowIndex="footRowIndex"
+                                    :cellValue="footRow[col.dataIndex]"
+                                />
+                                <div class="table-cell-wrapper" tabindex="-1" :title="footRow[col.dataIndex] || ''">
+                                    <span v-if="footRow[col.dataIndex] != null">{{ footRow[col.dataIndex] }}</span>
+                                </div>
+                            </td>
+                        </template>
                         <td v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></td>
                     </tr>
                 </component>
@@ -156,7 +161,12 @@
                                 :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
                             ></td>
                             <td v-if="virtualX_on && virtualX_spacerColspan" class="vt-x-spacer" :colspan="virtualX_spacerColspan"></td>
-                            <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
+                            <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
+                                <template v-if="col.type === 'spacer'">
+                                    <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
+                                </template>
+                                <td v-else :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
+                            </template>
                             <td
                                 v-if="virtualX_on"
                                 class="vt-x-right"
@@ -175,9 +185,12 @@
                         <template v-else>
                             <td v-if="virtualX_on" class="vt-x-left"></td>
                             <td v-if="virtualX_on && virtualX_spacerColspan" class="vt-x-spacer" :colspan="virtualX_spacerColspan"></td>
-                            <template v-for="col in virtualX_columnPart" :key="colKeyGen(col)">
+                            <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
+                                <template v-if="col.type === 'spacer'">
+                                    <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
+                                </template>
                                 <td
-                                    v-if="!shouldHideCell(row, col)"
+                                    v-else-if="!shouldHideCell(row, col)"
                                     v-bind="getTDProps(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LEAF_START__ ?? 0)"
                                 >
                                     <component

@@ -244,11 +244,24 @@ export function useVirtualScroll(
             const validEndIndex = Math.min(endIndex, maxIndex);
             const validStartIndex = Math.min(startIndex, maxIndex);
 
-            // 多级表头：不重排固定列，保持原始顺序，依赖 sticky CSS 定位固定列
+            // 多级表头：分离右侧固定列，插入 spacer 标记实现对齐
             if (isMultiLevelHeader.value) {
-                return tableHeaderLastValue.filter((col, i) => {
-                    return col.fixed || (i >= validStartIndex && i < validEndIndex);
-                });
+                const result: PrivateStkTableColumn<PrivateRowDT>[] = [];
+                const rightCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
+                for (let i = 0; i < tableHeaderLastValue.length; i++) {
+                    const col = tableHeaderLastValue[i];
+                    if (col.fixed === 'right') {
+                        rightCols.push(col);
+                    } else if (col.fixed === 'left' || (i >= validStartIndex && i < validEndIndex)) {
+                        result.push(col);
+                    }
+                }
+                const spacerColspan = Math.max(0, theadVirtualX.value.endIndex - endIndex);
+                if (rightCols.length > 0 || spacerColspan > 0) {
+                    result.push({ type: 'spacer', __COLSPAN__: spacerColspan } as unknown as PrivateStkTableColumn<PrivateRowDT>);
+                    result.push(...rightCols);
+                }
+                return result;
             }
 
             // 单级表头：保持原有重排逻辑（向后兼容）
@@ -267,7 +280,6 @@ export function useVirtualScroll(
             }
 
             const mainColumns = tableHeaderLastValue.slice(validStartIndex, validEndIndex);
-
             return leftCols.concat(mainColumns).concat(rightCols);
         }
         return tableHeaderLastValue;
@@ -306,10 +318,11 @@ export function useVirtualScroll(
         return Math.max(0, virtualScrollX.value.startIndex - theadVirtualX.value.startIndex);
     });
 
-    /** 展开行 colspan：虚拟滚动时等于所有 spacer + virtualX_columnPart 占用的列数之和 */
+    /** 展开行 colspan：虚拟滚动时等于所有 td 元素数量（含 spacer）之和 */
     const expandRowColspan = computed(() => {
         if (!virtualX_on.value) return tableHeaderLast.value.length;
-        return (virtualX_spacerColspan.value > 0 ? 1 : 0) + 2 + virtualX_columnPart.value.length;
+        const spacerColspan = virtualX_columnPart.value.find(c => c.type === 'spacer')?.__COLSPAN__ ?? 0;
+        return (virtualX_spacerColspan.value > 0 ? 1 : 0) + 2 + virtualX_columnPart.value.length + Math.max(0, spacerColspan - 1);
     });
 
     const virtualX_offsetRight = computed(() => {
