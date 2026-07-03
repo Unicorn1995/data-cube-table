@@ -119,7 +119,6 @@
                             class="vt-x-left"
                             :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
                         ></td>
-                        <td v-if="virtualX_on && virtualX_spacerColspan" class="vt-x-spacer" :colspan="virtualX_spacerColspan"></td>
                         <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
                             <template v-if="col.type === 'spacer'">
                                 <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
@@ -160,7 +159,6 @@
                                 class="vt-x-left"
                                 :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
                             ></td>
-                            <td v-if="virtualX_on && virtualX_spacerColspan" class="vt-x-spacer" :colspan="virtualX_spacerColspan"></td>
                             <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
                                 <template v-if="col.type === 'spacer'">
                                     <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
@@ -184,7 +182,6 @@
                         </td>
                         <template v-else>
                             <td v-if="virtualX_on" class="vt-x-left"></td>
-                            <td v-if="virtualX_on && virtualX_spacerColspan" class="vt-x-spacer" :colspan="virtualX_spacerColspan"></td>
                             <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
                                 <template v-if="col.type === 'spacer'">
                                     <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
@@ -877,7 +874,6 @@ const [
     clearAllAutoHeight,
     clearColWidthCache,
     virtualX_tableHeaders,
-    virtualX_spacerColspan,
     expandRowColspan,
     theadVirtualX,
     virtualX_columnPart,

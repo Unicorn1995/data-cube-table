@@ -244,22 +244,39 @@ export function useVirtualScroll(
             const validEndIndex = Math.min(endIndex, maxIndex);
             const validStartIndex = Math.min(startIndex, maxIndex);
 
-            // 多级表头：分离右侧固定列，插入 spacer 标记实现对齐
+            // 多级表头：分离左/右固定列，插入 spacer 标记实现对齐
             if (isMultiLevelHeader.value) {
-                const result: PrivateStkTableColumn<PrivateRowDT>[] = [];
-                const rightCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
+                const leftFixedCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
+                const rightFixedCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
+                const visibleCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
                 for (let i = 0; i < tableHeaderLastValue.length; i++) {
                     const col = tableHeaderLastValue[i];
                     if (col.fixed === 'right') {
-                        rightCols.push(col);
-                    } else if (col.fixed === 'left' || (i >= validStartIndex && i < validEndIndex)) {
-                        result.push(col);
+                        rightFixedCols.push(col);
+                    } else if (col.fixed === 'left') {
+                        leftFixedCols.push(col);
+                    } else if (i >= validStartIndex && i < validEndIndex) {
+                        visibleCols.push(col);
                     }
                 }
-                const spacerColspan = Math.max(0, theadVirtualX.value.endIndex - endIndex);
-                if (rightCols.length > 0 || spacerColspan > 0) {
-                    result.push({ type: 'spacer', __COLSPAN__: spacerColspan } as unknown as PrivateStkTableColumn<PrivateRowDT>);
-                    result.push(...rightCols);
+
+                const result: PrivateStkTableColumn<PrivateRowDT>[] = [];
+                result.push(...leftFixedCols);
+
+                // 左侧 spacer：theadStart 到 tbodyStart 之间非 fixed:left 的叶子列数
+                const theadStart = theadVirtualX.value.startIndex;
+                const leftSpacerColspan = Math.max(0, startIndex - theadStart);
+                if (leftSpacerColspan) {
+                    result.push({ type: 'spacer', __COLSPAN__: leftSpacerColspan } as unknown as PrivateStkTableColumn<PrivateRowDT>);
+                }
+
+                result.push(...visibleCols);
+
+                // 右侧 spacer：tbodyEnd 到 theadEnd 之间的非 fixed:right 列数
+                if (rightFixedCols.length) {
+                    const rightSpacerColspan = Math.max(0, theadVirtualX.value.endIndex - endIndex);
+                    result.push({ type: 'spacer', __COLSPAN__: rightSpacerColspan } as unknown as PrivateStkTableColumn<PrivateRowDT>);
+                    result.push(...rightFixedCols);
                 }
                 return result;
             }
@@ -308,21 +325,13 @@ export function useVirtualScroll(
         return headers.map((row, i) => (i === headers.length - 1 ? virtualX_columnPart.value : row));
     });
 
-    /**
-     * vt-x-spacer colspan：多级表头时 tbody 比 thead 多出的列数，用于对齐。
-     * - 多级表头：theadStart（顶层组粒度）可能小于 tbodyStart（叶子列粒度），差值即为 spacer 占用的列数。
-     * - 单级表头：thead 与 tbody 起始位置一致，无需 spacer。
-     */
-    const virtualX_spacerColspan = computed(() => {
-        if (!virtualX_on.value || !isMultiLevelHeader.value) return 0;
-        return Math.max(0, virtualScrollX.value.startIndex - theadVirtualX.value.startIndex);
-    });
-
     /** 展开行 colspan：虚拟滚动时等于所有 td 元素数量（含 spacer）之和 */
     const expandRowColspan = computed(() => {
         if (!virtualX_on.value) return tableHeaderLast.value.length;
-        const spacerColspan = virtualX_columnPart.value.find(c => c.type === 'spacer')?.__COLSPAN__ ?? 0;
-        return (virtualX_spacerColspan.value > 0 ? 1 : 0) + 2 + virtualX_columnPart.value.length + Math.max(0, spacerColspan - 1);
+        const spacers = virtualX_columnPart.value.filter(c => c.type === 'spacer');
+        // 2 = vt-x-left + vt-x-right
+        // 每个 spacer 项占 1 个位置，colspan > 1 时额外增加 (colspan - 1)
+        return 2 + virtualX_columnPart.value.length + spacers.reduce((sum, s) => sum + Math.max(0, (s.__COLSPAN__ ?? 0) - 1), 0);
     });
 
     const virtualX_offsetRight = computed(() => {
@@ -681,7 +690,6 @@ export function useVirtualScroll(
         clearAllAutoHeight,
         clearColWidthCache,
         virtualX_tableHeaders,
-        virtualX_spacerColspan,
         expandRowColspan,
         theadVirtualX,
         virtualX_columnPart,
