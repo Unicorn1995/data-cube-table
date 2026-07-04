@@ -7,13 +7,13 @@ declare function __VLS_template(): {
 declare const __VLS_component: import('vue').DefineComponent<import('vue').ExtractPropTypes<__VLS_TypePropsToRuntimeProps<CustomHeaderCellProps<any> & {
     theme?: "light" | "dark";
     active?: boolean;
-    options: FilterOption[];
+    getOptions: () => FilterOption[];
 }>>, {}, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     change: (value: any[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_TypePropsToRuntimeProps<CustomHeaderCellProps<any> & {
     theme?: "light" | "dark";
     active?: boolean;
-    options: FilterOption[];
+    getOptions: () => FilterOption[];
 }>>> & Readonly<{
     onChange?: ((value: any[]) => any) | undefined;
 }>, {}, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>;
