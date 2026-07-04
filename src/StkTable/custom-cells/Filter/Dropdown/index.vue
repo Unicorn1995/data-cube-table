@@ -19,7 +19,7 @@ const columns = ref<StkTableColumn<FilterOption>[]>([
                 checked: checkedTempValueSet.has(row.value),
             }),
     },
-    { title: '', dataIndex: 'label', customCell: ({ row }) => h('span', [row.label]) },
+    { title: '', dataIndex: 'label' },
 ]);
 
 const visible = ref(false);
