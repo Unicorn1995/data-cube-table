@@ -28,36 +28,26 @@ const dataSource = ref<RowData[]>([
     { id: 6, name: t('zhouBa'), city: t('shenzhen'), department: t('productDept') },
 ]);
 
+const NameFilter = Filter({
+    options: [
+        { label: t('zhangSan'), value: t('zhangSan') },
+        { label: t('liSi'), value: t('liSi') },
+        { label: t('wangWu'), value: t('wangWu') },
+    ],
+});
+const CityFilter = Filter({ autoOptions: true });
+const DepartmentFilter = Filter({
+    options: [
+        { label: t('techDept'), value: t('techDept') },
+        { label: t('productDept'), value: t('productDept') },
+        { label: t('opsDept'), value: t('opsDept') },
+    ],
+});
+
 const columns: StkTableColumn<RowData>[] = [
     { title: 'ID', dataIndex: 'id', width: 60 },
-    {
-        title: t('name'),
-        dataIndex: 'name',
-        customHeaderCell: Filter({
-            options: [
-                { label: t('zhangSan'), value: t('zhangSan') },
-                { label: t('liSi'), value: t('liSi') },
-                { label: t('wangWu'), value: t('wangWu') },
-            ],
-        }),
-    },
-    {
-        title: t('city'),
-        dataIndex: 'city',
-        customHeaderCell: Filter({
-            autoOptions: true,
-        }),
-    },
-    {
-        title: t('department'),
-        dataIndex: 'department',
-        customHeaderCell: Filter({
-            options: [
-                { label: t('techDept'), value: t('techDept') },
-                { label: t('productDept'), value: t('productDept') },
-                { label: t('opsDept'), value: t('opsDept') },
-            ],
-        }),
-    },
+    { title: t('name'), dataIndex: 'name', customHeaderCell: NameFilter },
+    { title: t('city'), dataIndex: 'city', customHeaderCell: CityFilter },
+    { title: t('department'), dataIndex: 'department', customHeaderCell: DepartmentFilter },
 ];
 </script>
