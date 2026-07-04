@@ -1,5 +1,5 @@
 import { CustomHeaderCellProps, UniqKey } from '@/StkTable/types';
-import { computed, defineComponent, getCurrentInstance, h, markRaw, ref, VNode } from 'vue';
+import { computed, defineComponent, getCurrentInstance, h, markRaw, ref, VNode, watch } from 'vue';
 import Filter from './Filter.vue';
 import type { CreateFilterOption, FilterComponentConfig, FilterOption, FilterStatus } from './types';
 
@@ -66,15 +66,27 @@ export function createFilter(option?: CreateFilterOption) {
                         return filterStatus.value[colKey]?.value.length || 0;
                     });
 
-                    // 自动从数据中提取筛选选项
-                    const autoOptions = computed<FilterOption[]>(() => {
+                    // 自动从数据中提取筛选选项（懒计算，仅在下拉打开时触发）
+                    let cachedAutoOptions: FilterOption[] | null = null;
+                    // 数据源变化时清除缓存，下次打开下拉时重新计算
+                    watch(
+                        () => stkTableInstance?.props?.dataSource,
+                        () => {
+                            cachedAutoOptions = null;
+                        },
+                    );
+                    function getAutoOptions(): FilterOption[] {
                         if (!config?.autoOptions) return [];
+                        if (cachedAutoOptions) return cachedAutoOptions;
                         const dataSource: any[] = stkTableInstance?.props?.dataSource || [];
-                        return extractFilterOptions(dataSource, colKey);
-                    });
+                        cachedAutoOptions = extractFilterOptions(dataSource, colKey);
+                        return cachedAutoOptions;
+                    }
 
                     // 优先使用 FilterComponent 传入的 options，其次使用自动提取的选项
-                    const resolvedOptions = computed(() => config?.options ?? autoOptions.value);
+                    function getResolvedOptions(): FilterOption[] {
+                        return config?.options ?? getAutoOptions();
+                    }
 
                     function handleChange(value: FilterOption['value'][]) {
                         filterStatus.value[colKey] = {
@@ -91,7 +103,7 @@ export function createFilter(option?: CreateFilterOption) {
                                 ...props,
                                 theme: theme.value,
                                 active: filterNumber.value > 0,
-                                options: resolvedOptions.value,
+                                getOptions: getResolvedOptions,
                                 onChange: handleChange,
                             },
                             component ? { default: () => [h(component, props)] } : undefined,

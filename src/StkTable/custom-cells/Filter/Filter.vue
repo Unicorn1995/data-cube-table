@@ -8,7 +8,7 @@ const props = defineProps<
     CustomHeaderCellProps<any> & {
         theme?: 'light' | 'dark';
         active?: boolean; // 是否激活筛选
-        options: FilterOption[]; // 自定义筛选选项
+        getOptions: () => FilterOption[]; // 懒获取筛选选项，仅在下拉打开时调用
     }
 >();
 
@@ -40,7 +40,7 @@ function handleIconClick(e: MouseEvent) {
                 y: rect.bottom + scrollTop,
                 height: rect.height,
             },
-            props.options,
+            props.getOptions(),
             handleConfirm,
         );
     });

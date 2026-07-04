@@ -1,4 +1,4 @@
-# Filter (Beta)
+# Filter <Badge type="tip" text="^1.0.0" /> <Badge type="warning" text="Beta" />
 
 Filter is a built-in column header filter component. Click the filter icon in the column header to open the filter panel. It supports manually specified options and automatically extracting options from data.
 
@@ -36,17 +36,17 @@ You can customize the filter logic via the `filter` parameter:
             { label: '30 and above', value: 'old' },
         ],
         filter: ({ row, cellValue, filterValues }) => {
-            if (filterValues.includes('young')) {
-                return cellValue < 30;
-            }
-            if (filterValues.includes('old')) {
-                return cellValue >= 30;
-            }
-            return true;
+            return filterValues.some(v => {
+                if (v === 'young') return cellValue < 30;
+                if (v === 'old') return cellValue >= 30;
+                return false;
+            });
         },
     }),
 }
 ```
+
+<demo vue="advanced/custom-cells/Filter/CustomFilter.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/Filter/CustomFilter.vue"></demo>
 
 ### Data Filtering
 
