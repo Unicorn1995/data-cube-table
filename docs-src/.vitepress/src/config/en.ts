@@ -50,7 +50,7 @@ export const enConfig = defineConfig({
                                     { text: 'Content Overflow', link: '/table/basic/overflow' },
                                     { text: 'Sorting', link: '/table/basic/sort' },
                                     { text: 'Row & Cell Selection/Hover', link: '/table/basic/row-cell-mouse-event' },
-                                    { text: 'Checkbox', link: '/table/basic/checkbox' },
+                                    { text: 'Checkbox', link: '/table/basic/checkbox-cell' },
                                     { text: 'Cell Merging', link: '/table/basic/merge-cells' },
                                     { text: 'Headless', link: '/table/basic/headless' },
                                     { text: 'Row Expansion', link: '/table/basic/expand-row' },
@@ -85,6 +85,7 @@ export const enConfig = defineConfig({
                                         items: [
                                             { text: 'EditableCell', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'Filter', link: '/table/advanced/custom-cells/filter' },
+                                            { text: 'CheckboxCell', link: '/table/advanced/custom-cells/checkbox-cell' },
                                         ],
                                     },
                                 ]

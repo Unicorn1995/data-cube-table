@@ -8,6 +8,7 @@
     - feat: `setFilter` add `silent` option. When set to `true`, the `filter-change` event will not be triggered.
     - feat: add `filter-change` emit event, triggered when filter status changes via `setFilter`.
   - feat `createEditableCell`
+  - feat `createCheckboxCell`
   
 
 ## 0.11.15

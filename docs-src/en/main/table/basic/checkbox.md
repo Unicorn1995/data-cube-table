@@ -4,7 +4,7 @@
 The StkTable component **does not have built-in checkbox functionality**, but you can implement it through the `customCell` and `customHeaderCell` configuration options. This approach is very flexible and can meet different business requirements.
 ## Example
 
-<demo vue="basic/checkbox/Checkbox.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/checkbox/Checkbox.vue"></demo>
+<demo vue="basic/checkbox-cell/Checkbox.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/checkbox-cell/Checkbox.vue"></demo>
 
 
 ## Code Implementation

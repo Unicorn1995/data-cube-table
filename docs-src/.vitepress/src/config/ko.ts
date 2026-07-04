@@ -50,7 +50,7 @@ export const koConfig = defineConfig({
                                     { text: '텍스트 생략', link: '/table/basic/overflow' },
                                     { text: '정렬', link: '/table/basic/sort' },
                                     { text: '행/셀 선택/호버', link: '/table/basic/row-cell-mouse-event' },
-                                    { text: '체크박스', link: '/table/basic/checkbox' },
+                                    { text: '체크박스', link: '/table/basic/checkbox-cell' },
                                     { text: '셀 병합', link: '/table/basic/merge-cells' },
                                     { text: '헤더리스', link: '/table/basic/headless' },
                                     { text: '행 확장', link: '/table/basic/expand-row' },
@@ -85,6 +85,7 @@ export const koConfig = defineConfig({
                                         items: [
                                             { text: 'EditableCell 편집 가능 셀', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'Filter 필터', link: '/table/advanced/custom-cells/filter' },
+                                            { text: 'CheckboxCell 체크박스', link: '/table/advanced/custom-cells/checkbox-cell' },
                                         ],
                                     },
                                 ]

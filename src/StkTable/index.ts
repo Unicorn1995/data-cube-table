@@ -8,5 +8,7 @@ export { createFilter } from './custom-cells/Filter/index';
 export type { CreateFilterOption, FilterStatus } from './custom-cells/Filter/index';
 export { createEditableCell } from './custom-cells/EditableCell/index';
 export type { CreateEditableCellOptions } from './custom-cells/EditableCell/index';
+export { createCheckboxCell } from './custom-cells/CheckboxCell/index';
+export type { createCheckboxCellOptions } from './custom-cells/CheckboxCell/index';
 
 import './style.less';

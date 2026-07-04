@@ -76,7 +76,7 @@ export const zhConfig = defineConfig({
                                     { text: '内容溢出省略', link: '/table/basic/overflow', },
                                     { text: '排序', link: '/table/basic/sort', },
                                     { text: '行、单元格选中/悬浮', link: '/table/basic/row-cell-mouse-event', },
-                                    { text: '复选框', link: '/table/basic/checkbox', },
+                                    { text: '复选框', link: '/table/basic/checkbox-cell', },
                                     { text: '单元格合并', link: '/table/basic/merge-cells', },
                                     { text: '无头', link: '/table/basic/headless', },
                                     { text: '行展开', link: '/table/basic/expand-row', },
@@ -111,6 +111,7 @@ export const zhConfig = defineConfig({
                                         items: [
                                             { text: 'EditableCell 可编辑单元格', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'Filter 筛选', link: '/table/advanced/custom-cells/filter' },
+                                            { text: 'CheckboxCell 多选框', link: '/table/advanced/custom-cells/checkbox-cell' },
                                         ],
                                     },
                                 ]
