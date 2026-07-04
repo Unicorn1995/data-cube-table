@@ -1,5 +1,6 @@
 <template>
     <StkTable
+        row-key="id"
         cell-hover
         cell-active
         :selected-cell-revokable="false"
@@ -7,7 +8,6 @@
         :row-hover="false"
         :columns="columns"
         :data-source="dataSource"
-        row-key="id"
     />
 </template>
 
@@ -32,11 +32,13 @@ interface RowData {
     address: string;
 }
 
+const EditableCellComp = EditableCell();
+
 const columns: StkTableColumn<RowData>[] = [
     { title: 'ID', dataIndex: 'id', width: 60 },
-    { title: t('name'), dataIndex: 'name', width: 100, customCell: EditableCell() },
-    { title: t('age'), dataIndex: 'age', width: 80, customCell: EditableCell() },
-    { title: t('address'), dataIndex: 'address', customCell: EditableCell() },
+    { title: t('name'), dataIndex: 'name', width: 100, customCell: EditableCellComp },
+    { title: t('age'), dataIndex: 'age', width: 80, customCell: EditableCellComp },
+    { title: t('address'), dataIndex: 'address', customCell: EditableCellComp },
 ];
 
 const dataSource = ref<RowData[]>([
