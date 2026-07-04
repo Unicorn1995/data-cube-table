@@ -1,6 +1,6 @@
-# Checkbox <Badge type="tip" text="^1.0.0" /> <Badge type="warning" text="Beta" />
+# CheckboxCell <Badge type="tip" text="^1.0.0" /> <Badge type="warning" text="Beta" />
 
-Checkbox is a built-in checkbox cell component that supports select-all and indeterminate states at the cell level.
+CheckboxCell is a built-in checkbox cell component that supports select-all and indeterminate states at the cell level.
 
 ### Basic Usage
 

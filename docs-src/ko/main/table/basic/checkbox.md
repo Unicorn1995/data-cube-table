@@ -1,10 +1,13 @@
 # 다중 선택상자
-## 개요
+## 내장 확장 기능 사용 <Badge type="tip" text="^1.0.0" />
+[CheckboxCell](/main/table/advanced/custom-cells/checkbox-cell)
 
-StkTable 컴포넌트는 자체적으로**내장 다중 선택상자 기능이 없습니다**, 그러나 `customCell`과 `customHeaderCell` 설정 항목을 통해 다중 선택상자 기능을 커스텀 구현할 수 있습니다. 이 방식은 매우 유연하여 다양한 비즈니스 요구를 충족시킬 수 있습니다.
+## 직접 구현
+
+`customCell`과 `customHeaderCell` 설정 항목을 통해 다중 선택상자 기능을 구현합니다. 이 방식은 매우 유연하여 다양한 비즈니스 요구를 충족시킬 수 있습니다.
 ## 예시
 
-<demo vue="basic/checkbox-cell/Checkbox.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/checkbox-cell/Checkbox.vue"></demo>
+<demo vue="basic/checkbox/Checkbox.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/checkbox/Checkbox.vue"></demo>
 
 ## 코드 구현
 

@@ -285,7 +285,7 @@ import {
     DEFAULT_SORT_CONFIG,
     IS_LEGACY_MODE,
 } from './const';
-import type { FilterStatus } from './custom-cells/Filter/types';
+import type { FilterStatus } from './custom-cells/FilterCell/types';
 import { useAreaSelectionName } from './features';
 import { ON_DEMAND_FEATURE } from './registerFeature';
 import {

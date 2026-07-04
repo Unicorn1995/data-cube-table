@@ -5,12 +5,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import StkTable from '../../../StkTable.vue';
-import { createFilter, StkTableColumn } from 'stk-table-vue';
+import { createFilterCell, StkTableColumn } from '../../../../src/StkTable/index';
 import { useI18n } from '../../../hooks/useI18n/index';
 
 const { t } = useI18n();
 
-const { Filter } = createFilter();
+const { Filter } = createFilterCell();
 
 interface RowData {
     id: number;

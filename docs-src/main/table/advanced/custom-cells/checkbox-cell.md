@@ -1,6 +1,6 @@
 # CheckboxCell 多选框 <Badge type="tip" text="^1.0.0" /> <Badge type="warning" text="Beta" />
 
-Checkbox 是一个内置的多选框单元格组件，支持单元格级别的全选/半选功能。
+CheckboxCell 是一个内置的多选框单元格组件，支持单元格级别的全选/半选功能。
 
 ### 基础使用
 

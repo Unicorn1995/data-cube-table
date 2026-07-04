@@ -32,7 +32,7 @@ import 'stk-table-vue/lib/style.css'; // 引入样式，一般在 main.js(全局
 // 工具函数
 import { tableSort, insertToOrderedArray, strCompare, binarySearch } from 'stk-table-vue';
 // 按需特性（Area Selection 需先注册再使用）
-import { useAreaSelection, registerFeature, createFilter, createEditableCell } from 'stk-table-vue';
+import { useAreaSelection, registerFeature, createFilterCell, createEditableCell } from 'stk-table-vue';
 import type { FilterStatus, CreateFilterOptions, CreateEditableCellOptions } from 'stk-table-vue';
 ```
 

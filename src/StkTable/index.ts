@@ -4,8 +4,8 @@ export { default as StkTable } from './StkTable.vue';
 export type { Order, SortConfig, SortOption, SortState, StkTableColumn } from './types/index';
 export { binarySearch, insertToOrderedArray, strCompare, tableSort } from './utils';
 // export custom cells
-export { createFilter } from './custom-cells/Filter/index';
-export type { CreateFilterOption, FilterStatus } from './custom-cells/Filter/index';
+export { createFilterCell } from './custom-cells/FilterCell/index';
+export type { CreateFilterCellOption, FilterStatus } from './custom-cells/FilterCell/index';
 export { createEditableCell } from './custom-cells/EditableCell/index';
 export type { CreateEditableCellOptions } from './custom-cells/EditableCell/index';
 export { createCheckboxCell } from './custom-cells/CheckboxCell/index';

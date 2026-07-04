@@ -1,6 +1,6 @@
-# Checkbox チェックボックス <Badge type="tip" text="^1.0.0" /> <Badge type="warning" text="Beta" />
+# CheckboxCell チェックボックス <Badge type="tip" text="^1.0.0" /> <Badge type="warning" text="Beta" />
 
-Checkbox は、セルレベルで全選択/半選択機能をサポートする組み込みのチェックボックスセルコンポーネントです。
+CheckboxCell は、セルレベルで全選択/半選択機能をサポートする組み込みのチェックボックスセルコンポーネントです。
 
 ### 基本的な使い方
 

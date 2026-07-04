@@ -50,7 +50,7 @@ export const jaConfig = defineConfig({
                                     { text: 'オーバーフロー省略', link: '/table/basic/overflow' },
                                     { text: 'ソート', link: '/table/basic/sort' },
                                     { text: '行・セルの選択/ホバー', link: '/table/basic/row-cell-mouse-event' },
-                                    { text: 'チェックボックス', link: '/table/basic/checkbox-cell' },
+                                    { text: 'チェックボックス', link: '/table/basic/checkbox' },
                                     { text: 'セルマージ', link: '/table/basic/merge-cells' },
                                     { text: 'ヘッダーレス', link: '/table/basic/headless' },
                                     { text: '行展開', link: '/table/basic/expand-row' },
@@ -84,7 +84,7 @@ export const jaConfig = defineConfig({
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell 編集可能セル', link: '/table/advanced/custom-cells/editable-cell' },
-                                            { text: 'Filter フィルター', link: '/table/advanced/custom-cells/filter' },
+                                            { text: 'FilterCell フィルター', link: '/table/advanced/custom-cells/filter-cell' },
                                             { text: 'CheckboxCell チェックボックス', link: '/table/advanced/custom-cells/checkbox-cell' },
                                         ],
                                     },
