@@ -202,12 +202,12 @@ export function useVirtualScroll(
 
             if (!foundStart && groupRight > scrollLeft) {
                 foundStart = true;
-                theadStartIndex = col.__LEAF_START__ ?? 0;
+                theadStartIndex = col.__LF_S__ ?? 0;
                 theadOffsetLeft = cumLeft;
             }
             cumLeft = groupRight;
 
-            theadEndIndex = col.__LEAF_END__ ?? totalLeafCount;
+            theadEndIndex = col.__LF_E__ ?? totalLeafCount;
             if (foundStart && groupRight >= scrollLeft + containerWidth) {
                 // find end
                 break;
@@ -250,19 +250,21 @@ export function useVirtualScroll(
                 const result: PrivateStkTableColumn<PrivateRowDT>[] = [];
                 result.push(...leftFixedCols);
 
-                // 左侧 spacer：theadStart 到 tbodyStart 之间非 fixed:left 的叶子列数
+                // left spacer：theadStart ~ tbodyStart 之间非 fixed:left 的叶子列数
                 const theadStart = theadVirtualX.value.startIndex;
                 const leftSpacerColspan = Math.max(0, startIndex - theadStart);
                 if (leftSpacerColspan) {
-                    result.push({ type: 'spacer', __COLSPAN__: leftSpacerColspan } as unknown as PrivateStkTableColumn<PrivateRowDT>);
+                    result.push({ __VT_C_SP__: leftSpacerColspan } as PrivateStkTableColumn<PrivateRowDT>);
                 }
 
                 result.push(...visibleCols);
 
-                // 右侧 spacer：tbodyEnd 到 theadEnd 之间的非 fixed:right 列数
+                // right spacer：tbodyEnd ~ theadEnd 之间的非 fixed:right 列数
                 if (rightFixedCols.length) {
                     const rightSpacerColspan = Math.max(0, theadVirtualX.value.endIndex - endIndex);
-                    result.push({ type: 'spacer', __COLSPAN__: rightSpacerColspan } as unknown as PrivateStkTableColumn<PrivateRowDT>);
+                    if (rightSpacerColspan) {
+                        result.push({ __VT_C_SP__: rightSpacerColspan } as PrivateStkTableColumn<PrivateRowDT>);
+                    }
                     result.push(...rightFixedCols);
                 }
                 return result;
@@ -301,8 +303,8 @@ export function useVirtualScroll(
             return tableHeaders.value.map(row => {
                 return row.filter(col => {
                     if (col.fixed === 'left' || col.fixed === 'right') return true;
-                    const leafStart = col.__LEAF_START__ ?? 0;
-                    const leafEnd = col.__LEAF_END__ ?? leafStart + 1;
+                    const leafStart = col.__LF_S__ ?? 0;
+                    const leafEnd = col.__LF_E__ ?? leafStart + 1;
                     return leafEnd > startIndex && leafStart < endIndex;
                 });
             });
@@ -315,10 +317,10 @@ export function useVirtualScroll(
     /** 展开行 colspan：虚拟滚动时等于所有 td 元素数量（含 spacer）之和 */
     const expandRowColspan = computed(() => {
         if (!virtualX_on.value) return tableHeaderLast.value.length;
-        const spacers = virtualX_columnPart.value.filter(c => c.type === 'spacer');
+        const spacers = virtualX_columnPart.value.filter(c => c.__VT_C_SP__);
         // 2 = vt-x-left + vt-x-right
         // 每个 spacer 项占 1 个位置，colspan > 1 时额外增加 (colspan - 1)
-        return 2 + virtualX_columnPart.value.length + spacers.reduce((sum, s) => sum + Math.max(0, (s.__COLSPAN__ ?? 0) - 1), 0);
+        return 2 + virtualX_columnPart.value.length + spacers.reduce((sum, s) => sum + Math.max(0, (s.__VT_C_SP__ ?? 0) - 1), 0);
     });
 
     const virtualX_offsetRight = computed(() => {

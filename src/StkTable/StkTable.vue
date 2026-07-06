@@ -119,10 +119,8 @@
                             class="vt-x-left"
                             :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
                         ></td>
-                        <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
-                            <template v-if="col.type === 'spacer'">
-                                <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
-                            </template>
+                        <template v-for="col in virtualX_columnPart" :key="col.__VT_C_SP__ ? 'spacer' : colKeyGen(col)">
+                            <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
                             <td v-else v-bind="getTFProps(col)">
                                 <component
                                     :is="col.customFooterCell"
@@ -159,10 +157,8 @@
                                 class="vt-x-left"
                                 :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
                             ></td>
-                            <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
-                                <template v-if="col.type === 'spacer'">
-                                    <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
-                                </template>
+                            <template v-for="col in virtualX_columnPart" :key="col.__VT_C_SP__ ? 'spacer' : colKeyGen(col)">
+                                <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
                                 <td v-else :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
                             </template>
                             <td
@@ -182,13 +178,11 @@
                         </td>
                         <template v-else>
                             <td v-if="virtualX_on" class="vt-x-left"></td>
-                            <template v-for="col in virtualX_columnPart" :key="col.type === 'spacer' ? 'spacer' : colKeyGen(col)">
-                                <template v-if="col.type === 'spacer'">
-                                    <td v-if="col.__COLSPAN__" class="vt-x-spacer" :colspan="col.__COLSPAN__"></td>
-                                </template>
+                            <template v-for="col in virtualX_columnPart" :key="col.__VT_C_SP__ ? 'spacer' : colKeyGen(col)">
+                                <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
                                 <td
                                     v-else-if="!shouldHideCell(row, col)"
-                                    v-bind="getTDProps(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LEAF_START__ ?? 0)"
+                                    v-bind="getTDProps(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0)"
                                 >
                                     <component
                                         :is="col.customCell"
@@ -198,7 +192,7 @@
                                         :col="col"
                                         :row="row"
                                         :rowIndex="getAbsoluteRowIndex(rowIndex)"
-                                        :colIndex="(col as PrivateStkTableColumn<DT>).__LEAF_START__ ?? 0"
+                                        :colIndex="(col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0"
                                         :cellValue="row && row[col.dataIndex]"
                                         :expanded="row && row.__EXP__"
                                         :tree-expanded="row && row.__T_EXP__"
@@ -1330,7 +1324,7 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
         'data-col-key': colKey,
         style: cellStyleMap.value[TagType.TD].get(colKey),
         class: classList,
-        ...mergeCellsWrapper(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LEAF_START__ ?? 0),
+        ...mergeCellsWrapper(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0),
     };
 }
 
