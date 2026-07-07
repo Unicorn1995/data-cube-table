@@ -15,30 +15,30 @@ const columns = computed(() => {
     return [
         {
             dataIndex: 'Basic',
-            title: t('basic'),
+            label: t('basic'),
             fixed: fixedLeft.value ? 'left' : null,
             children: [
                 {
                     dataIndex: 'id',
-                    title: t('id'),
+                    label: t('id'),
                     width: 100,
                     fixed: fixedLeft.value ? 'left' : null,
                 },
                 {
                     dataIndex: 'lv2',
-                    title: t('lv2'),
+                    label: t('lv2'),
                     width: 100,
                     fixed: fixedLeft.value ? 'left' : null,
                     children: [
                         {
                             dataIndex: 'lv2_1',
-                            title: t('lv2_1'),
+                            label: t('lv2_1'),
                             width: 100,
                             fixed: fixedLeft.value ? 'left' : null,
                         },
                         {
                             dataIndex: 'lv2_2',
-                            title: t('lv2_2'),
+                            label: t('lv2_2'),
                             width: 100,
                             fixed: fixedLeft.value ? 'left' : null,
                         },
@@ -48,25 +48,25 @@ const columns = computed(() => {
         },
         {
             dataIndex: 'age',
-            title: t('age'),
+            label: t('age'),
             width: '50px',
             children: [
-                { dataIndex: 'id3', title: t('id'), width: 50 },
+                { dataIndex: 'id3', label: t('id'), width: 50 },
                 {
                     dataIndex: 'lv5',
-                    title: t('lv2'),
+                    label: t('lv2'),
                     width: 100,
                 },
             ],
         },
-        { dataIndex: 'email', title: t('email'), width: '130px' },
+        { dataIndex: 'email', label: t('email'), width: '130px' },
         {
             dataIndex: 'other',
-            title: t('other'),
+            label: t('other'),
             children: new Array(10).fill(0).map((it, i) => {
                 return {
                     dataIndex: 'other' + i,
-                    title: t('other') + ' ' + i,
+                    label: t('other') + ' ' + i,
                     width: 100,
                 };
             }),
@@ -74,24 +74,24 @@ const columns = computed(() => {
         ...new Array(5).fill(0).map((it, i) => {
             return {
                 dataIndex: 'lv1' + i,
-                title: t('lv1') + ' ' + i,
+                label: t('lv1') + ' ' + i,
                 width: 100,
             };
         }),
         {
             dataIndex: 'right',
-            title: t('right'),
+            label: t('right'),
             fixed: fixedRight.value ? 'right' : null,
             children: [
                 {
                     dataIndex: 'right-1',
-                    title: t('right1'),
+                    label: t('right1'),
                     width: 50,
                     fixed: fixedRight.value ? 'right' : null,
                 },
                 {
                     dataIndex: 'right-2',
-                    title: t('right2'),
+                    label: t('right2'),
                     width: 100,
                     fixed: fixedRight.value ? 'right' : null,
                 },
