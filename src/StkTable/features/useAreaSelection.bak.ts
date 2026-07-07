@@ -1,4 +1,4 @@
-import { Ref, ShallowRef, computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { Ref, ShallowRef, computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import {
     AreaSelectionConfig,
     AreaSelectionRange,
@@ -155,16 +155,11 @@ export function useAreaSelection<DT extends Record<string, any>>(
         };
     });
 
-    /** 根据 selectionRanges 计算所有选区内 cellKey 的并集（非响应式，用于 DOM 操作） */
-    let selectedCellKeys: Set<string> = new Set();
-
-    /** 重新计算 selectedCellKeys */
-    function recomputeSelectedCellKeys() {
+    /** 根据 selectionRanges 计算所有选区内 cellKey 的并集 */
+    const selectedCellKeys = computed<Set<string>>(() => {
         const ranges = selectionRanges.value;
-        if (!ranges.length) {
-            selectedCellKeys = new Set();
-            return;
-        }
+        if (!ranges.length) return new Set();
+
         const keys = new Set<string>();
         const cols = tableHeaderLast.value;
         const data = dataSourceCopy.value;
@@ -173,8 +168,10 @@ export function useAreaSelection<DT extends Record<string, any>>(
                 begin: { row: r1, col: c1 },
                 end: { row: r2, col: c2 },
             } = range.index;
+
             const [rStart, rEnd] = r1 < r2 ? [r1, r2] : [r2, r1];
             const [cStart, cEnd] = c1 < c2 ? [c1, c2] : [c2, c1];
+
             for (let r = rStart; r <= rEnd; r++) {
                 const row = data[r];
                 if (!row) continue;
@@ -184,131 +181,8 @@ export function useAreaSelection<DT extends Record<string, any>>(
                 }
             }
         }
-        selectedCellKeys = keys;
-    }
-
-    /**
-     * 直接操作 DOM 更新选区样式（不触发 Vue re-render）
-     * 用于替代在渲染函数中读取响应式选区数据，避免拖选时频繁触发整个表格重渲染
-     */
-    function updateSelectionDOM() {
-        const container = tableContainerRef.value;
-        if (!container) return;
-
-        const cellHighlight = highlightCellEnabled.value;
-        const rowHighlight = highlightRowEnabled.value;
-
-        // 1. 清除所有旧的选区 class
-        const oldSelectedCells = container.querySelectorAll(`.${CELL_RANGE_SELECTED}`);
-        for (let i = 0; i < oldSelectedCells.length; i++) {
-            const el = oldSelectedCells[i] as HTMLElement;
-            el.classList.remove(CELL_RANGE_SELECTED, CELL_RANGE_TOP, CELL_RANGE_BOTTOM, CELL_RANGE_LEFT, CELL_RANGE_RIGHT);
-        }
-        const oldSelectedRows = container.querySelectorAll('.row-range-selected');
-        for (let i = 0; i < oldSelectedRows.length; i++) {
-            (oldSelectedRows[i] as HTMLElement).classList.remove('row-range-selected');
-        }
-
-        // 2. 重算 selectedCellKeys
-        recomputeSelectedCellKeys();
-
-        const ranges = selectionRanges.value;
-        if (!ranges.length) return;
-
-        const tbody = container.querySelector('.stk-tbody-main');
-        if (!tbody) return;
-
-        // 3. 应用行高亮 class
-        if (rowHighlight) {
-            for (const range of ranges) {
-                const { minRow, maxRow } = normalizeRange(range);
-                for (let r = minRow; r <= maxRow; r++) {
-                    const tr = tbody.querySelector(`tr[data-row-i="${r}"]`) as HTMLElement | null;
-                    if (tr) tr.classList.add('row-range-selected');
-                }
-            }
-        }
-
-        // 4. 应用单元格高亮 class
-        if (cellHighlight) {
-            const lastRange = ranges[ranges.length - 1];
-            const { minRow: lrMinRow, maxRow: lrMaxRow, minCol: lrMinCol, maxCol: lrMaxCol } = normalizeRange(lastRange);
-
-            // 遍历所有可见行
-            const trs = tbody.querySelectorAll('tr[data-row-i]');
-            for (let t = 0; t < trs.length; t++) {
-                const tr = trs[t] as HTMLElement;
-                const rowIndex = parseInt(tr.getAttribute('data-row-i')!, 10);
-
-                // 检查此行是否在任何选区内
-                let inAnyRange = false;
-                for (const range of ranges) {
-                    const { minRow, maxRow } = normalizeRange(range);
-                    if (rowIndex >= minRow && rowIndex <= maxRow) {
-                        inAnyRange = true;
-                        break;
-                    }
-                }
-                if (!inAnyRange) continue;
-
-                // 遍历此行中的单元格
-                const tds = tr.querySelectorAll('td[data-col-key]');
-                for (let d = 0; d < tds.length; d++) {
-                    const td = tds[d] as HTMLElement;
-                    const colKey = td.getAttribute('data-col-key')!;
-                    const colIndex = colKeyToIndexMap.value.get(colKey);
-                    if (colIndex === void 0 || colIndex < 0) continue;
-
-                    // 生成 cellKey 检查是否在选区内
-                    const data = dataSourceCopy.value;
-                    const row = data[rowIndex];
-                    const cols = tableHeaderLast.value;
-                    if (!row || !cols[colIndex]) continue;
-                    const ck = cellKeyGen(row, cols[colIndex]);
-                    if (!selectedCellKeys.has(ck)) continue;
-
-                    td.classList.add(CELL_RANGE_SELECTED);
-
-                    // 判断是否在最后一个区域的边界
-                    const isInLastRange = rowIndex >= lrMinRow && rowIndex <= lrMaxRow && colIndex >= lrMinCol && colIndex <= lrMaxCol;
-                    if (isInLastRange) {
-                        if (rowIndex === lrMinRow) td.classList.add(CELL_RANGE_TOP);
-                        if (rowIndex === lrMaxRow) td.classList.add(CELL_RANGE_BOTTOM);
-                        if (colIndex === lrMinCol) td.classList.add(CELL_RANGE_LEFT);
-                        if (colIndex === lrMaxCol) td.classList.add(CELL_RANGE_RIGHT);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 监听 selectionRanges 变化，在 DOM 更新后直接操作选区 class
-     * 同时在虚拟滚动等导致 DOM 重建时也能重新应用选区样式
-     */
-    watch(
-        () => {
-            // 组合依赖：选区变化 或 虚拟滚动可见范围变化 都触发
-            const ranges = selectionRanges.value;
-            const vs = virtualScroll.value;
-            const vsx = virtualScrollX.value;
-            return [
-                ranges.length,
-                ranges.length > 0 ? JSON.stringify(ranges.map(r => r.index)) : '',
-                vs.startIndex,
-                vs.endIndex,
-                vsx.startIndex,
-                vsx.endIndex,
-                dataSourceCopy.value.length,
-                tableHeaderLast.value.length,
-            ];
-        },
-        () => {
-            // flush: 'post' 等效 — watch callback 在 DOM patch 后执行
-            nextTick(updateSelectionDOM);
-        },
-        { flush: 'post' },
-    );
+        return keys;
+    });
 
     onMounted(() => {
         addListener();
@@ -920,58 +794,58 @@ export function useAreaSelection<DT extends Record<string, any>>(
      * @param colKey 列唯一键
      * @returns 样式类名数组
      */
-    // function getAreaSelectionClasses(cellKey: string, absoluteRowIndex: number, colKey: UniqKey): string[] {
-    //     if (!highlightCellEnabled.value) return [];
-    //     if (!selectedCellKeys.has(cellKey)) return [];
+    function getAreaSelectionClasses(cellKey: string, absoluteRowIndex: number, colKey: UniqKey): string[] {
+        if (!highlightCellEnabled.value) return [];
+        if (!selectedCellKeys.value.has(cellKey)) return [];
 
-    //     const colIndex = colKeyToIndexMap.value.get(colKey);
-    //     if (colIndex === void 0 || colIndex < 0) return [];
+        const colIndex = colKeyToIndexMap.value.get(colKey);
+        if (colIndex === void 0 || colIndex < 0) return [];
 
-    //     const classes: string[] = [CELL_RANGE_SELECTED];
-    //     const ranges = selectionRanges.value;
-    //     if (!ranges.length) return classes;
+        const classes: string[] = [CELL_RANGE_SELECTED];
+        const ranges = selectionRanges.value;
+        if (!ranges.length) return classes;
 
-    //     const lastRange = ranges[ranges.length - 1];
-    //     const { minRow, maxRow, minCol, maxCol } = normalizeRange(lastRange);
+        const lastRange = ranges[ranges.length - 1];
+        const { minRow, maxRow, minCol, maxCol } = normalizeRange(lastRange);
 
-    //     // 判断当前单元格是否在最后一个区域内
-    //     const isInLastRange = absoluteRowIndex >= minRow && absoluteRowIndex <= maxRow && colIndex >= minCol && colIndex <= maxCol;
+        // 判断当前单元格是否在最后一个区域内
+        const isInLastRange = absoluteRowIndex >= minRow && absoluteRowIndex <= maxRow && colIndex >= minCol && colIndex <= maxCol;
 
-    //     if (isInLastRange) {
-    //         if (absoluteRowIndex === minRow) classes.push(CELL_RANGE_TOP);
-    //         if (absoluteRowIndex === maxRow) classes.push(CELL_RANGE_BOTTOM);
-    //         if (colIndex === minCol) classes.push(CELL_RANGE_LEFT);
-    //         if (colIndex === maxCol) classes.push(CELL_RANGE_RIGHT);
-    //     }
+        if (isInLastRange) {
+            if (absoluteRowIndex === minRow) classes.push(CELL_RANGE_TOP);
+            if (absoluteRowIndex === maxRow) classes.push(CELL_RANGE_BOTTOM);
+            if (colIndex === minCol) classes.push(CELL_RANGE_LEFT);
+            if (colIndex === maxCol) classes.push(CELL_RANGE_RIGHT);
+        }
 
-    //     return classes;
-    // }
+        return classes;
+    }
 
     /**
      * 判断一行的选区样式类名（行高亮）
      * @param absoluteRowIndex 行在 dataSourceCopy 中的绝对索引
      * @returns 样式类名数组
      */
-    // function getAreaSelectionRowClasses(absoluteRowIndex: number): string[] {
-    //     if (!highlightRowEnabled.value) return [];
+    function getAreaSelectionRowClasses(absoluteRowIndex: number): string[] {
+        if (!highlightRowEnabled.value) return [];
 
-    //     const ranges = selectionRanges.value;
-    //     if (!ranges.length) return [];
+        const ranges = selectionRanges.value;
+        if (!ranges.length) return [];
 
-    //     // 检查该行是否在任何选区内
-    //     for (const range of ranges) {
-    //         const {
-    //             begin: { row: r1 },
-    //             end: { row: r2 },
-    //         } = range.index;
-    //         const [minRow, maxRow] = r1 < r2 ? [r1, r2] : [r2, r1];
-    //         if (absoluteRowIndex >= minRow && absoluteRowIndex <= maxRow) {
-    //             return ['row-range-selected'];
-    //         }
-    //     }
+        // 检查该行是否在任何选区内
+        for (const range of ranges) {
+            const {
+                begin: { row: r1 },
+                end: { row: r2 },
+            } = range.index;
+            const [minRow, maxRow] = r1 < r2 ? [r1, r2] : [r2, r1];
+            if (absoluteRowIndex >= minRow && absoluteRowIndex <= maxRow) {
+                return ['row-range-selected'];
+            }
+        }
 
-    //     return [];
-    // }
+        return [];
+    }
 
     // expose function
 
@@ -1063,8 +937,8 @@ export function useAreaSelection<DT extends Record<string, any>>(
     return {
         config,
         isSelecting,
-        // getClass: getAreaSelectionClasses,
-        // getRowClass: getAreaSelectionRowClasses,
+        getClass: getAreaSelectionClasses,
+        getRowClass: getAreaSelectionRowClasses,
         get: getSelectedArea,
         set: setAreaSelection,
         clear: clearSelectedArea,
