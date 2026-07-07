@@ -38,4 +38,4 @@ const dataSource = ref<Data[]>([
 </template>
 ```
 
-<demo vue="basic/Basic.vue"></demo>
+<demo vue="basic/Basic.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/Basic.vue"></demo>

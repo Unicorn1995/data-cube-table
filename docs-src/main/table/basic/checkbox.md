@@ -1,10 +1,13 @@
 # 多选框
-## 概述
+## 使用内置扩展 <Badge type="tip" text="^1.0.0" />
+[CheckboxCell](/main/table/advanced/custom-cells/checkbox-cell)
 
-StkTable 组件本身**没有内置的多选框功能**，但可以通过 `customCell` 和 `customHeaderCell` 配置项来自定义实现多选框功能。这种方式非常灵活，可以满足不同的业务需求。
+## 自行实现
+
+通过 `customCell` 和 `customHeaderCell` 配置项来自定义实现多选框功能。这种方式非常灵活，可以满足不同的业务需求。
 ## 示例
 
-<demo vue="basic/checkbox/Checkbox.vue" />
+<demo vue="basic/checkbox/Checkbox.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/checkbox/Checkbox.vue"></demo>
 
 ## 代码实现
 

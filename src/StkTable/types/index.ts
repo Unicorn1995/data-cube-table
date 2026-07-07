@@ -73,7 +73,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * - tree-node 树节点列，这一列前面有展开收起箭头
      * - selection 选择列
      */
-    type?: 'seq' | 'expand' | 'dragRow' | 'tree-node' | 'selection';
+    type?: 'seq' | 'expand' | 'dragRow' | 'tree-node' | 'spacer' | 'selection';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */
@@ -107,7 +107,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /** 过滤 */
     filterable?: boolean;
     /** 过滤项 */
-    filterOptions?: { label: string; value: string; selected: boolean }[];
+    filterOptions?: { label: string; value: any; selected?: boolean }[];
     /** 过滤方法 */
     filter?: ({ row, cellValue, filterValues }: { row: any; cellValue: any; filterValues: any }) => boolean;
     /** 是否隐藏列 */
@@ -165,6 +165,21 @@ export type PrivateStkTableColumn<T extends Record<string, any>> = StkTableColum
      * @private
      */
     __W__?: number;
+    /**
+     * 当前列在 tableHeaderLast 中的起始叶子索引（含）。用于多级表头横向虚拟滚动。
+     * @private
+     */
+    __LEAF_START__?: number;
+    /**
+     * 当前列在 tableHeaderLast 中的结束叶子索引（不含）。用于多级表头横向虚拟滚动。
+     * @private
+     */
+    __LEAF_END__?: number;
+    /**
+     * 虚拟滚动右侧 spacer 占用的列数。仅用于内部 spacer 标记列。
+     * @private
+     */
+    __COLSPAN__?: number;
 };
 /** private row keys */
 export type PrivateRowDT = {

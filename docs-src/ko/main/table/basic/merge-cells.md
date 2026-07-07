@@ -18,10 +18,10 @@ function mergeCells(data: {
 `{ colspan: number, rowspan: number }`를 반환하면 셀 병합 수량을 나타내며, `colspan`은 열 병합 수량을, `rowspan`은 행 병합 수량을 나타냅니다.
 
 ## 열 병합
-<demo vue="basic/merge-cells/MergeCellsCol.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
 ## 행 병합
-<demo vue="basic/merge-cells/MergeCellsRow.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>
 
 ::: tip
 테이블 데이터가 변경되면 `mergeCells` 함수를 다시 호출하여 계산합니다.
@@ -29,7 +29,7 @@ function mergeCells(data: {
 
 ### 행 병합 가상 리스트 <Badge type="tip" text="^0.8.4" /> 
 #### 간단한 병합
-<demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
 코드에서 `mergeCells` 함수를 정의하여 행의 `rowspan` 필드를 병합 수량으로 사용합니다.
 ```ts
 function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
@@ -54,4 +54,4 @@ rowspan가 특히 크면(예: 1000행) 여전히 이 병합 셀이 덮는 모든
 :::
 
 #### 불규칙 병합
-<demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>

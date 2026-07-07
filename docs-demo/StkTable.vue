@@ -30,6 +30,12 @@ defineExpose({
     sortStates: typeof baseStkTableRef.value?.sortStates,
     resetSorter: (...p: Parameters<BaseStkTableType['resetSorter']>) =>
         baseStkTableRef.value?.resetSorter(...p),
+    setAutoHeight: (...p: Parameters<BaseStkTableType['setAutoHeight']>) =>
+        baseStkTableRef.value?.setAutoHeight(...p),
+    clearAllAutoHeight: (...p: Parameters<BaseStkTableType['clearAllAutoHeight']>) =>
+        baseStkTableRef.value?.clearAllAutoHeight(...p),
+    scrollTo: (...p: Parameters<BaseStkTableType['scrollTo']>) =>
+        baseStkTableRef.value?.scrollTo(...p),
 });
 </script>
 <template>

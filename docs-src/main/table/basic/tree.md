@@ -28,29 +28,29 @@ export const getDataSource = () => [
 ## 简单树形
 
 
-<demo vue="basic/tree/Tree.vue"></demo>
+<demo vue="basic/tree/Tree.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/Tree.vue"></demo>
 
 ## 默认展开节点
 
 ### 全部展开
 `treeConfig.defaultExpandAll = true`
 
-<demo vue="basic/tree/TreeDefaultExpandAll.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandAll.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandAll.vue"></demo>
 
 ### 展开指定层级
 `treeConfig.defaultExpandLevel = 1`
 
-<demo vue="basic/tree/TreeDefaultExpandLevel.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandLevel.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandLevel.vue"></demo>
 
 ### 展开指定节点
 `treeConfig.defaultExpandedKeys = ['Asia', 'China', 'Zhejiang']`
 
-<demo vue="basic/tree/TreeDefaultExpandKeys.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandKeys.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandKeys.vue"></demo>
 
 
 ## 虚拟列表
 
-<demo vue="basic/tree/TreeVirtualList.vue"></demo>
+<demo vue="basic/tree/TreeVirtualList.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeVirtualList.vue"></demo>
 
 ::: warning 注意
 组件会在dataSource的每一行中注入`__T_EXP__` 字段，用于控制是否展开。在更新一行的数据时，不要修改这个字段。因此样例中使用 `Object.assign` 来更新数据。

@@ -1,7 +1,7 @@
 # 행/셀 선택/호버
 
 ## demo
-<demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
+<demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
 
 ## 행 선택 비활성화
 `rowActive.disabled`를 사용하면 특정 행의 선택 기능을 비활성화할 수 있습니다.

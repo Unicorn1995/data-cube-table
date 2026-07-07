@@ -1,4 +1,16 @@
 
+## 1.0.0
+* Feature
+  - feat: Multi-level headers support horizontal virtual list (`props.virtualX`).
+  - feat: `HighlightDimBaseOption` add `ignoreInvisible` option. When set to `true`, if the corresponding DOM cannot be obtained, it will be discarded directly and not put into the store for loop calculation. If the key already exists in the store, it will also be deleted.
+  - feat `createFilterCell`
+    - feat: `createFilterCell` add `onChange` callback in `CreateFilterCellOption`, triggered when filter status changes with `{ colKey, status }` parameters.
+    - feat: `setFilter` add `silent` option. When set to `true`, the `filter-change` event will not be triggered.
+    - feat: add `filter-change` emit event, triggered when filter status changes via `setFilter`.
+  - feat `createEditableCell`
+  - feat `createCheckboxCell`
+  
+
 ## 0.11.15
 * Bugfix:
   - fix: if value is null ,not show emptyCellText `--`.
@@ -21,7 +33,7 @@
   - feat: Add `EditableCell` component for cell editing. Double click to edit, Enter to confirm, Esc to cancel.
   - feat: Add `setAreaSelection` API to programmatically set cell selection range.
   - feat: Add `getRowIndex` and `getColumnIndex` utility APIs.
-  - `createFilter`
+  - `createFilterCell`
     - support `autoOptions` to auto extract options from data.
     - support `filter` function to custom filter logic.
     - dropdown position auto adjust to avoid overflow viewport.
@@ -30,7 +42,7 @@
   - fix: area selection input focus issue.
 * Change
   - areaSelection: press esc will not clear selection area.
-  - `useFilter` rename to `createFilter` (Beta).
+  - `useFilter` rename to `createFilterCell` (Beta).
   - `useAreaSelection` internal code refactored for better performance.
 * Optimize
   - optimize `getColPosition` and `getFixedColOffset` calculation in area selection.

@@ -17,7 +17,7 @@
 **仮想リスト**モードでは、行の高さは常に設定値になります。
 :::
 
-<demo vue="basic/row-height/RowHeight.vue"></demo>
+<demo vue="basic/row-height/RowHeight.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-height/RowHeight.vue"></demo>
 
 仮想リストが有効な場合、スクロールにより列幅が変化する場合がありますが、これは列幅が設定されていないためです。
 
@@ -36,7 +36,7 @@
 ```
 
 以下の高さコントローラーをドラッグして、フレキシブル行高さを確認してください。
-<demo vue="basic/row-height/RowHeightFull.vue"></demo>
+<demo vue="basic/row-height/RowHeightFull.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-height/RowHeightFull.vue"></demo>
 これは **行数が固定** のテーブルに便利です。
 
 ::: info

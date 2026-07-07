@@ -4,6 +4,7 @@
             row-key="id"
             cell-active
             :selected-cell-revokable="false"
+            :row-active="false"
             :row-height="40"
             :columns="columns"
             :data-source="tableData"
@@ -43,7 +44,5 @@ const tableData = ref<RowDataType[]>([
     { id: 2, name: '李四', age: 32, address: '上海市浦东新区', _isEditing: true },
     { id: 3, name: 'Jack', age: 45, address: 'London' },
     { id: 4, name: 'Rose', age: 22, address: 'New York' },
-
-
 ]);
 </script>

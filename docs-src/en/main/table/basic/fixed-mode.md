@@ -10,7 +10,7 @@ To achieve a scenario where one column has a fixed width and the remaining colum
 This mode only affects `StkTableColumn['width']`
 :::
 
-<demo vue="basic/fixed-mode/FixedMode.vue"></demo>
+<demo vue="basic/fixed-mode/FixedMode.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed-mode/FixedMode.vue"></demo>
 
 
 

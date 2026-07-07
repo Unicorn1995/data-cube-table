@@ -10,4 +10,4 @@ Configure `props.scrollRowByRow` to enable this feature.
 
 Scroll the table below and you'll see that the position of the table rows remains relatively unchanged.
 
-<demo vue="basic/scroll-row-by-row/ScrollRowByRow.vue"></demo>
+<demo vue="basic/scroll-row-by-row/ScrollRowByRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scroll-row-by-row/ScrollRowByRow.vue"></demo>

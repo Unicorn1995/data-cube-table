@@ -4,7 +4,7 @@
 Set `StkTableColumn['sorter']` to `true` in column configuration to enable sorting.
 
 Click the table header to trigger sorting.
-<demo vue="basic/sort/Sort.vue"></demo>
+<demo vue="basic/sort/Sort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/Sort.vue"></demo>
 
 ## Custom Sorting
 `StkTableColumn['sorter']` can be set to a function in column configuration.
@@ -20,7 +20,7 @@ This function will be triggered during sorting, and the table will display using
 | order | `'desc'` \| `'asc'` \| `null` | Current sorting order.
 
 The following table customizes the size sorting rules for the `Rate` column field.
-<demo vue="basic/sort/CustomSort.vue"></demo>
+<demo vue="basic/sort/CustomSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/CustomSort.vue"></demo>
 
 For more sorting methods, please refer to [Custom Sorting](/en/main/table/advanced/custom-sort)
 
@@ -28,14 +28,14 @@ For more sorting methods, please refer to [Custom Sorting](/en/main/table/advanc
 Some fields may use independent fields for sorting, such as year, month, and day fields. In this case, you can provide a special sorting field where year and month are converted to the smallest unit (day) for easy sorting. Specify this sorting field through `sortField`.
 
 The `period` column in the following table specifies `periodNumber` as the sorting field.
-<demo vue="basic/sort/SortField.vue"></demo>
+<demo vue="basic/sort/SortField.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortField.vue"></demo>
 
 ## Empty Fields Excluded from Sorting
 Configure `props.sortConfig.emptyToBottom` to always place empty fields at the bottom of the list
 ```vue
 <StkTable :sort-config="{emptyToBottom: true}"></StkTable>
 ```
-<demo vue="basic/sort/SortEmptyValue.vue"></demo>
+<demo vue="basic/sort/SortEmptyValue.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortEmptyValue.vue"></demo>
 
 ## Specify Default Sort Column
 Configure `props.sortConfig.defaultSort` to control the default sorting.
@@ -44,7 +44,7 @@ When default sorting is set, if **no sorting is applied**, it will sort by the *
 
 Click on the `Name` column in the table below to observe its behavior.
 :::
-<demo vue="basic/sort/DefaultSort.vue"></demo>
+<demo vue="basic/sort/DefaultSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/DefaultSort.vue"></demo>
 
 ## Using localCompare for String Sorting
 After configuring `props.sortConfig.stringLocaleCompare = true`, strings will be sorted using [`String.prototype.localeCompare`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare).
@@ -60,12 +60,12 @@ After clicking the table header, the `@sort-change` event will be triggered. You
 ```vue
 <StkTable sort-remote></StkTable>
 ```
-<demo vue="basic/sort/SortRemote.vue"></demo>
+<demo vue="basic/sort/SortRemote.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortRemote.vue"></demo>
 
 ## Tree Node Deep Sorting
 After configuring `props.sortConfig.sortChildren = true`, when clicking on the table header to sort, the `children` sub-nodes will also be sorted.
 
-<demo vue="basic/sort/SortChildren.vue"></demo>
+<demo vue="basic/sort/SortChildren.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortChildren.vue"></demo>
 
 ## Multi-column Sorting <Badge type="tip" text="^0.11.2" />
 
@@ -78,7 +78,7 @@ In multi-column sorting mode:
 - Third click cancels sorting for that column
 - Can limit maximum number of sorting columns via `props.sortConfig.multiSortLimit` (default 3)
 
-<demo vue="basic/sort/MultiSort.vue"></demo>
+<demo vue="basic/sort/MultiSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/MultiSort.vue"></demo>
 
 ## API
 ### StkTableColumn Configuration

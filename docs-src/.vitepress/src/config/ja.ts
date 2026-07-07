@@ -55,14 +55,14 @@ export const jaConfig = defineConfig({
                                     { text: 'ヘッダーレス', link: '/table/basic/headless' },
                                     { text: '行展開', link: '/table/basic/expand-row' },
                                     { text: 'ツリー', link: '/table/basic/tree' },
-                                    { text: 'マルチレベルヘッダー', link: '/table/basic/multi-header' },
+                                    { text: 'マルチレベルヘッダー(✨Update)', link: '/table/basic/multi-header' },
                                     { text: 'シーケンス列', link: '/table/basic/seq' },
                                     { text: '空データ', link: '/table/basic/empty' },
                                     { text: '行・列の一意キー', link: '/table/basic/key' },
                                     { text: 'スクロールバー', link: '/table/basic/scrollbar' },
                                     { text: 'table-layout: fixed', link: '/table/basic/fixed-mode' },
                                     { text: '行単位スクロール', link: '/table/basic/scroll-row-by-row' },
-                                    { text: 'フッター（✨NEW）', link: '/table/basic/footer' },
+                                    { text: 'フッター', link: '/table/basic/footer' },
                                 ]
                             },
                             {
@@ -79,6 +79,15 @@ export const jaConfig = defineConfig({
                                     { text: 'カスタムセル', link: '/table/advanced/custom-cell' },
                                     { text: 'カスタムソート', link: '/table/advanced/custom-sort' },
                                     { text: 'Vue 2スクロール最適化', link: '/table/advanced/vue2-scroll-optimize' },
+                                    {
+                                        text: 'カスタムセル組み込み拡張(✨NEW)',
+                                        collapsed: true,
+                                        items: [
+                                            { text: 'EditableCell 編集可能セル', link: '/table/advanced/custom-cells/editable-cell' },
+                                            { text: 'FilterCell フィルター', link: '/table/advanced/custom-cells/filter-cell' },
+                                            { text: 'CheckboxCell チェックボックス', link: '/table/advanced/custom-cells/checkbox-cell' },
+                                        ],
+                                    },
                                 ]
                             },
                             {

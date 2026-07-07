@@ -27,29 +27,29 @@ export const getDataSource = () => [
 
 ## Simple Tree
 
-<demo vue="basic/tree/Tree.vue"></demo>
+<demo vue="basic/tree/Tree.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/Tree.vue"></demo>
 
 ## Default Expanded Nodes
 
 ### Expand All
 `treeConfig.defaultExpandAll = true`
 
-<demo vue="basic/tree/TreeDefaultExpandAll.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandAll.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandAll.vue"></demo>
 
 ### Expand Specific Level
 `treeConfig.defaultExpandLevel = 1`
 
-<demo vue="basic/tree/TreeDefaultExpandLevel.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandLevel.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandLevel.vue"></demo>
 
 ### Expand Specific Nodes
 `treeConfig.defaultExpandedKeys = ['Asia', 'China', 'Zhejiang']`
 
-<demo vue="basic/tree/TreeDefaultExpandKeys.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandKeys.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandKeys.vue"></demo>
 
 
 ## Virtual List
 
-<demo vue="basic/tree/TreeVirtualList.vue"></demo>
+<demo vue="basic/tree/TreeVirtualList.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeVirtualList.vue"></demo>
 
 ::: warning Note
 The component will inject the `__T_EXP__` field into each row of the dataSource to control whether it is expanded. Do not modify this field when updating the data of a row. Therefore, `Object.assign` is used in the example to update data.

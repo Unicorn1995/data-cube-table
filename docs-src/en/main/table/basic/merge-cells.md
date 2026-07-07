@@ -18,10 +18,10 @@ function mergeCells(data: {
 Return `{ colspan: number, rowspan: number }` to indicate the number of cells to merge, `colspan` for columns and `rowspan` for rows.
 
 ## Column Merging
-<demo vue="basic/merge-cells/MergeCellsCol.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
 ## Row Merging
-<demo vue="basic/merge-cells/MergeCellsRow.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>
 
 ::: tip
 If the table data changes, the `mergeCells` function will be called again to recalculate.
@@ -29,7 +29,7 @@ If the table data changes, the `mergeCells` function will be called again to rec
 
 ### Row Merging in Virtual List <Badge type="tip" text="^0.8.4" /> 
 #### Simple Merging
-<demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
 In the code, the `mergeCells` function is defined to use the `rowspan` field in a row as the merge count.
 ```ts
 function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
@@ -54,4 +54,4 @@ This feature does not support **horizontal virtual list** yet.
 :::
 
 #### Irregular Merging
-<demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>

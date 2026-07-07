@@ -5,7 +5,7 @@
 열 설정에서 `StkTableColumn['sorter']`를 `true`로 설정하면 정렬이 활성화됩니다.
 
 테이블 헤더를 클릭하면 정렬이 트리거됩니다.
-<demo vue="basic/sort/Sort.vue"></demo>
+<demo vue="basic/sort/Sort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/Sort.vue"></demo>
 
 ## 커스텀 정렬
 열 설정에서 `StkTableColumn['sorter']`를 함수로 설정할 수 있습니다.
@@ -21,7 +21,7 @@
 | order | `'desc'` \| `'asc'` \| `null` | 현재 정렬 순서. |
 
 다음 표에서 `Rate` 열 필드의 커스텀 크기 정렬 규칙을 정의합니다.
-<demo vue="basic/sort/CustomSort.vue"></demo>
+<demo vue="basic/sort/CustomSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/CustomSort.vue"></demo>
 
 더 많은 정렬 사용법은 [커스텀 정렬](/ko/main/table/advanced/custom-sort)을 참고하세요.
 
@@ -29,14 +29,14 @@
 일부 필드는 독립적인 필드로 정렬될 수 있습니다, 예를 들어 년, 월, 일 필드의 경우. 이 경우 정렬 전용 필드를 제공할 수 있으며, 년과 월을 최소 단위인 일로 변환하여 정렬을 용이하게 합니다. 이때 `sortField` 를 통해 해당 정렬 필드를 지정합니다.
 
 다음 표에서 `period` 열은 `periodNumber`를 정렬 필드로 지정했습니다.
-<demo vue="basic/sort/SortField.vue"></demo>
+<demo vue="basic/sort/SortField.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortField.vue"></demo>
 
 ## 빈 필드 정렬 제외
 `props.sortConfig.emptyToBottom`를 설정하면 빈 필드가 항상 리스트 하단에 배치됩니다
 ```vue
 <StkTable :sort-config="{emptyToBottom: true}"></StkTable>
 ```
-<demo vue="basic/sort/SortEmptyValue.vue"></demo>
+<demo vue="basic/sort/SortEmptyValue.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortEmptyValue.vue"></demo>
 
 ## 기본 정렬 열 지정
 `props.sortConfig.defaultSort`를 설정하여 기본 정렬을 제어합니다.
@@ -45,7 +45,7 @@
 
 아래 표의 `이름` 열을 클릭하여 정렬 동작을 관찰하세요.
 :::
-<demo vue="basic/sort/DefaultSort.vue"></demo>
+<demo vue="basic/sort/DefaultSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/DefaultSort.vue"></demo>
 
 ## localCompare 를 사용한 문자열 정렬
 `props.sortConfig.stringLocaleCompare = true`를 설정하면 [`String.prototype.localeCompare`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare) 를 사용하여 문자열을 정렬합니다.
@@ -61,12 +61,12 @@
 ```vue
 <StkTable sort-remote></StkTable>
 ```
-<demo vue="basic/sort/SortRemote.vue"></demo>
+<demo vue="basic/sort/SortRemote.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortRemote.vue"></demo>
 
 ## 트리 노드 깊이 정렬
 `props.sortConfig.sortChildren = true`를 설정하면 테이블 헤더를 클릭하여 정렬할 때 `children` 하위 노드도 정렬됩니다.
 
-<demo vue="basic/sort/SortChildren.vue"></demo>
+<demo vue="basic/sort/SortChildren.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortChildren.vue"></demo>
 
 ## 다중 열 정렬 <Badge type="tip" text="^0.11.2" />
 
@@ -79,7 +79,7 @@
 - 세 번째 클릭하면 해당 열 정렬이 취소됩니다
 - `props.sortConfig.multiSortLimit`으로 최대 정렬 열 수를 제한할 수 있습니다 (기본값 3)
 
-<demo vue="basic/sort/MultiSort.vue"></demo>
+<demo vue="basic/sort/MultiSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/MultiSort.vue"></demo>
 
 ## API
 ### StkTableColumn 열 설정

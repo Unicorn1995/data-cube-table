@@ -10,7 +10,7 @@
 ```ts
 stkTableRef.value?.setSorter('rate', 'desc');
 ```
-<demo vue="advanced/custom-sort/CustomSort/index.vue"></demo>
+<demo vue="advanced/custom-sort/CustomSort/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-sort/CustomSort/index.vue"></demo>
 
 ### 매개변수 설명
 
@@ -119,4 +119,4 @@ export function insertToOrderedArray<T extends object>(
 ### 예시
 다음 예시는 `tableSort`와 `insertToOrderedArray`의 사용을 포함합니다. 삽입 버튼을 클릭하여 삽입 정렬 효과를 관찰합니다.
 
-<demo vue="advanced/custom-sort/InsertSort.vue"></demo>
+<demo vue="advanced/custom-sort/InsertSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-sort/InsertSort.vue"></demo>

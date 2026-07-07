@@ -17,7 +17,7 @@
 在**虚拟列表**的模式下，行高始终为设置的值。
 :::
 
-<demo vue="basic/row-height/RowHeight.vue"></demo>
+<demo vue="basic/row-height/RowHeight.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-height/RowHeight.vue"></demo>
 
 在开启虚拟列表时，滚动会导致列宽度变化，是没有设置列宽导致的。
 
@@ -36,7 +36,7 @@
 ```
 
 拖动下方的高度控制器，可以看到行弹性行高。
-<demo vue="basic/row-height/RowHeightFull.vue"></demo>
+<demo vue="basic/row-height/RowHeightFull.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-height/RowHeightFull.vue"></demo>
 在做一些 **行数固定** 的表格会比较有用。
 
 ::: info

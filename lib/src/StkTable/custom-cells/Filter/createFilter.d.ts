@@ -4,6 +4,9 @@ import { CreateFilterOption, FilterComponentConfig, FilterStatus } from './types
 
 /**
  * 表格筛选功能工厂函数 (BETA)
+ *
+ * Q: 为什么要通过 stkTableInstance 来设置筛选状态，而不是直接在 createFilter 中传入dataSource。
+ * A: 因为 createFilter 不一定有 dataSource的上下文，它可能在独立的js/ts 中使用，而非Vue SFC。而通过 stkTableInstance 可以获取到 dataSource
  * @beta
  * @returns
  */

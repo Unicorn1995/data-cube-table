@@ -11,4 +11,4 @@
 이 모드는 `StkTableColumn['width']` 에만 영향을 미칩니다.
 :::
 
-<demo vue="basic/fixed-mode/FixedMode.vue"></demo>
+<demo vue="basic/fixed-mode/FixedMode.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed-mode/FixedMode.vue"></demo>

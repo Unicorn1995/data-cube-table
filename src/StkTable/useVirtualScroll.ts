@@ -167,17 +167,110 @@ export function useVirtualScroll(
         );
     });
 
+    /** 是否多级表头 */
+    const isMultiLevelHeader = computed(() => tableHeaders.value.length > 1);
+
+    /**
+     * 多级表头横向虚拟滚动参数：以顶层列组为单位计算开始/结束位置。
+     * - 只有整个顶层组完全滚出视口时才移除（避免 colSpan 变化导致抖动）。
+     * - 单级表头时退化为与 tbody 相同的参数。
+     */
+    const theadVirtualX = computed(() => {
+        if (!virtualX_on.value || !isMultiLevelHeader.value) {
+            return {
+                startIndex: virtualScrollX.value.startIndex,
+                endIndex: virtualScrollX.value.endIndex,
+                offsetLeft: virtualScrollX.value.offsetLeft,
+            };
+        }
+        const { scrollLeft, containerWidth } = virtualScrollX.value;
+        const topLevelCols = tableHeaders.value[0];
+        const totalLeafCount = tableHeaderLast.value.length;
+
+        let theadStartIndex = 0;
+        let theadEndIndex = totalLeafCount;
+        let theadOffsetLeft = 0;
+        let cumLeft = 0;
+        let foundStart = false;
+
+        for (let i = 0, len = topLevelCols.length; i < len; i++) {
+            const col = topLevelCols[i];
+            if (col.fixed === 'left' || col.fixed === 'right') continue;
+
+            const groupWidth = col.__W__ || getCalculatedColWidth(col);
+            const groupRight = cumLeft + groupWidth;
+
+            if (!foundStart && groupRight > scrollLeft) {
+                foundStart = true;
+                theadStartIndex = col.__LEAF_START__ ?? 0;
+                theadOffsetLeft = cumLeft;
+            }
+            cumLeft = groupRight;
+
+            theadEndIndex = col.__LEAF_END__ ?? totalLeafCount;
+            if (foundStart && groupRight >= scrollLeft + containerWidth) {
+                // find end
+                break;
+            }
+        }
+
+        if (!foundStart) {
+            theadStartIndex = totalLeafCount;
+            theadOffsetLeft = cumLeft;
+        }
+
+        return { startIndex: theadStartIndex, endIndex: theadEndIndex, offsetLeft: theadOffsetLeft };
+    });
+
     const virtualX_columnPart = computed(() => {
         const tableHeaderLastValue = tableHeaderLast.value;
         if (virtualX_on.value) {
-            // 虚拟横向滚动，固定列要一直保持存在
-            const leftCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
-            const rightCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
             const { startIndex, endIndex } = virtualScrollX.value;
             // 将索引钳制到列数组范围内，防止列数减少时越界
             const maxIndex = tableHeaderLastValue.length;
             const validEndIndex = Math.min(endIndex, maxIndex);
             const validStartIndex = Math.min(startIndex, maxIndex);
+
+            // 多级表头：分离左/右固定列，插入 spacer 标记实现对齐
+            if (isMultiLevelHeader.value) {
+                const leftFixedCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
+                const rightFixedCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
+                const visibleCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
+                for (let i = 0; i < tableHeaderLastValue.length; i++) {
+                    const col = tableHeaderLastValue[i];
+                    if (col.fixed === 'right') {
+                        rightFixedCols.push(col);
+                    } else if (col.fixed === 'left') {
+                        leftFixedCols.push(col);
+                    } else if (i >= validStartIndex && i < validEndIndex) {
+                        visibleCols.push(col);
+                    }
+                }
+
+                const result: PrivateStkTableColumn<PrivateRowDT>[] = [];
+                result.push(...leftFixedCols);
+
+                // 左侧 spacer：theadStart 到 tbodyStart 之间非 fixed:left 的叶子列数
+                const theadStart = theadVirtualX.value.startIndex;
+                const leftSpacerColspan = Math.max(0, startIndex - theadStart);
+                if (leftSpacerColspan) {
+                    result.push({ type: 'spacer', __COLSPAN__: leftSpacerColspan } as unknown as PrivateStkTableColumn<PrivateRowDT>);
+                }
+
+                result.push(...visibleCols);
+
+                // 右侧 spacer：tbodyEnd 到 theadEnd 之间的非 fixed:right 列数
+                if (rightFixedCols.length) {
+                    const rightSpacerColspan = Math.max(0, theadVirtualX.value.endIndex - endIndex);
+                    result.push({ type: 'spacer', __COLSPAN__: rightSpacerColspan } as unknown as PrivateStkTableColumn<PrivateRowDT>);
+                    result.push(...rightFixedCols);
+                }
+                return result;
+            }
+
+            // 单级表头：保持原有重排逻辑（向后兼容）
+            const leftCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
+            const rightCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
 
             // 左侧固定列，如果在左边不可见区。则需要拿出来放在前面
             for (let i = 0; i < validStartIndex; i++) {
@@ -191,17 +284,50 @@ export function useVirtualScroll(
             }
 
             const mainColumns = tableHeaderLastValue.slice(validStartIndex, validEndIndex);
-
             return leftCols.concat(mainColumns).concat(rightCols);
         }
         return tableHeaderLastValue;
     });
 
+    /**
+     * 表头横向虚拟滚动：
+     * - 单级表头：最后一行使用 virtualX_columnPart，其他行原样返回。
+     * - 多级表头：按顶层组粒度过滤（整个组滚出才移除），保持 colSpan 稳定。
+     */
+    const virtualX_tableHeaders = computed(() => {
+        if (!virtualX_on.value) return tableHeaders.value;
+        if (isMultiLevelHeader.value) {
+            const { startIndex, endIndex } = theadVirtualX.value;
+            return tableHeaders.value.map(row => {
+                return row.filter(col => {
+                    if (col.fixed === 'left' || col.fixed === 'right') return true;
+                    const leafStart = col.__LEAF_START__ ?? 0;
+                    const leafEnd = col.__LEAF_END__ ?? leafStart + 1;
+                    return leafEnd > startIndex && leafStart < endIndex;
+                });
+            });
+        }
+        // 单级：最后一行用 virtualX_columnPart
+        const headers = tableHeaders.value;
+        return headers.map((row, i) => (i === headers.length - 1 ? virtualX_columnPart.value : row));
+    });
+
+    /** 展开行 colspan：虚拟滚动时等于所有 td 元素数量（含 spacer）之和 */
+    const expandRowColspan = computed(() => {
+        if (!virtualX_on.value) return tableHeaderLast.value.length;
+        const spacers = virtualX_columnPart.value.filter(c => c.type === 'spacer');
+        // 2 = vt-x-left + vt-x-right
+        // 每个 spacer 项占 1 个位置，colspan > 1 时额外增加 (colspan - 1)
+        return 2 + virtualX_columnPart.value.length + spacers.reduce((sum, s) => sum + Math.max(0, (s.__COLSPAN__ ?? 0) - 1), 0);
+    });
+
     const virtualX_offsetRight = computed(() => {
         if (!virtualX_on.value) return 0;
+        // 多级表头使用 theadEndIndex，单级使用 body endIndex
+        const endIndex = isMultiLevelHeader.value ? theadVirtualX.value.endIndex : virtualScrollX.value.endIndex;
         let width = 0;
         const tableHeaderLastValue = tableHeaderLast.value;
-        for (let i = virtualScrollX.value.endIndex; i < tableHeaderLastValue.length; i++) {
+        for (let i = endIndex; i < tableHeaderLastValue.length; i++) {
             const col = tableHeaderLastValue[i];
             if (col.fixed !== 'right') {
                 width += getCalculatedColWidth(col);
@@ -482,9 +608,10 @@ export function useVirtualScroll(
         const { nonFixedCols, leftFixedCols } = getColWidthCache(tableHeaderLastValue);
 
         if (nonFixedCols.length > 0 && sLeft > 0) {
-            // 二分查找：找到第一个累计宽度 >= sLeft 的非固定列
+            // 二分查找：找到第一个累计宽度 > sLeft 的非固定列
+            // 使用 <= 确保当列右边缘恰好等于 sLeft 时（列完全滚出视口），不再将其作为起始列
             const found = binarySearch(nonFixedCols, mid => {
-                return nonFixedCols[mid].cumWidth < sLeft ? -1 : 1;
+                return nonFixedCols[mid].cumWidth <= sLeft ? -1 : 1;
             });
             const idx = Math.min(found, nonFixedCols.length - 1);
             startIndex = nonFixedCols[idx].index;
@@ -539,7 +666,6 @@ export function useVirtualScroll(
         virtual_dataSourcePart,
         virtual_offsetBottom,
         virtualX_on,
-        virtualX_columnPart,
         virtualX_offsetRight,
         tableHeaderHeight,
         initVirtualScroll,
@@ -550,5 +676,9 @@ export function useVirtualScroll(
         setAutoHeight,
         clearAllAutoHeight,
         clearColWidthCache,
+        virtualX_tableHeaders,
+        expandRowColspan,
+        theadVirtualX,
+        virtualX_columnPart,
     ] as const;
 }

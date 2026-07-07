@@ -24,7 +24,7 @@ Estimated height of a row, used to calculate how many rows can fit within the cu
 
 ## Example
 
-<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
+<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
 
 If you want to control the top and bottom padding of cells, you can do so by overriding CSS variables:
 ```css
@@ -35,3 +35,34 @@ If you want to control the top and bottom padding of cells, you can do so by ove
 
 ## Single Column List
 Please refer to [Virtual Single Column List - Variable Height](/en/demos/virtual-list.html#Variable%20Height)
+
+## Pre-calculating Row Height with Pretext
+
+When row height can be calculated from content in advance, it is recommended to use [@chenglou/pretext](https://github.com/chenglou/pretext) for pre-calculation to avoid the performance overhead of measuring row height at runtime, and to prevent scrollbar jitter.
+
+### How it works
+
+1. Enable `auto-row-height` and `virtual`
+2. Use `prepare` and `layout` methods to calculate text height
+3. Set actual row height via `setAutoHeight(rowKey, height)`
+
+### Example
+
+<demo vue="advanced/auto-height-virtual/PretextAutoHeight/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/auto-height-virtual/PretextAutoHeight/index.vue"></demo>
+
+### API
+
+#### setAutoHeight(rowKey, height)
+
+Manually set the row height for a specific row.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| rowKey | `string \| number` | Unique identifier for the row, corresponding to `row-key` |
+| height | `number` | Row height |
+
+::: tip Tips
+- Must be called after data is loaded
+- If row height changes, call this method again to update
+- Pass `null` or `undefined` to clear the set row height and restore auto measurement
+:::

@@ -42,4 +42,4 @@ document.body.oncontextmenu = (e) => {
 
 ## Demo
 
-<demo vue="other/contextmenu/ContextMenu.vue"></demo>
+<demo vue="other/contextmenu/ContextMenu.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/other/contextmenu/ContextMenu.vue"></demo>

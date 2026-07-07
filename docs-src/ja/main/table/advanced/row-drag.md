@@ -9,11 +9,11 @@
 `dragRow` の列設定では `dataIndex` が指定されていません。これは、一意キーが `props.colKey` でオーバーライドされ、`StkTableColumn['key']` フィールドが優先されるからです。
 :::
 
-<demo vue="advanced/row-drag/RowDrag.vue"></demo>
+<demo vue="advanced/row-drag/RowDrag.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/row-drag/RowDrag.vue"></demo>
 
 ネイティブ draggable API を使用して自分で実装することもできます。参照してください：
 
-<demo vue="advanced/row-drag/RowDragCustom.vue"></demo>
+<demo vue="advanced/row-drag/RowDragCustom.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/row-drag/RowDragCustom.vue"></demo>
 
 ## API
 

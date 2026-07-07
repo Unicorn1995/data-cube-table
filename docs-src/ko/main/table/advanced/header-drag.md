@@ -13,7 +13,7 @@
 
 테이블 헤더를 드래그해 보세요
 
-<demo vue="advanced/header-drag/HeaderDrag.vue"></demo>
+<demo vue="advanced/header-drag/HeaderDrag.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/header-drag/HeaderDrag.vue"></demo>
 
 ## 이벤트를 통해 순서 변경
 ```ts

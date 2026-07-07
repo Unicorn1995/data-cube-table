@@ -19,7 +19,7 @@ stkTableRef.value?.setHighlightDimRow(['id0']);
 // 高亮单元格
 stkTableRef.value?.setHighlightDimCell('id1', 'age');
 ```
-<demo vue="advanced/highlight/Highlight.vue"></demo>
+<demo vue="advanced/highlight/Highlight.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/Highlight.vue"></demo>
 
 ## 全局配置高亮
 `props.highlightConfig`
@@ -64,7 +64,7 @@ stkTableRef.value?.setHighlightDimCell('id1', 'age', {
 });
 ```
 
-<demo vue="advanced/highlight/HighlightAnimation.vue"></demo>
+<demo vue="advanced/highlight/HighlightAnimation.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/HighlightAnimation.vue"></demo>
 
 ## 通过css自定义高亮动画
 此api为旧版动画实现方式。出于`css`动画的**便捷**、**兼容性**好、**易于理解**等优点，依然保留此api。
@@ -88,7 +88,7 @@ stkTableRef.value?.setHighlightDimRow(['id1'], {
 }
 
 ```
-<demo vue="advanced/highlight/HighlightCss.vue"></demo>
+<demo vue="advanced/highlight/HighlightCss.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/HighlightCss.vue"></demo>
 
 ## ~~通过js自定义高亮动画~~ (`v0.7.0`已废弃)
 <details>
@@ -138,6 +138,14 @@ setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: Highlight
 ```ts
 type HighlightDimBaseOption = {
     duration?: number;
+    /**
+     * 忽略不可见元素。为 true 时：
+     * - 调用 setHighlightDimRow 时，若获取不到对应 DOM 则直接丢弃，不放入 store 循环计算；
+     * - 若 store 中已存在该 key，也会被删除。
+     * - 在循环计算过程中，若某行 DOM 已不存在，也会从 store 中删除，不再继续计算。
+     * @version ^1.0.0
+     */
+    ignoreInvisible?: boolean;
 };
 
 type HighlightDimAnimationOption = HighlightDimBaseOption & {

@@ -60,13 +60,14 @@ const dataSource = new Array(50).fill(0).map((it, i) => {
         lv2_1: 'lv2.1',
         lv2_2: 'lv2.2',
         age: i,
-        email: i + '@qq.com',
+        email: i + '@email.com',
     };
 });
 </script>
 <template>
     <div>
         <h3>Multi Header</h3>
-        <StkTable style="height: 200px; width: 600px" row-key="id" fixed-col-shadow virtual :columns="columns" :data-source="dataSource"> </StkTable>
+        <StkTable style="height: 200px; width: 600px" row-key="id" fixed-col-shadow virtual virtual-x :columns="columns" :data-source="dataSource">
+        </StkTable>
     </div>
 </template>

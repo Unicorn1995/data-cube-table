@@ -10,7 +10,7 @@ The component instance provides a `setSorter` method for users to manually trigg
 ```ts
 stkTableRef.value?.setSorter('rate', 'desc');
 ```
-<demo vue="advanced/custom-sort/CustomSort/index.vue"></demo>
+<demo vue="advanced/custom-sort/CustomSort/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-sort/CustomSort/index.vue"></demo>
 
 ### Parameter Description
 
@@ -116,5 +116,5 @@ export function insertToOrderedArray<T extends object>(
 ### Example
 The following example demonstrates the use of `tableSort` and `insertToOrderedArray`. Click to insert a row and observe the insertion sort effect.
 
-<demo vue="advanced/custom-sort/InsertSort.vue"></demo>
+<demo vue="advanced/custom-sort/InsertSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-sort/InsertSort.vue"></demo>
 

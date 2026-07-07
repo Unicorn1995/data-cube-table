@@ -162,6 +162,14 @@
 (e: 'col-resize', col: StkTableColumn<DT>): void;
 ```
 
+### filter-change
+
+フィルター状態が変更されたときにトリガーされます。`setFilter` メソッドを呼び出してフィルター状態を設定したときにのみこのコールバックがトリガーされます。
+
+```ts
+(e: 'filter-change', status: Record<UniqKey, FilterStatus>): void;
+```
+
 ### toggle-row-expand
 
 行を展開ときにトリガーされます。

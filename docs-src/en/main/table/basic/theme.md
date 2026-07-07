@@ -5,7 +5,7 @@ Switch theme by `props.theme` = `light`|`dark`. Corresponding to style selectors
 
 You can click the theme switch button in the top right corner of the page to see the effect.
 
-<demo vue="basic/stripe/Stripe.vue"></demo>
+<demo vue="basic/stripe/Stripe.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/stripe/Stripe.vue"></demo>
 
 ## CSS Variables
 
@@ -15,7 +15,7 @@ StkTable provides rich CSS variables that allow you to customize the table style
 
 Below is an interactive demo where you can adjust CSS variables in real-time and see the effects:
 
-<demo vue="basic/theme/CssVarsDemo.vue"></demo>
+<demo vue="basic/theme/CssVarsDemo.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/theme/CssVarsDemo.vue"></demo>
 
 ### Usage Example
 

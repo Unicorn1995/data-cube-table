@@ -14,7 +14,7 @@
 
 ## customBottom
 
-<demo vue="api/slots/CustomBottom.vue"></demo>
+<demo vue="api/slots/CustomBottom.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/api/slots/CustomBottom.vue"></demo>
 
 ::: tip
 `customBottom` を使用してテーブル下部に要素を追加でき、`IntersectionObserver` を使用してテーブル下部にスクロールされたかどうかを監視できます。

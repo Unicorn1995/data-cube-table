@@ -18,7 +18,7 @@ props:
 ```vue
 <StkTable virtual></StkTable>
 ```
-<demo vue="advanced/virtual/VirtualY.vue"></demo>
+<demo vue="advanced/virtual/VirtualY.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/virtual/VirtualY.vue"></demo>
 
 ## 横向虚拟列表
 ::: warning
@@ -28,7 +28,7 @@ props:
 ```vue
 <StkTable virtual-x></StkTable>
 ```
-<demo vue="advanced/virtual/VirtualX.vue"></demo>
+<demo vue="advanced/virtual/VirtualX.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/virtual/VirtualX.vue"></demo>
 
 ## 重新计算可视区域 autoResize
 很多情况下，虚拟列表区域的宽高会因为各种原因发生变化，这时需要重新计算可视区域。

@@ -17,7 +17,7 @@
 열 너비 조정을 활성화하면, 열 너비가 기본적으로 컨테이너를 채우지 않습니다.
 :::
 
-<demo vue="advanced/column-resize/ColResizable.vue"></demo>
+<demo vue="advanced/column-resize/ColResizable.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/column-resize/ColResizable.vue"></demo>
 
 
 ## 이벤트를 통해 열 너비 변경
@@ -40,7 +40,7 @@
 `props.colResizable.disabled` 로 마지막 열의 드래그 열 너비 조정을 비활성화합니다.
 
 아래 데모는 마지막 열의 minWidth 를 설정했습니다.
-<demo vue="advanced/column-resize/ColResizableFullHack.vue"></demo>
+<demo vue="advanced/column-resize/ColResizableFullHack.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/column-resize/ColResizableFullHack.vue"></demo>
 
 
 ## API

@@ -7,7 +7,7 @@
 
 ## 例
 ### 縦方向テーブル例
-<demo vue="basic/headless/Headless.vue"></demo>
+<demo vue="basic/headless/Headless.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/headless/Headless.vue"></demo>
 
 ### 仮想単位列リスト
 ヘッダーレスを設定して単位列リストを実装します。[仮想単位列リスト例](/ja/demos/virtual-list) を参照してください。

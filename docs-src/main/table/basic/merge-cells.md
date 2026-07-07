@@ -18,10 +18,10 @@ function mergeCells(data: {
 返回 `{ colspan: number, rowspan: number }` 表示合并单元格的数量，`colspan` 表示列合并数量，`rowspan` 表示行合并数量。
 
 ## 列合并
-<demo vue="basic/merge-cells/MergeCellsCol.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
 ## 行合并
-<demo vue="basic/merge-cells/MergeCellsRow.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>
 
 ::: tip
 如果表格数据有变化，则会重新调用 `mergeCells` 函数计算。
@@ -29,7 +29,7 @@ function mergeCells(data: {
 
 ### 行合并虚拟列表 <Badge type="tip" text="^0.8.4" /> 
 #### 简单合并
-<demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
 代码中，定义了 `mergeCells` 函数，将一行中的`rowspan`字段作为合并数量。
 ```ts
 function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
@@ -54,5 +54,5 @@ function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
 :::
 
 #### 不规律合并
-<demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
 

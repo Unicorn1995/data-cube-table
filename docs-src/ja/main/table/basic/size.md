@@ -10,7 +10,7 @@
 `style` を通じてテーブルの幅と高さを制御します。
 :::     
 
-<demo vue="basic/size/Default.vue"></demo>
+<demo vue="basic/size/Default.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/size/Default.vue"></demo>
 
 ## Flex レイアウト
 
@@ -18,4 +18,4 @@
 外側の `flex` コンテナの高さを制御すると、テーブル高さが自适应します。
 :::
 
-<demo vue="basic/size/Flex.vue"></demo>
+<demo vue="basic/size/Flex.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/size/Flex.vue"></demo>

@@ -10,4 +10,4 @@
 :::
 
 
-<demo vue="basic/overflow/Overflow.vue"></demo>
+<demo vue="basic/overflow/Overflow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/overflow/Overflow.vue"></demo>

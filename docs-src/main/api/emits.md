@@ -162,6 +162,14 @@
 (e: 'col-resize', col: StkTableColumn<DT>): void;
 ```
 
+### filter-change
+
+筛选状态变更时触发。通过调用 `setFilter` 方法设置筛选状态时才会触发此回调。
+
+```ts
+(e: 'filter-change', status: Record<UniqKey, FilterStatus>): void;
+```
+
 ### toggle-row-expand
 
 展开行触发。

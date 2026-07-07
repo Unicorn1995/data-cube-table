@@ -17,7 +17,7 @@ In **normal** (non-virtual list) mode, if content exceeds the row height, it wil
 In **virtual list** mode, the row height is always the set value.
 :::
 
-<demo vue="basic/row-height/RowHeight.vue"></demo>
+<demo vue="basic/row-height/RowHeight.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-height/RowHeight.vue"></demo>
 
 When virtual list is enabled, scrolling may cause column width changes, which is due to not setting column widths.
 
@@ -36,7 +36,7 @@ As follows
 ```
 
 Drag the height controller below to see flexible row heights.
-<demo vue="basic/row-height/RowHeightFull.vue"></demo>
+<demo vue="basic/row-height/RowHeightFull.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-height/RowHeightFull.vue"></demo>
 This is useful for tables with **fixed number of rows**.
 
 ::: info

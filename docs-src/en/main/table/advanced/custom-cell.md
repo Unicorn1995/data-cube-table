@@ -66,7 +66,7 @@ export type DataType = {
 ```
 :::
 
-<demo vue="advanced/custom-cell/CustomCell/index.vue"></demo>
+<demo vue="advanced/custom-cell/CustomCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cell/CustomCell/index.vue"></demo>
 
 ### Using with Render Function h
 For simple modifications, using the render function directly is more convenient.

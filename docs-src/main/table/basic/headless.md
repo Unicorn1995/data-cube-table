@@ -9,7 +9,7 @@
 
 ## 示例
 ### 垂直表格示例
-<demo vue="basic/headless/Headless.vue"></demo>
+<demo vue="basic/headless/Headless.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/headless/Headless.vue"></demo>
 
 ### 虚拟单列表
 配置无头，可以实现单列表。查看[虚拟单列表示例](/demos/virtual-list)

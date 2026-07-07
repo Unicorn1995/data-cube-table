@@ -29,7 +29,7 @@ const columns: StkTableColumn<any>[] = [
 위의 표에서 `Gender` 열 앞의 모든 열은 열 너비를 설정해야 합니다. 오른쪽 고정도 동일합니다.
 :::
 
-<demo vue="basic/fixed/Fixed.vue"></demo>
+<demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>
 
 표를 가로로 스크롤할 때 `Gender` 열이 자동으로 왼쪽에 흡착되는 것을 볼 수 있습니다.
 
@@ -48,7 +48,7 @@ const columns: StkTableColumn<any>[] = [
 ## 가상 리스트 열 고정
 
 
-<demo vue="basic/fixed/FixedVirtual.vue"></demo>
+<demo vue="basic/fixed/FixedVirtual.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/FixedVirtual.vue"></demo>
 
 ::: warning
 `props.virtual-x` 가로 가상 리스트를 설정하면, 열 너비가 설정되지 않은 열은 모두 100px로 강제 설정됩니다.

@@ -14,7 +14,7 @@
 
 ## customBottom
 
-<demo vue="api/slots/CustomBottom.vue"></demo>
+<demo vue="api/slots/CustomBottom.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/api/slots/CustomBottom.vue"></demo>
 
 ::: tip
 `customBottom` 可用于在表格底部加一个元素，使用 `IntersectionObserver` 监听是否滚动到表格底部。

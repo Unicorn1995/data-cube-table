@@ -28,29 +28,29 @@ export const getDataSource = () => [
 ## 간단한 트리형
 
 
-<demo vue="basic/tree/Tree.vue"></demo>
+<demo vue="basic/tree/Tree.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/Tree.vue"></demo>
 
 ## 기본값 전개 노드
 
 ### 모두 전개
 `treeConfig.defaultExpandAll = true`
 
-<demo vue="basic/tree/TreeDefaultExpandAll.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandAll.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandAll.vue"></demo>
 
 ### 지정 레벨 전개
 `treeConfig.defaultExpandLevel = 1`
 
-<demo vue="basic/tree/TreeDefaultExpandLevel.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandLevel.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandLevel.vue"></demo>
 
 ### 지정 노드 전개
 `treeConfig.defaultExpandedKeys = ['Asia', 'China', 'Zhejiang']`
 
-<demo vue="basic/tree/TreeDefaultExpandKeys.vue"></demo>
+<demo vue="basic/tree/TreeDefaultExpandKeys.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandKeys.vue"></demo>
 
 
 ## 가상 리스트
 
-<demo vue="basic/tree/TreeVirtualList.vue"></demo>
+<demo vue="basic/tree/TreeVirtualList.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeVirtualList.vue"></demo>
 
 ::: warning 주의
 컴포넌트는 dataSource의 모든 행에 `__T_EXP__` 필드를注入하여 전개 여부를 제어합니다. 행 데이터를 업데이트할 때 이 필드를 수정하지 마세요. 따라서 샘플에서 `Object.assign`을 사용하여 데이터를 업데이트합니다.

@@ -13,4 +13,4 @@
 ::: tip
 スクロールバーの影響により、テーブルの右端と下端のボーダーはセルの `border-right` と `border-bottom` で実装されており、消える場合があります。必要に応じてカスタムCSSを追加できます。
 :::
-<demo vue="basic/border/Default.vue"></demo>
+<demo vue="basic/border/Default.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/border/Default.vue"></demo>

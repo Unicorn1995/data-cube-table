@@ -1,7 +1,7 @@
 # 行、セル ホバーと選択
 
 ## デモ
-<demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
+<demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
 
 ## 行選択の無効化
 `rowActive.disabled` を使用して、特定の行の選択機能を無効にできます。

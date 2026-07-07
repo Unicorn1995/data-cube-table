@@ -19,7 +19,7 @@ stkTableRef.value?.setHighlightDimRow(['id0']);
 // Highlight cell
 stkTableRef.value?.setHighlightDimCell('id1', 'age');
 ```
-<demo vue="advanced/highlight/Highlight.vue"></demo>
+<demo vue="advanced/highlight/Highlight.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/Highlight.vue"></demo>
 
 ## Global Highlight Configuration
 `props.highlightConfig`
@@ -64,7 +64,7 @@ stkTableRef.value?.setHighlightDimCell('id1', 'age', {
 });
 ```
 
-<demo vue="advanced/highlight/HighlightAnimation.vue"></demo>
+<demo vue="advanced/highlight/HighlightAnimation.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/HighlightAnimation.vue"></demo>
 
 ## Custom Highlight Animation via CSS
 This API is an older animation implementation method. It is still retained due to the advantages of `css` animations such as **convenience**, **good compatibility**, and **ease of understanding**.
@@ -88,7 +88,7 @@ Here `duration` is set to `2000` to clear the `class` from the element after the
 }
 
 ```
-<demo vue="advanced/highlight/HighlightCss.vue"></demo>
+<demo vue="advanced/highlight/HighlightCss.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/HighlightCss.vue"></demo>
 
 ## ~~Custom Highlight Animation via JS~~ (deprecated in `v0.7.0`)
 <details>
@@ -138,6 +138,14 @@ setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: Highlight
 ```ts
 type HighlightDimBaseOption = {
     duration?: number;
+    /**
+     * Ignore invisible elements. When true:
+     * - When calling setHighlightDimRow, if the corresponding DOM cannot be obtained, it will be discarded directly and not put into the store for loop calculation;
+     * - If the key already exists in the store, it will also be deleted.
+     * - During the loop calculation, if the DOM of a row no longer exists, it will also be deleted from the store and no longer calculated.
+     * @version ^1.0.0
+     */
+    ignoreInvisible?: boolean;
 };
 
 type HighlightDimAnimationOption = HighlightDimBaseOption & {

@@ -16,7 +16,7 @@ String values with custom units like `%`, `em`, `ch` are also supported (**virtu
 Configuring `StkTableColumn['width']` will also configure `StkTableColumn['minWidth']` and `StkTableColumn['maxWidth']`.
 :::
 
-<demo vue="basic/column-width/ColumnWidth.vue"></demo>
+<demo vue="basic/column-width/ColumnWidth.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/column-width/ColumnWidth.vue"></demo>
 
 
 ## Table Not Full Width
@@ -24,7 +24,7 @@ The table in the component will fill the entire container. Therefore, if the `su
 
 If you want it not to fill the container, you can set `.stk-table-main` to `flex: none`.
 
-<demo vue="basic/column-width/TableWidthFit.vue"></demo>
+<demo vue="basic/column-width/TableWidthFit.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/column-width/TableWidthFit.vue"></demo>
 
 ## Horizontal Virtual List
 Column width control behavior differs between normal (non-virtual list) mode and virtual list mode.

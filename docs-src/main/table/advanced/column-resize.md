@@ -17,7 +17,7 @@
 打开列宽调整后，列宽不会默认铺满容器 。
 :::
 
-<demo vue="advanced/column-resize/ColResizable.vue"></demo>
+<demo vue="advanced/column-resize/ColResizable.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/column-resize/ColResizable.vue"></demo>
 
 
 ## 通过事件更改列宽
@@ -40,7 +40,7 @@
 通过 `props.colResizable.disabled`禁用最后一列的拖动列宽调整。
 
 下面的 demo 设置了最后一列的 minWidth。
-<demo vue="advanced/column-resize/ColResizableFullHack.vue"></demo>
+<demo vue="advanced/column-resize/ColResizableFullHack.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/column-resize/ColResizableFullHack.vue"></demo>
 
 
 ## API

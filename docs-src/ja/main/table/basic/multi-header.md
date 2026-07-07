@@ -1,10 +1,6 @@
 # マルチレベルヘッダー
 ## 設定
 `StkTableColumn['children']` でマルチレベルヘッダーを設定します
-::: warning
-マルチヘッダーテーブルはまだ **横方向仮想リスト**（`props.virtualX`）をサポートしていません。
-:::
-
 ```ts 
 const columns: StkTableColumn<any>[] = [
     {
@@ -27,7 +23,17 @@ const columns: StkTableColumn<any>[] = [
 ```
 
 
-<demo vue="basic/multi-header/MultiHeader.vue"></demo>
+<demo vue="basic/multi-header/MultiHeader.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeader.vue"></demo>
+
+## 横方向仮想リスト(✨NEW)<Badge type="tip" text="^1.0.0" />
+AIの支援により、マルチレベルヘッダーがついに横方向仮想リストをサポートしました！
+
+`props.virtualX` を設定するだけです。
+<demo vue="basic/multi-header/MultiHeaderVirtualX.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeaderVirtualX.vue"></demo>
+
+::: tip
+親ヘッダーノードに多くの子ノードがある場合は、仮想スクロールのパフォーマンス向上のためにヘッダーを分割してみてください。
+:::
 
 
 ## 列固定
@@ -73,10 +79,16 @@ const columns: StkTableColumn<any>[] = [
     },
 ]
 ```
-<demo vue="basic/multi-header/MultiHeaderFixed.vue"></demo>
+<demo vue="basic/multi-header/MultiHeaderFixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeaderFixed.vue"></demo>
 ### リーフノード固定のみ設定
-<demo vue="basic/multi-header/MultiHeaderLeavesFixed.vue"></demo>
+
+<demo vue="basic/multi-header/MultiHeaderLeavesFixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeaderLeavesFixed.vue"></demo>
+::: warning 横方向仮想リスト(`props.virtualX`)はこのモードをサポートしていません。
+:::
+
 ### 任意の固定を設定
-<demo vue="basic/multi-header/MultiHeaderAnyFixed.vue"></demo>
+<demo vue="basic/multi-header/MultiHeaderAnyFixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeaderAnyFixed.vue"></demo>
+::: warning 横方向仮想リスト(`props.virtualX`)はこのモードをサポートしていません。
+:::
 
 楽しめましたか？これもsticky機能のおかげです。

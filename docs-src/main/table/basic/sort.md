@@ -5,7 +5,7 @@
 列配置中`StkTableColumn['sorter']` 设置为 `true` 即可开启排序。
 
 点击表头即可触发排序。
-<demo vue="basic/sort/Sort.vue"></demo>
+<demo vue="basic/sort/Sort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/Sort.vue"></demo>
 
 ## 自定义排序
 列配置中`StkTableColumn['sorter']` 可以设置为一个函数。
@@ -21,7 +21,7 @@
 | order | `'desc'` \| `'asc'` \| `null` | 当前排序的顺序。
 
 下述表格中自定义了 `Rate` 列字段的大小排序规则。
-<demo vue="basic/sort/CustomSort.vue"></demo>
+<demo vue="basic/sort/CustomSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/CustomSort.vue"></demo>
 
 更多排序用法请移步 [自定义排序](/main/table/advanced/custom-sort)
 
@@ -29,14 +29,14 @@
 有些字段可能会使用独立的字段来排序，比如年、月、日字段，此时可提供的一个排序专用字段，年、月都转换为最小单位日，便于排序，此时通过 `sortField` 指定该排序字段。
 
 下面表格 `period` 列指定了 `periodNumber` 作为排序字段。
-<demo vue="basic/sort/SortField.vue"></demo>
+<demo vue="basic/sort/SortField.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortField.vue"></demo>
 
 ## 空字段不参与排序
 配置 `props.sortConfig.emptyToBottom` 空字段将始终置于列表底部
 ```vue
 <StkTable :sort-config="{emptyToBottom: true}"></StkTable>
 ```
-<demo vue="basic/sort/SortEmptyValue.vue"></demo>
+<demo vue="basic/sort/SortEmptyValue.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortEmptyValue.vue"></demo>
 
 ## 指定默认排序列
 配置 `props.sortConfig.defaultSort` 控制默认排序。
@@ -45,7 +45,7 @@
 
 点击下方表格 `姓名` 列排序观察其行为。
 :::
-<demo vue="basic/sort/DefaultSort.vue"></demo>
+<demo vue="basic/sort/DefaultSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/DefaultSort.vue"></demo>
 
 ## 使用localCompare 排序String
 配置 `props.sortConfig.stringLocaleCompare = true` 后，会使用 [`String.prototype.localeCompare`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare) 对字符串排序。
@@ -61,12 +61,12 @@
 ```vue
 <StkTable sort-remote></StkTable>
 ```
-<demo vue="basic/sort/SortRemote.vue"></demo>
+<demo vue="basic/sort/SortRemote.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortRemote.vue"></demo>
 
 ## 树节点深度排序
 配置 `props.sortConfig.sortChildren = true` 后，点击表头排序时，会对 `children` 子节点也进行排序。
 
-<demo vue="basic/sort/SortChildren.vue"></demo>
+<demo vue="basic/sort/SortChildren.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/SortChildren.vue"></demo>
 
 ## 多列排序 <Badge type="tip" text="^0.11.2" />
 
@@ -79,7 +79,7 @@
 - 第三次点击取消该列排序
 - 可通过 `props.sortConfig.multiSortLimit` 限制最大排序列数（默认 3）
 
-<demo vue="basic/sort/MultiSort.vue"></demo>
+<demo vue="basic/sort/MultiSort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/MultiSort.vue"></demo>
 
 ## API
 ### StkTableColumn列配置

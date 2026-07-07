@@ -1,11 +1,13 @@
 # Checkbox
-## Overview
+## Using Built-in Extension <Badge type="tip" text="^1.0.0" />
+[CheckboxCell](/main/table/advanced/custom-cells/checkbox-cell)
 
-The StkTable component **does not have built-in checkbox functionality**, but you can implement it through the `customCell` and `customHeaderCell` configuration options. This approach is very flexible and can meet different business requirements.
+## Custom Implementation
+
+Implement checkbox functionality through `customCell` and `customHeaderCell` configuration options. This approach is very flexible and can meet different business requirements.
 ## Example
 
-<demo vue="basic/checkbox/Checkbox.vue" />
-
+<demo vue="basic/checkbox/Checkbox.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/checkbox/Checkbox.vue"></demo>
 
 ## Code Implementation
 
@@ -23,7 +25,7 @@ Add a custom column to the columns configuration to display checkboxes:
             onChange: (e: Event) => {
                 const checked = (e.target as HTMLInputElement).checked;
                 dataSource.value.forEach(item => {
-                    item.isChecked = checked;
+                    item._isChecked = checked;
                 });
             },
         }),
@@ -33,9 +35,9 @@ Add a custom column to the columns configuration to display checkboxes:
     return h('div', { style: 'display:flex;align-items:center;justify-content:center' }, [
         h('input', {
             type: 'checkbox',
-            checked: row.isChecked,
+            checked: row._isChecked,
             onChange: (e: Event) => {
-                row.isChecked = (e.target as HTMLInputElement).checked;
+                row._isChecked = (e.target as HTMLInputElement).checked;
             },
         }),
     ]);

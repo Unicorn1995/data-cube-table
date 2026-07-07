@@ -18,7 +18,7 @@ const columns: StkTableColumn<any>[] = [
 
 ここでは、`seq` 列の `dataIndex` が空であることがわかります。这是因为 `dataIndex` は値フィールドだけでなく、v-forレンダリングのキーとしても使用されるからです。シーケンス列にはキーが必要ないため、空のままにしています。**重複しないように注意してください**。
 
-<demo vue="basic/seq/Seq.vue"></demo>
+<demo vue="basic/seq/Seq.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/seq/Seq.vue"></demo>
 
 
 ## カスタムシーケンス
@@ -26,4 +26,4 @@ const columns: StkTableColumn<any>[] = [
 
 これは特にページネーションに便利です。
 
-<demo vue="basic/seq/SeqStartIndex.vue"></demo>
+<demo vue="basic/seq/SeqStartIndex.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/seq/SeqStartIndex.vue"></demo>

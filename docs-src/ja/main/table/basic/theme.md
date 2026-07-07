@@ -5,7 +5,7 @@
 
 ページの右上のテーマ切替ボタンをクリックすると效果を確認できます。
 
-<demo vue="basic/stripe/Stripe.vue"></demo>
+<demo vue="basic/stripe/Stripe.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/stripe/Stripe.vue"></demo>
 
 ## CSS 変数
 
@@ -15,7 +15,7 @@ StkTable は豊富な CSS 変数を提供しており、テーブルのスタイ
 
 以下はインタラクティブデモで、CSS 変数をリアルタイムに調整して効果を確認できます：
 
-<demo vue="basic/theme/CssVarsDemo.vue"></demo>
+<demo vue="basic/theme/CssVarsDemo.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/theme/CssVarsDemo.vue"></demo>
 
 ### 使用例
 

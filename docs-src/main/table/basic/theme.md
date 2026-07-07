@@ -6,7 +6,7 @@
 
 您可以点击页面右上角的主题切换按钮看看效果。
 
-<demo vue="basic/stripe/Stripe.vue"></demo>
+<demo vue="basic/stripe/Stripe.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/stripe/Stripe.vue"></demo>
 
 ## CSS 变量
 
@@ -16,7 +16,7 @@ StkTable 提供了丰富的 CSS 变量，允许您自定义表格的样式。您
 
 下面是一个交互式演示，您可以实时调整 CSS 变量并查看效果：
 
-<demo vue="basic/theme/CssVarsDemo.vue"></demo>
+<demo vue="basic/theme/CssVarsDemo.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/theme/CssVarsDemo.vue"></demo>
 
 ### 使用示例
 

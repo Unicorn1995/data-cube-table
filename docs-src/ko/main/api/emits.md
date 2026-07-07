@@ -156,10 +156,18 @@
 
 ### col-resize
 
-열 너비 변경 시トリ거.
+열 너비 변경 시トリガー.
 
 ```ts
 (e: 'col-resize', col: StkTableColumn<DT>): void;
+```
+
+### filter-change
+
+필터 상태 변경 시 트리거됩니다. `setFilter` 메서드를 호출하여 필터 상태를 설정할 때만 이 콜백이 트리거됩니다.
+
+```ts
+(e: 'filter-change', status: Record<UniqKey, FilterStatus>): void;
 ```
 
 ### toggle-row-expand

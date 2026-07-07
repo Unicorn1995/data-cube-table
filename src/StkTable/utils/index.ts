@@ -32,6 +32,7 @@ export function insertToOrderedArray<T extends object>(
     let { sortType } = sortState;
     const field = sortField || dataIndex;
     if (!sortType) sortType = typeof newItem[field] as 'number' | 'string';
+    const isNumber = sortType === 'number';
     const data = targetArray.slice();
 
     if (!order || !data.length) {
@@ -43,22 +44,21 @@ export function insertToOrderedArray<T extends object>(
     const { emptyToBottom, customCompare, stringLocaleCompare } = { emptyToBottom: false, ...sortConfig };
 
     const targetVal: any = newItem[field];
-    if (emptyToBottom && isEmptyValue(targetVal, sortType === 'number')) {
+    if (emptyToBottom && isEmptyValue(targetVal, isNumber)) {
         // 空值排在最下方
         data.push(newItem);
     } else {
+        const isAsc = order === 'asc';
+
         const customCompareFn =
             customCompare ||
             ((a, b) => {
                 const midVal: any = a[field];
                 const compareRes = strCompare(midVal, targetVal, isNumber, stringLocaleCompare);
-                return order === 'asc' ? compareRes : -compareRes;
+                return isAsc ? compareRes : -compareRes;
             });
-        const isNumber = sortType === 'number';
         // 二分插入
-        const sIndex = binarySearch(data, midIndex => {
-            return customCompareFn(data[midIndex], newItem);
-        });
+        const sIndex = binarySearch(data, midIndex => customCompareFn(data[midIndex], newItem));
         data.splice(sIndex, 0, newItem);
     }
 

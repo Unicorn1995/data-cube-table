@@ -16,7 +16,7 @@
 
 下面这个例子使用 `::-webkit-scrollbar` 来设置滚动条的样式。
 
-<demo vue="basic/scrollbar-style/ScrollbarStyle.vue"></demo>
+<demo vue="basic/scrollbar-style/ScrollbarStyle.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scrollbar-style/ScrollbarStyle.vue"></demo>
 
 在 `Blink`或`webkit`内核的浏览器(Chrome, Safari, Opera)中生效（参考[::-webkit-scrollbar | MDN](https://developer.mozilla.org/zh-CN/docs/Web/CSS/::-webkit-scrollbar)）。
 
@@ -41,7 +41,7 @@
 * 移动端不生效。(`^0.11.13`)
 :::
 
-<demo vue="basic/scrollbar-style/CustomScrollbar.vue"></demo>
+<demo vue="basic/scrollbar-style/CustomScrollbar.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scrollbar-style/CustomScrollbar.vue"></demo>
 
 ### API 参考
 

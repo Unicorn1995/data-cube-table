@@ -18,7 +18,7 @@ const columns: StkTableColumn<any>[] = [
 
 여기서 `seq` 열의 `dataIndex` 가 비어 있는 것을 볼 수 있습니다. `dataIndex` 는 값 추출 필드로 사용될 뿐만 아니라 v-for 렌더링의 key 로도 사용되는데, 시퀀스 열은 key 가 필요 없기 때문에 비워 둡니다. **중복하지 않도록 주의하세요**.
 
-<demo vue="basic/seq/Seq.vue"></demo>
+<demo vue="basic/seq/Seq.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/seq/Seq.vue"></demo>
 
 
 ## 사용자 정의 시퀀스
@@ -26,4 +26,4 @@ const columns: StkTableColumn<any>[] = [
 
 페이지네이션 상황에서 유용합니다.
 
-<demo vue="basic/seq/SeqStartIndex.vue"></demo>
+<demo vue="basic/seq/SeqStartIndex.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/seq/SeqStartIndex.vue"></demo>

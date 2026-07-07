@@ -13,7 +13,7 @@
 
 尝试拖动表头
 
-<demo vue="advanced/header-drag/HeaderDrag.vue"></demo>
+<demo vue="advanced/header-drag/HeaderDrag.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/header-drag/HeaderDrag.vue"></demo>
 
 ## 通过事件更改顺序
 ```ts

@@ -18,7 +18,7 @@ Row height will no longer be affected by content. For details, refer to the [Row
 ```vue
 <StkTable virtual></StkTable>
 ```
-<demo vue="advanced/virtual/VirtualY.vue"></demo>
+<demo vue="advanced/virtual/VirtualY.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/virtual/VirtualY.vue"></demo>
 
 ## Horizontal Virtual List
 ::: warning
@@ -28,7 +28,7 @@ Row height will no longer be affected by content. For details, refer to the [Row
 ```vue
 <StkTable virtual-x></StkTable>
 ```
-<demo vue="advanced/virtual/VirtualX.vue"></demo>
+<demo vue="advanced/virtual/VirtualX.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/virtual/VirtualX.vue"></demo>
 
 ## Recalculate Visible Area autoResize
 In many cases, the width and height of the virtual list area will change for various reasons, and the visible area needs to be recalculated.

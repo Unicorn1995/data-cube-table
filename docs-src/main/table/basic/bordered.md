@@ -13,4 +13,4 @@
 ::: tip
 出于滚动条影响，表格右侧和底部的边框，由单元格的 `border-right` 和 `border-bottom` 实现。因此会消失。您可根据实际情况自行添加css。
 :::
-<demo vue="basic/border/Default.vue"></demo>
+<demo vue="basic/border/Default.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/border/Default.vue"></demo>

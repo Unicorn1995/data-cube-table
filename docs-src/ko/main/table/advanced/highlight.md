@@ -19,7 +19,7 @@ stkTableRef.value?.setHighlightDimRow(['id0']);
 // 셀 강조
 stkTableRef.value?.setHighlightDimCell('id1', 'age');
 ```
-<demo vue="advanced/highlight/Highlight.vue"></demo>
+<demo vue="advanced/highlight/Highlight.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/Highlight.vue"></demo>
 
 ## 전역 설정 강조
 `props.highlightConfig`
@@ -63,7 +63,7 @@ stkTableRef.value?.setHighlightDimCell('id1', 'age', {
 });
 ```
 
-<demo vue="advanced/highlight/HighlightAnimation.vue"></demo>
+<demo vue="advanced/highlight/HighlightAnimation.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/HighlightAnimation.vue"></demo>
 
 ## css를 통해 커스텀 강조 애니메이션 정의
 이 api는旧版动画实现方式입니다. `css` 애니메이션의 **便捷함**, **호환성** 좋음, **이해하기 쉬움** 등의优点으로 인해 여전히 이 api를 유지합니다.
@@ -86,7 +86,7 @@ stkTableRef.value?.setHighlightDimRow(['id1'], {
     animation: my-highlight-row 2s linear;
 }
 ```
-<demo vue="advanced/highlight/HighlightCss.vue"></demo>
+<demo vue="advanced/highlight/HighlightCss.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/highlight/HighlightCss.vue"></demo>
 
 ## ~~js를 통해 커스텀 강조 애니메이션 정의~~ (`v0.7.0`已废弃)
 <details>
@@ -137,6 +137,14 @@ setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: Highlight
 ```ts
 type HighlightDimBaseOption = {
     duration?: number;
+    /**
+     * 보이지 않는 요소를 무시합니다. true일 때:
+     * - setHighlightDimRow 호출 시 해당 DOM을 가져올 수 없으면 직접 폐기되어 store의 루프 계산에 들어가지 않습니다;
+     * - store에 해당 key가 이미 존재하는 경우에도 삭제됩니다.
+     * - 루프 계산 중에 어떤 행의 DOM이 더 이상 존재하지 않으면 store에서 삭제되어 더 이상 계산되지 않습니다.
+     * @version ^1.0.0
+     */
+    ignoreInvisible?: boolean;
 };
 
 type HighlightDimAnimationOption = HighlightDimBaseOption & {

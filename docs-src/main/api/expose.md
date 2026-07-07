@@ -253,14 +253,15 @@ function copySelectedArea(): string
 ```
 
 ### setFilter(Beta)
-设置筛选状态
+设置筛选状态(Beta)。设置后会触发 `filter-change` 事件。
 
 ```ts
 /**
  * 设置筛选状态
- * @param colKey 列唯一键字段
- * @param filteredValue 筛选值，undefined 为清除筛选
- * @param option.silent 设置 true 则不会触发 `@filter-change`. 默认:false
+ * @param status 筛选状态对象，传 null 清除所有筛选
+ * @param option.remote 设置 true 则不会自动触发数据过滤，适用于远程筛选场景
+ * @param option.silent 设置 true 则不会触发 `filter-change` 事件，默认 false
  */
-function setFilter(colKey: string, filteredValue: any, option?: { silent?: boolean })
+function setFilter(status: Record<UniqKey, FilterStatus> | null, option?: { remote?: boolean; silent?: boolean })
 ```
+

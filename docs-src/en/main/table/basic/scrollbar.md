@@ -16,7 +16,7 @@ If you need to customize scrollbar styles, you can do so through CSS. Add the `c
 
 The following example uses `::-webkit-scrollbar` to style the scrollbar.
 
-<demo vue="basic/scrollbar-style/ScrollbarStyle.vue"></demo>
+<demo vue="basic/scrollbar-style/ScrollbarStyle.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scrollbar-style/ScrollbarStyle.vue"></demo>
 
 Effective in browsers with `Blink` or `webkit` engines (Chrome, Safari, Opera) (refer to [::-webkit-scrollbar | MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/::-webkit-scrollbar)).
 
@@ -41,7 +41,7 @@ Built-in DOM-implemented scrollbar, enabled via `props.scrollbar`.
 * Not effective on mobile devices. (`^0.11.13`)
 :::
 
-<demo vue="basic/scrollbar-style/CustomScrollbar.vue"></demo>
+<demo vue="basic/scrollbar-style/CustomScrollbar.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scrollbar-style/CustomScrollbar.vue"></demo>
 
 ### API Reference
 

@@ -10,4 +10,4 @@
 
 以下のテーブルをスクロールすると、テーブル行の位置が比較的変わらないことがわかります。
 
-<demo vue="basic/scroll-row-by-row/ScrollRowByRow.vue"></demo>
+<demo vue="basic/scroll-row-by-row/ScrollRowByRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scroll-row-by-row/ScrollRowByRow.vue"></demo>

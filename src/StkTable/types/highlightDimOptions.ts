@@ -1,5 +1,7 @@
 type HighlightDimBaseOption = {
     duration?: number;
+    /** ignore invisible element */
+    ignoreInvisible?: boolean;
 };
 
 type HighlightDimAnimationOption = HighlightDimBaseOption & {
