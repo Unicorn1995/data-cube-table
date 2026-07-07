@@ -60,6 +60,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
     const CELL_RANGE_BOTTOM = 'cell-range-b';
     const CELL_RANGE_LEFT = 'cell-range-l';
     const CELL_RANGE_RIGHT = 'cell-range-r';
+    const ROW_RANGE_SELECTED = 'row-range-selected';
 
     const selectionRanges = ref<AreaSelectionRange[]>([]);
     const isSelecting = ref(false);
@@ -204,9 +205,9 @@ export function useAreaSelection<DT extends Record<string, any>>(
             const el = oldSelectedCells[i] as HTMLElement;
             el.classList.remove(CELL_RANGE_SELECTED, CELL_RANGE_TOP, CELL_RANGE_BOTTOM, CELL_RANGE_LEFT, CELL_RANGE_RIGHT);
         }
-        const oldSelectedRows = container.querySelectorAll('.row-range-selected');
+        const oldSelectedRows = container.querySelectorAll(`.${ROW_RANGE_SELECTED}`);
         for (let i = 0; i < oldSelectedRows.length; i++) {
-            (oldSelectedRows[i] as HTMLElement).classList.remove('row-range-selected');
+            (oldSelectedRows[i] as HTMLElement).classList.remove(ROW_RANGE_SELECTED);
         }
 
         // 2. 重算 selectedCellKeys
@@ -224,7 +225,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
                 const { minRow, maxRow } = normalizeRange(range);
                 for (let r = minRow; r <= maxRow; r++) {
                     const tr = tbody.querySelector(`tr[data-row-i="${r}"]`) as HTMLElement | null;
-                    if (tr) tr.classList.add('row-range-selected');
+                    if (tr) tr.classList.add(ROW_RANGE_SELECTED);
                 }
             }
         }
