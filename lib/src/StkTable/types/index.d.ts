@@ -68,7 +68,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * - tree-node 树节点列，这一列前面有展开收起箭头
      * - selection 选择列
      */
-    type?: 'seq' | 'expand' | 'dragRow' | 'tree-node' | 'selection' | 'spacer';
+    type?: 'seq' | 'expand' | 'dragRow' | 'tree-node' | 'spacer' | 'selection';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */
@@ -104,8 +104,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /** 过滤项 */
     filterOptions?: {
         label: string;
-        value: string;
-        selected: boolean;
+        value: any;
+        selected?: boolean;
     }[];
     /** 过滤方法 */
     filter?: ({ row, cellValue, filterValues }: {

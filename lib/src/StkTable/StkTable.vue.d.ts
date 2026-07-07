@@ -1,4 +1,4 @@
-import { FilterStatus } from './custom-cells/Filter/types';
+import { FilterStatus } from './custom-cells/FilterCell/types';
 import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, FooterConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 import { ScrollbarOptions } from './useScrollbar';
 
