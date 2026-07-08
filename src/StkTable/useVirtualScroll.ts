@@ -260,13 +260,12 @@ export function useVirtualScroll(
                 result.push(...visibleCols);
 
                 // right spacer：tbodyEnd ~ theadEnd 之间的非 fixed:right 列数
-                if (rightFixedCols.length) {
-                    const rightSpacerColspan = Math.max(0, theadVirtualX.value.endIndex - endIndex);
-                    if (rightSpacerColspan) {
-                        result.push({ __VT_C_SP__: rightSpacerColspan } as PrivateStkTableColumn<PrivateRowDT>);
-                    }
-                    result.push(...rightFixedCols);
+                const rightSpacerColspan = Math.max(0, theadVirtualX.value.endIndex - endIndex);
+                if (rightSpacerColspan) {
+                    result.push({ __VT_C_SP__: rightSpacerColspan } as PrivateStkTableColumn<PrivateRowDT>);
                 }
+                result.push(...rightFixedCols);
+
                 return result;
             }
 
@@ -623,7 +622,6 @@ export function useVirtualScroll(
             startIndex = nonFixedCols[0].index;
         }
         // -----
-        let endColWidthSum = leftFirstColRestWidth;
         // 根据 startIndex 快速计算实际在可视区域内的左侧固定列宽度
         let actualLeftColWidthSum = 0;
         for (const leftCol of leftFixedCols) {
@@ -632,7 +630,13 @@ export function useVirtualScroll(
         }
         const containerW = containerWidth - actualLeftColWidthSum;
         let endIndex = headerLength;
-        for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
+        let endColWidthSum = leftFirstColRestWidth;
+
+        /**
+         * 这里根据 leftFirstColRestWidth 如果为0 说明开始位置恰好在单元格边界，则计算endIndex 需要从当前单元格开始。
+         * 如果有值，则说明开始位置的单元格已经切了一半，需要从下一个单元格开始计算 因此startIndex + 1。
+         */
+        for (let colIndex = leftFirstColRestWidth ? startIndex + 1 : startIndex; colIndex < headerLength; colIndex++) {
             const col = tableHeaderLastValue[colIndex];
             endColWidthSum += getCalculatedColWidth(col);
             // 列宽大于容器宽度则停止
