@@ -270,7 +270,6 @@
                 @mousedown="onVerticalScrollbarMouseDown"
                 @touchstart.passive="onVerticalScrollbarMouseDown"
             />
-            <div ref="selectionAreaOverlayRef" class="selection-area-overlay" />
         </div>
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
             <slot name="empty">暂无数据</slot>
@@ -751,7 +750,6 @@ const emits = defineEmits<{
 //     empty(): void;
 // }>();
 
-const selectionAreaOverlayRef = ref<HTMLDivElement>();
 const tableContainerRef = ref<HTMLDivElement>();
 const colResizeIndicatorRef = ref<HTMLDivElement>();
 const trRef = ref<HTMLTableRowElement[]>();
@@ -1005,8 +1003,8 @@ const {
     config: areaSelectionConfig,
     isSelecting: isAreaSelecting,
     onMD: onSelectionMouseDown,
-    getClass: getAreaSelectionClasses,
-    getRowClass: getAreaSelectionRowClass,
+    // getClass: getAreaSelectionClasses,
+    // getRowClass: getAreaSelectionRowClass,
     get: getSelectedArea,
     set: setAreaSelection,
     clear: clearSelectedArea,
@@ -1024,7 +1022,6 @@ const {
     virtualScrollX,
     getRowIndex,
     getColumnIndex,
-    selectionAreaOverlayRef,
 );
 
 /** 键盘箭头滚动 */
@@ -1349,12 +1346,10 @@ function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
     const rowKey = rowKeyGen(row);
 
     const classList = [props.rowClassName(row, rowIndex), row?.__EXP__ ? 'expanded' : '', row?.__EXP_R__ ? 'expanded-row' : ''];
-
     // area selection row highlight
-    if (areaSelectionConfig.value.enabled) {
-        classList.push(...getAreaSelectionRowClass(rowIndex));
-    }
-
+    // if (areaSelectionConfig.value.enabled) {
+    //     classList.push(...getAreaSelectionRowClass(rowIndex));
+    // }
     if (currentRowKey.value === rowKey || row === currentRow.value) {
         classList.push('active');
     }
@@ -1443,13 +1438,11 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     if (props.cellActive && currentSelectedCellKey.value === cellKey) {
         classList.push('active');
     }
-
-    // area selection style
-    if (areaSelectionConfig.value.enabled) {
-        const absRowIndex = getAbsoluteRowIndex(rowIndex);
-        classList.push(...getAreaSelectionClasses(cellKey, absRowIndex, colKey));
-    }
-
+    // // area selection style
+    // if (areaSelectionConfig.value.enabled) {
+    //     const absRowIndex = getAbsoluteRowIndex(rowIndex);
+    //     classList.push(...getAreaSelectionClasses(cellKey, absRowIndex, colKey));
+    // }
     if (col.type === 'seq') {
         classList.push('seq-column');
     } else if (col.type === 'expand' && (row.__EXP__ ? colKeyGen.value(row.__EXP__) === colKey : false)) {
