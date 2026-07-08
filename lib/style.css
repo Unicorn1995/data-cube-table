@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v1.0.0-beta.3
+ * version: v1.0.0-beta.4
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -124,6 +124,19 @@
   padding:0 4px;
   border:none;
   background:transparent;
+}
+.stk-checkbox-cell{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+}
+.stk-checkbox-cell .stk-checkbox-native{
+  width:16px;
+  height:16px;
+  cursor:pointer;
+  vertical-align:middle;
 }
 @keyframes stk-table-dim{
   from{

@@ -34,7 +34,7 @@ export interface FilterComponentConfig {
     autoOptions?: boolean;
 }
 /** createFilter选项接口 */
-export interface CreateFilterOption {
+export interface CreateFilterCellOption {
     /** 是否远程筛选 */
     remote?: boolean;
     /** 筛选状态改变时触发 */
