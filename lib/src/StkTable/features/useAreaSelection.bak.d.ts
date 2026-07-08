@@ -1,5 +1,5 @@
 import { Ref, ShallowRef } from 'vue';
-import { AreaSelectionConfig, AreaSelectionRange, CellKeyGen, ColKeyGen, StkTableColumn, AreaSelectionSetterRange, AreaSelectionSetterOption } from '../types';
+import { AreaSelectionConfig, AreaSelectionRange, CellKeyGen, ColKeyGen, StkTableColumn, UniqKey, AreaSelectionSetterRange, AreaSelectionSetterOption } from '../types';
 import { VirtualScrollStore, VirtualScrollXStore } from '../useVirtualScroll';
 
 /**
@@ -10,6 +10,8 @@ import { VirtualScrollStore, VirtualScrollXStore } from '../useVirtualScroll';
 export declare function useAreaSelection<DT extends Record<string, any>>(props: any, emits: any, tableContainerRef: Ref<HTMLDivElement | undefined>, dataSourceCopy: ShallowRef<DT[]>, tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>, colKeyGen: ColKeyGen, cellKeyGen: CellKeyGen, scrollTo: (top: number | null, left: number | null) => void, virtualScroll: Ref<VirtualScrollStore>, virtualScrollX: Ref<VirtualScrollXStore>, getRowIndex: (row: DT) => number, getColumnIndex: (col: StkTableColumn<DT>) => number): {
     config: import('vue').ComputedRef<AreaSelectionConfig>;
     isSelecting: Ref<boolean, boolean>;
+    getClass: (cellKey: string, absoluteRowIndex: number, colKey: UniqKey) => string[];
+    getRowClass: (absoluteRowIndex: number) => string[];
     get: () => {
         rows: DT[];
         cols: StkTableColumn<DT>[];

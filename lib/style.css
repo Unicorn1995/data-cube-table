@@ -706,10 +706,3 @@
 .stk-table input[type='checkbox']{
   accent-color:#1890ff;
 }
-.stk-table .selection-area-overlay{
-  position:absolute;
-  border:1px solid var(--cs-bc);
-  pointer-events:none;
-  background-color:var(--acs-bgc);
-  z-index:1000;
-}
