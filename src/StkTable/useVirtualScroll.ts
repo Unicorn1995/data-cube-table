@@ -402,7 +402,10 @@ export function useVirtualScroll(
 
     let vue2ScrollYTimeout: null | number = null;
 
-    /** every row actual height */
+    /**
+     * every row actual height.
+     * FIXME: use a weak map instead of a plain map
+     */
     const autoRowHeightMap = new Map<string, number>();
     /** 如果行高度有变化，则要调用此方法清除保存的行高 */
     function setAutoHeight(rowKey: UniqKey, height?: number | null) {

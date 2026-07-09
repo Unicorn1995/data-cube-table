@@ -296,6 +296,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
             return [
                 ranges.length,
                 ranges.length > 0 ? JSON.stringify(ranges.map(r => r.index)) : '',
+                vsx.scrollLeft,
                 vs.startIndex,
                 vs.endIndex,
                 vsx.startIndex,

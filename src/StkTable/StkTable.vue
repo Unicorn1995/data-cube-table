@@ -135,7 +135,7 @@
                             class="vt-x-left"
                             :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
                         ></td>
-                        <template v-for="col in virtualX_columnPart" :key="col.__VT_C_SP__ ? 'spacer' : colKeyGen(col)">
+                        <template v-for="(col, _colIdx) in virtualX_columnPart" :key="col.__VT_C_SP__ ? `spacer-${_colIdx}` : colKeyGen(col)">
                             <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
                             <td v-else v-bind="getTFProps(col)">
                                 <component
@@ -173,7 +173,7 @@
                                 class="vt-x-left"
                                 :style="`min-width:${theadVirtualX.offsetLeft}px;width:${theadVirtualX.offsetLeft}px`"
                             ></td>
-                            <template v-for="col in virtualX_columnPart" :key="col.__VT_C_SP__ ? 'spacer' : colKeyGen(col)">
+                            <template v-for="(col, _colIdx) in virtualX_columnPart" :key="col.__VT_C_SP__ ? `spacer-${_colIdx}` : colKeyGen(col)">
                                 <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
                                 <td v-else :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
                             </template>
@@ -194,7 +194,7 @@
                         </td>
                         <template v-else>
                             <td v-if="virtualX_on" class="vt-x-left"></td>
-                            <template v-for="col in virtualX_columnPart" :key="col.__VT_C_SP__ ? 'spacer' : colKeyGen(col)">
+                            <template v-for="(col, _colIdx) in virtualX_columnPart" :key="col.__VT_C_SP__ ? `spacer-${_colIdx}` : colKeyGen(col)">
                                 <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
                                 <td
                                     v-else-if="!shouldHideCell(row, col)"
