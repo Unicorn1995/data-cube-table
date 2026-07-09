@@ -200,7 +200,10 @@
                                     v-else-if="!shouldHideCell(row, col)"
                                     v-bind="getTDProps(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0)"
                                 >
-                                    <template v-for="text in [getFormattedValue(row, col, rowIndex, colIndex)]" :key="text">
+                                    <template
+                                        v-for="text in [getFormattedValue(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0)]"
+                                        :key="text"
+                                    >
                                         <component
                                             :is="col.customCell"
                                             v-if="col.customCell"
