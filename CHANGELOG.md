@@ -9,8 +9,10 @@
     - feat: add `filter-change` emit event, triggered when filter status changes via `setFilter`.
   - feat `createEditableCell`
   - feat `createCheckboxCell`
-- optimize:
+- Optimize:
   - Improved the start/end position algorithm for virtualX, now more precise.
+- Change
+  - `useAreaSelection` use js to add cell class.
   
 
 ## 0.11.15
