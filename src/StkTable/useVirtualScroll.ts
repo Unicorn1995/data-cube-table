@@ -202,12 +202,12 @@ export function useVirtualScroll(
 
             if (!foundStart && groupRight > scrollLeft) {
                 foundStart = true;
-                theadStartIndex = col.__LEAF_START__ ?? 0;
+                theadStartIndex = col.__LF_S__ ?? 0;
                 theadOffsetLeft = cumLeft;
             }
             cumLeft = groupRight;
 
-            theadEndIndex = col.__LEAF_END__ ?? totalLeafCount;
+            theadEndIndex = col.__LF_E__ ?? totalLeafCount;
             if (foundStart && groupRight >= scrollLeft + containerWidth) {
                 // find end
                 break;
@@ -250,21 +250,22 @@ export function useVirtualScroll(
                 const result: PrivateStkTableColumn<PrivateRowDT>[] = [];
                 result.push(...leftFixedCols);
 
-                // 左侧 spacer：theadStart 到 tbodyStart 之间非 fixed:left 的叶子列数
+                // left spacer：theadStart ~ tbodyStart 之间非 fixed:left 的叶子列数
                 const theadStart = theadVirtualX.value.startIndex;
                 const leftSpacerColspan = Math.max(0, startIndex - theadStart);
                 if (leftSpacerColspan) {
-                    result.push({ type: 'spacer', __COLSPAN__: leftSpacerColspan } as unknown as PrivateStkTableColumn<PrivateRowDT>);
+                    result.push({ __VT_C_SP__: leftSpacerColspan } as PrivateStkTableColumn<PrivateRowDT>);
                 }
 
                 result.push(...visibleCols);
 
-                // 右侧 spacer：tbodyEnd 到 theadEnd 之间的非 fixed:right 列数
-                if (rightFixedCols.length) {
-                    const rightSpacerColspan = Math.max(0, theadVirtualX.value.endIndex - endIndex);
-                    result.push({ type: 'spacer', __COLSPAN__: rightSpacerColspan } as unknown as PrivateStkTableColumn<PrivateRowDT>);
-                    result.push(...rightFixedCols);
+                // right spacer：tbodyEnd ~ theadEnd 之间的非 fixed:right 列数
+                const rightSpacerColspan = Math.max(0, theadVirtualX.value.endIndex - endIndex);
+                if (rightSpacerColspan) {
+                    result.push({ __VT_C_SP__: rightSpacerColspan } as PrivateStkTableColumn<PrivateRowDT>);
                 }
+                result.push(...rightFixedCols);
+
                 return result;
             }
 
@@ -301,8 +302,8 @@ export function useVirtualScroll(
             return tableHeaders.value.map(row => {
                 return row.filter(col => {
                     if (col.fixed === 'left' || col.fixed === 'right') return true;
-                    const leafStart = col.__LEAF_START__ ?? 0;
-                    const leafEnd = col.__LEAF_END__ ?? leafStart + 1;
+                    const leafStart = col.__LF_S__ ?? 0;
+                    const leafEnd = col.__LF_E__ ?? leafStart + 1;
                     return leafEnd > startIndex && leafStart < endIndex;
                 });
             });
@@ -315,10 +316,10 @@ export function useVirtualScroll(
     /** 展开行 colspan：虚拟滚动时等于所有 td 元素数量（含 spacer）之和 */
     const expandRowColspan = computed(() => {
         if (!virtualX_on.value) return tableHeaderLast.value.length;
-        const spacers = virtualX_columnPart.value.filter(c => c.type === 'spacer');
+        const spacers = virtualX_columnPart.value.filter(c => c.__VT_C_SP__);
         // 2 = vt-x-left + vt-x-right
         // 每个 spacer 项占 1 个位置，colspan > 1 时额外增加 (colspan - 1)
-        return 2 + virtualX_columnPart.value.length + spacers.reduce((sum, s) => sum + Math.max(0, (s.__COLSPAN__ ?? 0) - 1), 0);
+        return 2 + virtualX_columnPart.value.length + spacers.reduce((sum, s) => sum + Math.max(0, (s.__VT_C_SP__ ?? 0) - 1), 0);
     });
 
     const virtualX_offsetRight = computed(() => {
@@ -621,7 +622,6 @@ export function useVirtualScroll(
             startIndex = nonFixedCols[0].index;
         }
         // -----
-        let endColWidthSum = leftFirstColRestWidth;
         // 根据 startIndex 快速计算实际在可视区域内的左侧固定列宽度
         let actualLeftColWidthSum = 0;
         for (const leftCol of leftFixedCols) {
@@ -630,7 +630,13 @@ export function useVirtualScroll(
         }
         const containerW = containerWidth - actualLeftColWidthSum;
         let endIndex = headerLength;
-        for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
+        let endColWidthSum = leftFirstColRestWidth;
+
+        /**
+         * 这里根据 leftFirstColRestWidth 如果为0 说明开始位置恰好在单元格边界，则计算endIndex 需要从当前单元格开始。
+         * 如果有值，则说明开始位置的单元格已经切了一半，需要从下一个单元格开始计算 因此startIndex + 1。
+         */
+        for (let colIndex = leftFirstColRestWidth ? startIndex + 1 : startIndex; colIndex < headerLength; colIndex++) {
             const col = tableHeaderLastValue[colIndex];
             endColWidthSum += getCalculatedColWidth(col);
             // 列宽大于容器宽度则停止

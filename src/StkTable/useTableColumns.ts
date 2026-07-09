@@ -80,7 +80,7 @@ export function useTableColumns<DT extends Record<string, any>>(virtualX: boolea
                 const col = arr[i];
                 if (col.hidden) continue;
                 col.__P__ = parent;
-                col.__LEAF_START__ = leafIndex;
+                col.__LF_S__ = leafIndex;
 
                 /** 一列中的子节点数量 */
                 let colChildrenLen = 1;
@@ -103,7 +103,7 @@ export function useTableColumns<DT extends Record<string, any>>(virtualX: boolea
                 }
 
                 // 回溯
-                col.__LEAF_END__ = leafIndex;
+                col.__LF_E__ = leafIndex;
                 col.__W__ = colWidth;
                 tableHeadersTemp[depth].push(col);
                 const rowSpan = col.children ? 1 : maxDeep - depth + 1;
