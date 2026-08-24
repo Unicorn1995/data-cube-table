@@ -18,6 +18,14 @@ export const enConfig = defineConfig({
             { text: 'Home', link: '/en/' },
             { text: 'Documentation', link: '/en/main/start/start' },
             { text: 'Demos', link: '/en/demos/huge-data' },
+            {
+                text: 'Other Versions',
+                items: [
+                    { text: 'React', link: 'https://ja-plus.github.io/stk-table-react/' },
+                    { text: 'Svelte', link: 'https://ja-plus.github.io/stk-table-svelte/' },
+                    { text: 'Solid', link: 'https://ja-plus.github.io/stk-table-solid/' },
+                ],
+            },
             { text: 'Sponsor', link: '/en/main/other/sponsor' }
         ],
         sidebar: {
@@ -55,7 +63,7 @@ export const enConfig = defineConfig({
                                     { text: 'Headless', link: '/table/basic/headless' },
                                     { text: 'Row Expansion', link: '/table/basic/expand-row' },
                                     { text: 'Tree', link: '/table/basic/tree' },
-                                    { text: 'Multi-level Header(✨Update)', link: '/table/basic/multi-header' },
+                                    { text: 'Multi-level Header', link: '/table/basic/multi-header' },
                                     { text: 'Sequence Column', link: '/table/basic/seq' },
                                     { text: 'Empty Data', link: '/table/basic/empty' },
                                     { text: 'Row & Column Unique Keys', link: '/table/basic/key' },
@@ -80,12 +88,14 @@ export const enConfig = defineConfig({
                                     { text: 'Custom Sorting', link: '/table/advanced/custom-sort' },
                                     { text: 'Vue 2 Scroll Optimization', link: '/table/advanced/vue2-scroll-optimize' },
                                     {
-                                        text: 'Built-in Custom Cell Extensions (✨NEW)',
+                                        text: 'Built-in Custom Cell Extensions',
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'FilterCell', link: '/table/advanced/custom-cells/filter-cell' },
                                             { text: 'CheckboxCell', link: '/table/advanced/custom-cells/checkbox-cell' },
+                                            { text: 'NumberCell', link: '/table/advanced/custom-cells/number-cell' },
+                                            { text: 'ChangeCell', link: '/table/advanced/custom-cells/change-cell' },
                                         ],
                                     },
                                 ]
@@ -127,6 +137,7 @@ export const enConfig = defineConfig({
                     { text: 'Cell Edit', link: '/cell-edit' },
                     { text: 'Panel Tree', link: '/panel-tree' },
                     { text: 'Lazy Load', link: '/lazy-load' },
+                    { text: 'Realtime Merge Cells', link: '/realtime-merge-cells' },
                 ]
             }
         },

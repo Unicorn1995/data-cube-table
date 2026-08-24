@@ -1,4 +1,55 @@
 
+## 1.2.1
+* Bugfix:
+  - fix: `sideEffects` now includes `"./lib/**/*.css"`, preventing webpack from tree-shaking CSS imports in production builds.
+
+## 1.2.0
+* Feature
+  - feat: `scrollTo` gains an options overload `scrollTo({ top, left, behavior })` — each axis accepts a pixel number or a `{ index, key, px }` target (row by index/rowKey, column by index/dataIndex), supports `behavior: 'smooth'`; the legacy `scrollTo(top, left)` form is unchanged.
+  - feat: add instance method `clearMergeCellsCache` to clear the `mergeCells` result cache and force recalculation.
+  - feat: `mergeCells` supports huge `rowspan` in `virtual` mode — rows covered by an off-viewport rowspan anchor are compressed into placeholder rows to keep DOM size proportional to the viewport.
+  - feat: `mergeCells` supports huge `colspan` in `virtualX` mode — the visible column range is expanded so merged cells anchored off-viewport stay fully rendered.
+* Optimize
+  - perf: `autoRowHeight` virtual scrolling row location is now O(log n) via a Fenwick tree; `scrollHeight` is the precise sum of per-row heights instead of an estimation.
+  - perf: `useAreaSelection` is tree-shakable (~6KB gzipped dropped when unused); `package.json` declares `"sideEffects"` for proper tree-shaking.
+  - perf: reduced DOM node count in merged scenarios and eliminated the double rendering of merged rows.
+  - perf: `virtualScroll` / `virtualScrollX` switched to `shallowRef` with explicit `triggerRef`, reducing deep Proxy overhead in the scroll hot path.
+  - perf: fixed a regression from the `shallowRef` switch — `triggerRef` now fires only when a store value actually changed (instead of unconditionally), so a scroll that leaves the viewport unchanged no longer forces a full re-render; scroll recalculation is back to 0.02ms level (scrollX 1.7→0.01ms, setAutoHeight 2.6→0.3ms).
+* Bugfix:
+  - fix: `autoRowHeight` + `virtual` + `stripe` — rows outside the viewport had their `td` stripped and collapsed; the td-stripping optimization now only applies to fixed row height.
+  - fix: remove `contain: paint` from tbody `tr` — it clipped cells to a zero-height row box, causing cells to disappear.
+
+## 1.1.0
+* Feature
+  - feat: `setTreeExpand` add `parents` option, pass a child node's rowKey to expand/collapse all its ancestors (the target node itself is also expanded when expanding if it has children), making the target row visible/hidden (e.g. locating a row).
+  - feat: `mergeCells` colspan now works with `virtualX` (horizontal virtual list). When the anchor column of a merged cell scrolls out of the viewport, the visible column range is automatically expanded so that the merged cell is fully rendered (also works with multi-level headers and vertical virtual list).
+
+## 1.0.4
+* Feature
+  - feat: `setTreeExpand` add `all` option, expand/collapse all descendants of a node.
+  - feat: `setTreeExpand` add `level` option, expand/collapse descendants to a specific level.
+* Bugfix:
+  - fix: `setTreeExpand` & `setRowExpand` not working when `rowKey` is a `number`, now correctly handles both `string` and `number` types.
+
+## 1.0.3
+* Bugfix:
+  - fix: `props.fixedMode` in multi-header.
+
+## 1.0.2
+* Bugfix:
+  - fix: `autoResize` now recalculates fixed columns state (active/shadow) on container resize, not only virtual scroll.
+  - fix: right fixed column not work properly.
+  - fix: right fixed column missing left border in `bordered` mode. A cell's left border is provided by the `border-right` of its left sibling, which gets covered once the right fixed column sticks, so the column now draws its own left border via the `fixed-cell--border-left` class.
+
+## 1.0.1
+* Feature
+  - feat: add `NumberCell` & `ChangeCell`
+* Bugfix:
+  - fix: table border-left not effected by `--border-width`
+  - fix: `useAreaSelection` apply selection styles via `data-*` attributes instead of `classList`, so Vue's class patching on merged cells (`cell-hover`/`cell-active`) no longer wipes the selection highlight and border.
+  - fix: `useAreaSelection` expand the range to fully cover merged cells on `mousedown` and during dragging (previously only on `mouseup`), fixing the incorrect border on merged cells and the range not reaching the merged cell boundary while dragging.
+  - fix: `useAreaSelection` selection background is no longer overridden by the hover/active background on merged cells.
+
 ## 1.0.0
 * Feature
   - feat: Multi-level headers support horizontal virtual list (`props.virtualX`).

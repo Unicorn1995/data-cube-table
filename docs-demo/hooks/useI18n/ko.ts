@@ -1,6 +1,9 @@
 export const ko = {
     abbreviation: '약칭',
     dataAmount: '데이터량',
+    mockDataCost: '목 데이터 생성 시간',
+    sortDataCost: '정렬 시간',
+    renderCost: '렌더링 시간',
     simulateUpdateData: '데이터 업데이트 시뮬레이션',
     start: '시작',
     stop: '중지',
@@ -222,4 +225,13 @@ export const ko = {
     techDept: '기술부',
     productDept: '제품부',
     opsDept: '운영부',
+    price: '현재가',
+    volume: '거래량',
+    turnover: '거래대금',
+    change: '등락액',
+    changePercent: '등락률',
+    mergeCells: '셀 병합',
+    splitCells: '셀 분할',
+    realtimeMergeTip: '여러 셀을 드래그 선택한 후 우클릭하여 셀을 병합/분할할 수 있습니다',
+    mergedRegions: '병합된 영역 수',
 };

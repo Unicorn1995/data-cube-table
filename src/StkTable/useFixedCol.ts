@@ -21,11 +21,18 @@ export function useFixedCol<DT extends Record<string, any>>(
     /** 正在被固定的列 */
     const fixedCols = shallowRef<StkTableColumn<DT>[]>([]);
 
+    /**
+     * 需要自行绘制左边框的右固定列。
+     * 单元格的左边框由左侧相邻单元格的 border-right 提供，右固定列吸附遮挡内容后两者不再相邻，因此需要自行绘制。
+     */
+    const fixedBorderLeftCols = shallowRef<StkTableColumn<DT>[]>([]);
+
     /** 固定列的class */
     const fixedColClassMap = computed(() => {
         const colMap = new Map();
         const fixedShadowColsValue = fixedShadowCols.value;
         const fixedColsValue = fixedCols.value;
+        const fixedBorderLeftColsValue = fixedBorderLeftCols.value;
         const colKeyFn = colKeyGen.value;
         const fixedColShadow = props.fixedColShadow;
         const headers = tableHeaders.value;
@@ -48,6 +55,9 @@ export function useFixedCol<DT extends Record<string, any>>(
                 }
                 if (showShadow) {
                     classList.push('fixed-cell--shadow');
+                }
+                if (fixed === 'right' && fixedBorderLeftColsValue.includes(col)) {
+                    classList.push('fixed-cell--border-left');
                 }
                 colMap.set(colKeyFn(col), classList);
             }
@@ -105,6 +115,15 @@ export function useFixedCol<DT extends Record<string, any>>(
         for (let level = 0; level < len; level++) {
             const row = tableHeadersForCalc.value[level];
             /**
+             * 最右侧连续 fixed:right 列的起始下标。
+             * 这些列的固定偏移只由其右侧固定列宽度决定，不依赖中间列的声明宽度，
+             * 且 sticky/relative 在无横向溢出时偏移为0无副作用，因此无需判断滚动位置，始终固定。
+             */
+            let rightSuffixStart = row.length;
+            while (rightSuffixStart > 0 && row[rightSuffixStart - 1].fixed === 'right') {
+                rightSuffixStart--;
+            }
+            /**
              * 左侧第n个fixed:left 计算要加上前面所有left 的列宽。
              */
             let left = 0;
@@ -121,10 +140,14 @@ export function useFixedCol<DT extends Record<string, any>>(
 
                 left += getCalculatedColWidth(col);
 
-                if (isFixedRight && scrollLeft + clientWidth - left < position) {
-                    fixedColsTemp.push(col);
-                    // 右固定列阴影，只要第一列
-                    if (!rightShadowCol[level]) {
+                if (isFixedRight) {
+                    /** 是否需要固定。依赖列声明宽度累加，声明宽度与实际渲染宽度不一致时会失真 */
+                    const needFix = scrollLeft + clientWidth - left < position;
+                    if (i >= rightSuffixStart || needFix) {
+                        fixedColsTemp.push(col);
+                    }
+                    // 右固定列阴影，只要第一列。阴影仍按滚动位置判断，避免未遮挡时也显示阴影
+                    if (needFix && !rightShadowCol[level]) {
                         rightShadowCol[level] = col;
                     }
                 }
@@ -134,6 +157,9 @@ export function useFixedCol<DT extends Record<string, any>>(
         if (props.fixedColShadow) {
             fixedShadowCols.value = leftShadowCol.concat(rightShadowCol).filter(Boolean) as StkTableColumn<DT>[];
         }
+
+        // rightShadowCol 是每层最靠左的、已遮挡内容的右固定列，正是需要绘制左边框的列
+        fixedBorderLeftCols.value = rightShadowCol.filter(Boolean) as StkTableColumn<DT>[];
 
         fixedCols.value = fixedColsTemp;
     }

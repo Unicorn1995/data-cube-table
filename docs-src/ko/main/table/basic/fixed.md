@@ -29,6 +29,20 @@ const columns: StkTableColumn<any>[] = [
 위의 표에서 `Gender` 열 앞의 모든 열은 열 너비를 설정해야 합니다. 오른쪽 고정도 동일합니다.
 :::
 
+::: warning 오른쪽 고정 열이 "이상"한가요?
+오른쪽 고정 열은 일반적으로 **`columns`의 마지막에 선언합니다**. 이 경우 해당 열들은 열 너비 설정과 무관하게 항상 고정된 상태를 유지합니다.
+
+단, **흡착 효과**(열이 가시 영역을 벗어날 때만 흡착되는 효과 및 고정 열 그림자)가 필요하다면 **모든 열에 너비를 지정해야 합니다**. 흡착 위치는 각 열의 너비를 누적해 계산하기 때문에, 중간의 어떤 열(아래의 `url` 열 등)에 `width`가 없으면 계산 결과가 실제 렌더링 너비와 달라져 흡착 시점이 이상해집니다.
+
+```typescript
+const columns: StkTableColumn<any>[] = [
+    { title: 'Name', dataIndex: 'name', width: 100 },
+    { title: 'Stream URL', dataIndex: 'url' }, // ❌ 너비 미설정, 흡착 계산이 부정확해짐
+    { title: 'Operation', dataIndex: '_action', fixed: 'right', width: 150 },
+];
+```
+:::
+
 <demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>
 
 표를 가로로 스크롤할 때 `Gender` 열이 자동으로 왼쪽에 흡착되는 것을 볼 수 있습니다.

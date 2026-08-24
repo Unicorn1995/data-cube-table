@@ -40,6 +40,30 @@ initVirtualScrollX()
 initVirtualScrollY(height?: number)
 ```
 
+### clearMergeCellsCache
+`mergeCells` の結果キャッシュをクリアし、マージ結果の再計算を強制します。
+
+マージ結果のキャッシュは `dataSource` / `columns` が変更されたときのみ自動的にクリアされます。行フィールドを**その場で変更**した場合（行オブジェクトの参照が変わらない場合。例：リアクティブな行オブジェクトを直接変更）、かつ `mergeCells` の戻り値がこれらのフィールドに依存する場合、変更後にこのメソッドを呼び出す必要があります。呼び出さないと、rowspan/colspan は古いキャッシュ結果を使用し続けます。
+
+```ts
+/**
+ * mergeCells の結果キャッシュをクリアし、マージ結果の再計算を強制する
+ */
+clearMergeCellsCache()
+```
+
+```ts
+// 行フィールドをその場で変更した後、マージキャッシュを手動で無効化する
+row.rowspan = { continent: 3 };
+nextTick(() => {
+    tableRef.value.clearMergeCellsCache();
+});
+```
+
+::: tip
+`dataSource` を置き換える（新しい配列を渡す）方法でデータを更新する場合、キャッシュは自動的にクリアされるため、このメソッドを呼び出す必要はありません。
+:::
+
 ### setCurrentRow
 現在選択されている行を設定します。
 
@@ -148,15 +172,65 @@ function setSorter(
 排序状態をリセット
 
 ### scrollTo
-指定位置までスクロール
+指定位置までスクロール。数値オーバーロード（後方互換）と options オーバーロード（行/列の指定に対応）の 2 種類の呼び出し形式をサポート。
 
 ```ts
 /**
  * スクロールバー位置を設定
- * @param top nullに設定して位置を変更しない
- * @param left nullに設定して位置を変更しない
+ * - 数値オーバーロード：top/left はピクセル座標、null は該当軸を変更しない、省略時は 0
+ * - options オーバーロード：各軸にピクセル数値または { index, key, px } ターゲットを指定可能、省略した軸は位置を変更しない
  */
-function scrollTo(top: number | null = 0, left: number | null = 0)
+function scrollTo(top?: number | null, left?: number | null): void;
+function scrollTo(options: ScrollToOptions): void;
+
+interface ScrollToOptions {
+    /** 縦方向ターゲット：ピクセル座標または行ターゲット */
+    top?: number | ScrollAxisTarget;
+    /** 横方向ターゲット：ピクセル座標または列ターゲット */
+    left?: number | ScrollAxisTarget;
+    /** スクロール挙動、ネイティブの ScrollToOptions.behavior と同じ、デフォルト 'auto'（即時ジャンプ） */
+    behavior?: ScrollBehavior;
+}
+
+interface ScrollAxisTarget {
+    /** ターゲットインデックス（0 始まり）、key と同時指定時は index を優先 */
+    index?: number;
+    /** ターゲットキー：top 軸は rowKey に対応する行キー、left 軸は列の dataIndex */
+    key?: string | number;
+    /** 基準オフセットに加算するピクセルオフセット、負値可。px のみの場合の基準は 0 */
+    px?: number;
+}
+```
+
+* インデックス空間：`top` 軸の `index` は現在の表示順序（ソート/フィルター/ツリー展開後）の行インデックス、`left` 軸の `index` はリーフ列（最深ヘッダー階層）のインデックス。
+* ターゲットを解決できない場合（index が範囲外 / key が存在しない）、該当軸は黙ってスキップされ位置は変わらない。
+* `behavior: 'smooth'` 指定時はアニメーションでスクロール。アニメーション中の新しい `scrollTo` 呼び出しは古いアニメーションをキャンセルする。ホイール/タッチ操作でもキャンセルされる。
+
+::: tip
+2 つのオーバーロードで「省略」の意味が異なる：
+* options オーバーロード：省略した軸は現在位置を**維持**、`scrollTo({})` は何もスクロールしない；
+* 数値オーバーロード：省略した引数は **0** がデフォルト、`scrollTo()` は左上隅へスクロールする。
+:::
+
+```js
+// 数値オーバーロード（後方互換）
+stkTableRef.value.scrollTo(100, 200);
+stkTableRef.value.scrollTo(null, 200); // 横方向のみ変更
+
+// options オーバーロード：ピクセル座標
+stkTableRef.value.scrollTo({ top: 100, left: 200 });
+
+// 5 行目へスクロール（0 始まり）
+stkTableRef.value.scrollTo({ top: { index: 5 } });
+
+// rowKey が 'row-42' の行へスクロール
+stkTableRef.value.scrollTo({ top: { key: 'row-42' } });
+
+// 5 行目 + 10px オフセットへスクロール
+stkTableRef.value.scrollTo({ top: { index: 5, px: 10 } });
+
+// 行列を同時に指定しスムーズスクロール（列は dataIndex で指定）
+stkTableRef.value.scrollTo({ top: { index: 5 }, left: { key: 'name' }, behavior: 'smooth' });
 ```
 
 ### getTableData
@@ -206,18 +280,32 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
 function setAutoHeight(rowKey: UniqKey, height?: number | null)
 ```
 
+::: tip タイミング意味
+即時に反映されます：設定した行高はただちにスクロール位置の特定とコンテンツ全体の高さ（scrollHeight）の計算に参加し、次のレンダリングでの実測を待つ必要はありません。行キーが現在のデータに存在しない場合、高さのみ保存され、現在の位置特定と全体の高さには影響しません。
+:::
+
 ### clearAllAutoHeight
-auto-row-heightに保存されたすべての高さをクリア
+auto-row-heightに保存されたすべての高さをクリア。クリア後、行高は推定値（`expectedHeight` / `rowHeight`）に戻り、コンテンツ全体の高さもそれに応じて再計算されます。
 
 ### setTreeExpand
 ツリー構造展開行を設定
 ```ts
 /**
- * @param row rowKeyまたはrowまたはrow
- * @param option.expand 提供されていない場合、現在の状态に基づいて切り替えられます
+ * @param row rowKey / row / またはその配列
+ * @param option.expand 展開するかどうか、未指定の場合は現在の状態に基づいて切り替え
+ * @param option.all 全ての子ノードを展開するかどうか、デフォルト false
+ * @param option.level n 番目のレベルまで展開
+ * @param option.parents 渡された row を対象の子ノードとみなし、そのすべての親ノードを展開/折りたたみする。展開時に対象行自身が子ノードを持つ場合は合わせて展開される。単一の rowKey / row のみサポート
  */
-function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number; parents?: boolean })
 ```
+::: tip
+`option.parents` が `true` の場合、深い階層の子ノードの rowKey を渡すだけで、そのすべての親ノードが自動的に展開され、対象行が表示されます。対象行自身が子ノードを持つ場合は合わせて展開されます（行への位置移動など）。フィルタによってある親ノードが除外されている場合、展開はそこで中断されます。
+:::
+
+- `option.all` <Badge type="tip" text="^1.0.4" />
+- `option.level` <Badge type="tip" text="^1.0.4" />
+- `option.parents` <Badge type="tip" text="^1.1.0" />
 
 ### getSelectedArea
 選択されたセル情報を取得

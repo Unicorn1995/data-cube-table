@@ -1,6 +1,9 @@
 export const en = {
     abbreviation: 'Abbreviation',
     dataAmount: 'Data Amount',
+    mockDataCost: 'Mock Data Creation Cost',
+    sortDataCost: 'Sort Data Cost',
+    renderCost: 'Render Cost',
     simulateUpdateData: 'Simulate Update Data',
     start: 'start',
     stop: 'stop',
@@ -213,4 +216,13 @@ export const en = {
     techDept: 'Tech Dept',
     productDept: 'Product Dept',
     opsDept: 'Operations Dept',
+    price: 'Price',
+    volume: 'Volume',
+    turnover: 'Turnover',
+    change: 'Change',
+    changePercent: 'Change %',
+    mergeCells: 'Merge Cells',
+    splitCells: 'Split Cells',
+    realtimeMergeTip: 'Drag to select multiple cells, then right-click to merge/split cells',
+    mergedRegions: 'Merged regions',
 };

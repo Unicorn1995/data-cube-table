@@ -29,6 +29,20 @@ const columns: StkTableColumn<any>[] = [
 上記のテーブルのように、`性別` 列より前のすべての列はwidthが設定されている必要があります。右固定列也同样です。
 :::
 
+::: warning 右固定列が「異常」？
+右固定列は通常**`columns` の末尾に宣言します**。この場合、これらの列は列幅の設定に依存せず、常に固定されたままになります。
+
+ただし、**吸着効果**（列が可視領域を超えたときにのみ吸着する効果、および固定列シャドウ）が必要な場合は、**すべての列に列幅を指定する必要があります**。吸着位置は各列の列幅を累積して計算するため、中間のある列（下記の `url` 列など）に `width` がないと、計算結果が実際のレンダリング幅と一致せず、吸着のタイミングが異常になります。
+
+```typescript
+const columns: StkTableColumn<any>[] = [
+    { title: '名前', dataIndex: 'name', width: 100 },
+    { title: '配信URL', dataIndex: 'url' }, // ❌ width未設定。吸着の計算が不正確になる
+    { title: '操作', dataIndex: '_action', fixed: 'right', width: 150 },
+];
+```
+:::
+
 <demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>
 
 横スクロールすると、`性別` 列が自動的に左に吸着するのがわかります。

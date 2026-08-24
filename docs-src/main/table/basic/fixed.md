@@ -29,6 +29,20 @@ const columns: StkTableColumn<any>[] = [
 如上表 `Gender` 列前的所有列必须都设置列宽。固定右侧同理。
 :::
 
+::: warning 右侧固定列「异常」？
+一般固定右侧的列都**声明在 `columns` 的最后**。这种情况下这些列会始终保持固定，不依赖列宽配置。
+
+但如果需要实现**吸附效果**（列超出可视区时才吸附、以及固定列阴影），则**要把所有列的列宽都补充上去**。因为吸附位置需要用各列的列宽累加计算，中间某一列（如下面的 `url` 列）缺少 `width` 时，计算结果与实际渲染宽度不一致，吸附时机就会出现异常。
+
+```typescript
+const columns: StkTableColumn<any>[] = [
+    { title: '主播名称', dataIndex: 'name', width: 100 },
+    { title: '直播间URL', dataIndex: 'url' }, // ❌ 未设置列宽，吸附计算会失真
+    { title: '操作', dataIndex: '_action', fixed: 'right', width: 150 },
+];
+```
+:::
+
 <demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>
 
 可以看到，上面表格横向滚动时， `Gender` 列会自动吸附到左侧。

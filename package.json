@@ -1,6 +1,6 @@
 {
   "name": "stk-table-vue",
-  "version": "0.11.16",
+  "version": "1.2.1",
   "description": "High performance realtime virtual table for vue3 and vue2.7",
   "main": "./lib/stk-table-vue.js",
   "types": "./lib/src/StkTable/index.d.ts",
@@ -19,14 +19,18 @@
     "test": "test"
   },
   "type": "module",
+  "sideEffects": ["./src/**", "./lib/**/*.css"],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "test": "vitest",
+    "test:types": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p type-tests",
     "docs:dev": "vitepress dev docs-src",
     "docs:build": "vitepress build docs-src",
     "docs:preview": "vitepress preview docs-src",
-    "docs:update": "cp -rf ./docs-src/.vitepress/dist/* ./docs"
+    "docs:update": "cp -rf ./docs-src/.vitepress/dist/* ./docs",
+    "perf": "node test/perf/run-perf-benchmark.mjs",
+    "perf:test": "vitest run test/perf/scrollPerf.test.js"
   },
   "keywords": [
     "vue",
@@ -49,6 +53,7 @@
     "src"
   ],
   "devDependencies": {
+    "@arco-design/web-vue": "^2.58.0",
     "@chenglou/pretext": "^0.0.8",
     "@types/mockjs": "^1.0.10",
     "@types/node": "^22.18.10",
@@ -56,6 +61,8 @@
     "@typescript-eslint/parser": "^7.7.0",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vue/test-utils": "^2.4.6",
+    "ant-design-vue": "4",
+    "element-plus": "^2.14.3",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-html": "^8.1.0",
@@ -66,6 +73,7 @@
     "less": "^4.2.0",
     "mitt": "^3.0.1",
     "mockjs": "^1.1.0",
+    "naive-ui": "2",
     "postcss": "^8.4.47",
     "postcss-discard-comments": "^6.0.2",
     "postcss-preset-env": "^9.5.11",

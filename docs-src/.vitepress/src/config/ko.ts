@@ -18,6 +18,14 @@ export const koConfig = defineConfig({
             { text: '홈', link: '/ko/' },
             { text: '문서', link: '/ko/main/start/start' },
             { text: '데모', link: '/ko/demos/huge-data' },
+            {
+                text: '다른 버전',
+                items: [
+                    { text: 'React 버전', link: 'https://ja-plus.github.io/stk-table-react/' },
+                    { text: 'Svelte 버전', link: 'https://ja-plus.github.io/stk-table-svelte/' },
+                    { text: 'Solid 버전', link: 'https://ja-plus.github.io/stk-table-solid/' },
+                ],
+            },
             { text: '스폰서', link: '/ko/main/other/sponsor' }
         ],
         sidebar: {
@@ -55,7 +63,7 @@ export const koConfig = defineConfig({
                                     { text: '헤더리스', link: '/table/basic/headless' },
                                     { text: '행 확장', link: '/table/basic/expand-row' },
                                     { text: '트리', link: '/table/basic/tree' },
-                                    { text: '멀티 레벨 헤더(✨Update)', link: '/table/basic/multi-header' },
+                                    { text: '멀티 레벨 헤더', link: '/table/basic/multi-header' },
                                     { text: '시퀀스 열', link: '/table/basic/seq' },
                                     { text: '빈 데이터', link: '/table/basic/empty' },
                                     { text: '행/열 고유 키', link: '/table/basic/key' },
@@ -80,12 +88,14 @@ export const koConfig = defineConfig({
                                     { text: '커스텀 정렬', link: '/table/advanced/custom-sort' },
                                     { text: 'Vue 2 스크롤 최적화', link: '/table/advanced/vue2-scroll-optimize' },
                                     {
-                                        text: '커스텀 셀 내장 확장(✨NEW)',
+                                        text: '커스텀 셀 내장 확장',
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell 편집 가능 셀', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'FilterCell 필터', link: '/table/advanced/custom-cells/filter-cell' },
                                             { text: 'CheckboxCell 체크박스', link: '/table/advanced/custom-cells/checkbox-cell' },
+                                            { text: 'NumberCell 숫자 포맷', link: '/table/advanced/custom-cells/number-cell' },
+                                            { text: 'ChangeCell 등락 셀', link: '/table/advanced/custom-cells/change-cell' },
                                         ],
                                     },
                                 ]
@@ -127,6 +137,7 @@ export const koConfig = defineConfig({
                     { text: '셀 편집', link: '/cell-edit' },
                     { text: '패널 트리', link: '/panel-tree' },
                     { text: '지연 로딩', link: '/lazy-load' },
+                    { text: '실시간 셀 병합', link: '/realtime-merge-cells' },
                 ]
             }
         },

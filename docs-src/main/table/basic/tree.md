@@ -32,6 +32,12 @@ export const getDataSource = () => [
 
 ## 默认展开节点
 
+::: warning 
+通过 `props.treeConfig` 配置的展开只对第一次渲染表格的时候生效。
+
+异步数据请使用 [expose.setTreeExpand()](/main/api/expose.html#settreeexpand) 函数控制。
+:::
+
 ### 全部展开
 `treeConfig.defaultExpandAll = true`
 
@@ -45,7 +51,27 @@ export const getDataSource = () => [
 ### 展开指定节点
 `treeConfig.defaultExpandedKeys = ['Asia', 'China', 'Zhejiang']`
 
+下方 `Toggle China` 按钮使用 [setTreeExpand()](/main/api/expose.html#settreeexpand) 来控制 `China` 行的展开关闭。
+
 <demo vue="basic/tree/TreeDefaultExpandKeys.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandKeys.vue"></demo>
+
+### 手动展开节点
+
+通过 [setTreeExpand](/main/api/expose.html#settreeexpand) 方法手动控制节点的展开/折叠。
+
+下方示例展示了不同参数的用法：
+
+- `Toggle All`：切换所有根节点的展开/折叠状态（传入整个 `dataSource` 数组，`{ all: true }`）
+- `Collapse All`：折叠所有根节点（传入整个 `dataSource` 数组，`{ all: true, expand: false }`）
+- `Toggle Asia`：切换 Asia 节点的展开/折叠状态
+- `Expand All Asia`：展开 Asia 的所有后代节点（`{ expand: true, all: true }`）
+- `Collapse All Asia`：折叠 Asia 的所有后代节点（`{ expand: false, all: true }`）
+- `Expand Asia to Level 2`：展开 Asia 到第 2 层（`{ expand: true, level: 2 }`）
+- `Collapse Asia to Level 1`：折叠 Asia 到第 1 层（`{ expand: false, level: 1 }`）
+- `Expand Parents of Zhejiang`：自动展开 Zhejiang 的所有父节点（Asia → China），Zhejiang 自身因有子节点 Hangzhou 也会一并展开（`{ expand: true, parents: true }`）
+- `Collapse Parents of Zhejiang`：收起 Zhejiang 的所有父节点（`{ expand: false, parents: true }`）
+
+<demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 
 
 ## 虚拟列表

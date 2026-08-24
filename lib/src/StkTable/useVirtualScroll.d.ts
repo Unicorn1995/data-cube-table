@@ -1,4 +1,5 @@
 import { Ref, ShallowRef } from 'vue';
+import { MergeCellsCache } from './mergeCellsCache';
 import { PrivateRowDT, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
 import { ScrollbarOptions } from './useScrollbar';
 
@@ -21,6 +22,10 @@ export type VirtualScrollStore = {
     /** 总滚动高度 */
     scrollHeight: number;
     translateY: number;
+    /** 视口实际起始行索引（rowspan 修正前的原始值，用于区分 above-viewport 行） */
+    viewportStartIndex: number;
+    /** 视口实际结束行索引（rowspan 修正前的原始值，用于区分 below-viewport 行） */
+    viewportEndIndex: number;
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
@@ -41,42 +46,24 @@ export type VirtualScrollXStore = {
  * virtual scroll
  * @returns
  */
-export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTMLElement | undefined>, trRef: Ref<HTMLTableRowElement[] | undefined>, dataSourceCopy: ShallowRef<PrivateRowDT[]>, tableHeaderLast: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[]>, tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>, rowKeyGen: RowKeyGen, maxRowSpan: Map<UniqKey, number>, scrollbarOptions: Ref<Required<ScrollbarOptions>>, isExperimentalScrollY: Ref<boolean | undefined>): readonly [Ref<{
-    containerHeight: number;
-    pageSize: number;
-    startIndex: number;
-    endIndex: number;
-    rowHeight: number;
-    offsetTop: number;
-    scrollTop: number;
-    scrollHeight: number;
-    translateY: number;
-}, VirtualScrollStore | {
-    containerHeight: number;
-    pageSize: number;
-    startIndex: number;
-    endIndex: number;
-    rowHeight: number;
-    offsetTop: number;
-    scrollTop: number;
-    scrollHeight: number;
-    translateY: number;
-}>, Ref<{
-    containerWidth: number;
-    scrollWidth: number;
+export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTMLElement | undefined>, trRef: Ref<HTMLTableRowElement[] | undefined>, dataSourceCopy: ShallowRef<PrivateRowDT[]>, tableHeaderLast: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[]>, tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>, rowKeyGen: RowKeyGen, maxRowSpan: Map<UniqKey, number>, 
+/** 全局最大 rowspan（限定跨界修正扫描范围用） */
+getMaxRowSpanValue: () => number, scrollbarOptions: Ref<Required<ScrollbarOptions>>, isExperimentalScrollY: Ref<boolean | undefined>, 
+/** mergeCells 结果共享缓存（与 useMergeCells 共用，避免重复调用用户回调） */
+mergeCellsCache: MergeCellsCache): readonly [ShallowRef<VirtualScrollStore, VirtualScrollStore>, ShallowRef<VirtualScrollXStore, VirtualScrollXStore>, import('vue').ComputedRef<any>, import('vue').ComputedRef<PrivateRowDT[]>, import('vue').ComputedRef<number>, import('vue').ComputedRef<any>, import('vue').ComputedRef<number>, import('vue').ComputedRef<number>, (height?: number) => void, (height?: number) => void, () => void, (sTop?: number) => void, (sLeft?: number) => void, (rowKey: UniqKey, height?: number | null) => void, () => void, (count: number) => number, () => void, import('vue').ComputedRef<PrivateStkTableColumn<PrivateRowDT>[][]>, import('vue').ComputedRef<number>, import('vue').ComputedRef<{
     startIndex: number;
     endIndex: number;
     offsetLeft: number;
-    scrollLeft: number;
-}, VirtualScrollXStore | {
-    containerWidth: number;
-    scrollWidth: number;
-    startIndex: number;
-    endIndex: number;
-    offsetLeft: number;
-    scrollLeft: number;
-}>, import('vue').ComputedRef<any>, import('vue').ComputedRef<PrivateRowDT[]>, import('vue').ComputedRef<number>, import('vue').ComputedRef<any>, import('vue').ComputedRef<number>, import('vue').ComputedRef<number>, (height?: number) => void, (height?: number) => void, () => void, (sTop?: number) => void, (sLeft?: number) => void, (rowKey: UniqKey, height?: number | null) => void, () => void, () => void, import('vue').ComputedRef<PrivateStkTableColumn<PrivateRowDT>[][]>, import('vue').ComputedRef<number>, import('vue').ComputedRef<{
-    startIndex: number;
-    endIndex: number;
-    offsetLeft: number;
-}>, import('vue').ComputedRef<PrivateStkTableColumn<PrivateRowDT>[]>];
+}>, import('vue').ComputedRef<PrivateStkTableColumn<PrivateRowDT>[]>, import('vue').ComputedRef<{
+    prefix: PrivateStkTableColumn<PrivateRowDT>[];
+    leftExpand: PrivateStkTableColumn<PrivateRowDT>[];
+    viewport: PrivateStkTableColumn<PrivateRowDT>[];
+    suffix: PrivateStkTableColumn<PrivateRowDT>[];
+    /** leftExpand 起始的绝对叶子列索引（mergeCells 缓存键用） */
+    leftExpandStart: number;
+} | null>, () => {
+    mapSize: number;
+    mapKeys: string[];
+    cacheSize: number;
+    total: number;
+}];

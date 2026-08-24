@@ -1,6 +1,9 @@
 export const zh = {
     abbreviation: '简称',
     dataAmount: '数据量',
+    mockDataCost: '创建mock数据耗时',
+    sortDataCost: '排序耗时',
+    renderCost: '渲染耗时',
     simulateUpdateData: '模拟更新数据',
     start: '开始',
     stop: '停止',
@@ -222,4 +225,13 @@ export const zh = {
     techDept: '技术部',
     productDept: '产品部',
     opsDept: '运营部',
+    price: '现价',
+    volume: '成交量',
+    turnover: '成交额',
+    change: '涨跌额',
+    changePercent: '涨跌幅',
+    mergeCells: '合并单元格',
+    splitCells: '拆分单元格',
+    realtimeMergeTip: '拖选多个单元格后右键，可合并/拆分单元格',
+    mergedRegions: '已合并区域数',
 };

@@ -40,6 +40,30 @@ Initializes the number of rows for vertical virtual scrolling.
 initVirtualScrollY(height?: number)
 ```
 
+### clearMergeCellsCache
+Clears the cached `mergeCells` results and forces the merge results to be recalculated.
+
+The merge result cache is only cleared automatically when `dataSource` / `columns` change. If you **mutate** row fields in place (the row object reference stays the same, e.g. directly modifying a reactive row object) and the return value of `mergeCells` depends on these fields, you must call this method after the mutation; otherwise rowspan/colspan will still use the stale cached result.
+
+```ts
+/**
+ * Clear the mergeCells result cache and force recalculation of merge results
+ */
+clearMergeCellsCache()
+```
+
+```ts
+// After mutating row fields in place, manually invalidate the merge cache
+row.rowspan = { continent: 3 };
+nextTick(() => {
+    tableRef.value.clearMergeCellsCache();
+});
+```
+
+::: tip
+If you update data by replacing `dataSource` (passing a new array), you don't need to call this method, as the cache will be cleared automatically.
+:::
+
 ### setCurrentRow
 Sets the currently selected row.
 
@@ -148,15 +172,65 @@ function setSorter(
 Reset sort state
 
 ### scrollTo
-Scroll to specified position
+Scroll to specified position. Two call forms are supported: the numeric overload (backward compatible) and the options overload (with row/column targeting).
 
 ```ts
 /**
  * Set scrollbar position
- * @param top Set to null to not change position
- * @param left Set to null to not change position
+ * - Numeric overload: top/left are pixel coordinates, null keeps the axis unchanged, omitted defaults to 0
+ * - Options overload: each axis accepts a pixel number or an { index, key, px } target, omitted axes keep their position
  */
-function scrollTo(top: number | null = 0, left: number | null = 0)
+function scrollTo(top?: number | null, left?: number | null): void;
+function scrollTo(options: ScrollToOptions): void;
+
+interface ScrollToOptions {
+    /** Vertical target: pixel coordinate or row target */
+    top?: number | ScrollAxisTarget;
+    /** Horizontal target: pixel coordinate or column target */
+    left?: number | ScrollAxisTarget;
+    /** Scroll behavior, same as native ScrollToOptions.behavior, default 'auto' (jump immediately) */
+    behavior?: ScrollBehavior;
+}
+
+interface ScrollAxisTarget {
+    /** Target index (0-based). Takes precedence over key when both are given */
+    index?: number;
+    /** Target key: row key (rowKey) for the top axis; column dataIndex for the left axis */
+    key?: string | number;
+    /** Extra pixel offset added to the base offset, may be negative. Base is 0 when only px is given */
+    px?: number;
+}
+```
+
+* Index space: the `top` axis `index` is the row index in the current display order (after sorting/filtering/tree expansion); the `left` axis `index` is the leaf column (deepest header level) index.
+* When a target cannot be resolved (index out of range / key not found), that axis is silently skipped and its position is unchanged.
+* With `behavior: 'smooth'` the table animates to the target position; a new `scrollTo` call cancels an in-progress animation, as does wheel/touch interaction.
+
+::: tip
+The two overloads treat "omitted" differently:
+* Options overload: an omitted axis **keeps** its current position, `scrollTo({})` performs no scrolling;
+* Numeric overload: an omitted parameter defaults to **0**, so `scrollTo()` scrolls to the top-left corner.
+:::
+
+```js
+// Numeric overload (backward compatible)
+stkTableRef.value.scrollTo(100, 200);
+stkTableRef.value.scrollTo(null, 200); // change horizontal only
+
+// Options overload: pixel coordinates
+stkTableRef.value.scrollTo({ top: 100, left: 200 });
+
+// Scroll to row 5 (0-based)
+stkTableRef.value.scrollTo({ top: { index: 5 } });
+
+// Scroll to the row whose rowKey is 'row-42'
+stkTableRef.value.scrollTo({ top: { key: 'row-42' } });
+
+// Scroll to row 5 plus a 10px offset
+stkTableRef.value.scrollTo({ top: { index: 5, px: 10 } });
+
+// Target both axes with smooth scrolling (column targeted by dataIndex)
+stkTableRef.value.scrollTo({ top: { index: 5 }, left: { key: 'name' }, behavior: 'smooth' });
 ```
 
 ### getTableData
@@ -206,18 +280,32 @@ In variable row height virtual list, sets the height saved by auto-row-height fo
 function setAutoHeight(rowKey: UniqKey, height?: number | null)
 ```
 
+::: tip Timing semantics
+Takes effect immediately: the height immediately participates in scroll positioning and content height (scrollHeight) calculation, without waiting for the next render measurement. If the rowKey does not exist in the current data, the height is only stored and does not affect current positioning or total height.
+:::
+
 ### clearAllAutoHeight
-Clear all heights saved by auto-row-height
+Clear all heights saved by auto-row-height. After clearing, row heights fall back to estimated values (`expectedHeight` / `rowHeight`), and the content height is recalculated accordingly.
 
 ### setTreeExpand
 Set tree structure expanded row
 ```ts
 /**
- * @param row rowKey or row or row
- * @param option.expand If not provided, it will toggle based on current state
+ * @param row rowKey / row / or an array of them
+ * @param option.expand Whether to expand, if not provided, it will toggle based on current state
+ * @param option.all Whether to expand all descendants, default false
+ * @param option.level Expand to the nth level
+ * @param option.parents Treat the given row as a target child, expand/collapse all its ancestors. The target row itself is also expanded when expanding if it has children. Only a single rowKey / row is supported
  */
-function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number; parents?: boolean })
 ```
+::: tip
+When `option.parents` is `true`, passing the rowKey of a deep child node will automatically expand all its ancestors to make the row visible, and the row itself is also expanded if it has children (e.g. locating a row). If a filter currently excludes one of the ancestors, the expansion will stop there.
+:::
+
+- `option.all` <Badge type="tip" text="^1.0.4" />
+- `option.level` <Badge type="tip" text="^1.0.4" />
+- `option.parents` <Badge type="tip" text="^1.1.0" />
 
 ### getSelectedArea
 Get selected cells information

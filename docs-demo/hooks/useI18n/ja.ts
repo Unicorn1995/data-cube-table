@@ -1,6 +1,9 @@
 export const ja = {
     abbreviation: '略称',
     dataAmount: 'データ量',
+    mockDataCost: 'モックデータ生成時間',
+    sortDataCost: 'ソート時間',
+    renderCost: 'レンダリング時間',
     simulateUpdateData: 'データ更新をシミュレート',
     start: '開始',
     stop: '停止',
@@ -213,4 +216,13 @@ export const ja = {
     techDept: '技術部',
     productDept: '製品部',
     opsDept: '運営部',
+    price: '現在値',
+    volume: '出来高',
+    turnover: '売買代金',
+    change: '騰落額',
+    changePercent: '騰落率',
+    mergeCells: 'セル結合',
+    splitCells: 'セル分割',
+    realtimeMergeTip: '複数のセルをドラッグ選択してから右クリックでセルを結合/分割できます',
+    mergedRegions: '結合済み領域数',
 };

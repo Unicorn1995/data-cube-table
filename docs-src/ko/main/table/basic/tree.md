@@ -32,6 +32,12 @@ export const getDataSource = () => [
 
 ## 기본값 전개 노드
 
+::: warning 
+`props.treeConfig`를 통해 설정된 전개는 테이블이 처음 렌더링될 때만 적용됩니다.
+
+비동기 데이터의 경우 [expose.setTreeExpand()](/ko/main/api/expose.html#settreeexpand) 함수를 사용하여 제어하세요.
+:::
+
 ### 모두 전개
 `treeConfig.defaultExpandAll = true`
 
@@ -45,7 +51,26 @@ export const getDataSource = () => [
 ### 지정 노드 전개
 `treeConfig.defaultExpandedKeys = ['Asia', 'China', 'Zhejiang']`
 
+아래 `Toggle China` 버튼은 [setTreeExpand()](/ko/main/api/expose.html#settreeexpand)를 사용하여 `China` 행의 전개/축소를 제어합니다.
+
 <demo vue="basic/tree/TreeDefaultExpandKeys.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandKeys.vue"></demo>
+
+### 수동으로 노드 전개
+
+[setTreeExpand](/ko/main/api/expose.html#settreeexpand) 메서드를 사용하여 노드의 전개/축소를 수동으로 제어합니다.
+
+아래 예시에서는 다양한 매개변수 사용법을 보여줍니다:
+- `Toggle All`: 모든 루트 노드의 전개/축소 상태를 전환합니다 (`dataSource` 배열 전체를 전달, `{ all: true }`)
+- `Collapse All`: 모든 루트 노드를 축소합니다 (`dataSource` 배열 전체를 전달, `{ all: true, expand: false }`)
+- `Toggle Asia`: Asia 노드의 전개/축소 상태를 전환합니다
+- `Expand All Asia`: Asia의 모든 하위 노드를 전개합니다 (`{ expand: true, all: true }`)
+- `Collapse All Asia`: Asia의 모든 하위 노드를 축소합니다 (`{ expand: false, all: true }`)
+- `Expand Asia to Level 2`: Asia를 2번째 레벨까지 전개합니다 (`{ expand: true, level: 2 }`)
+- `Collapse Asia to Level 1`: Asia를 1번째 레벨까지 축소합니다 (`{ expand: false, level: 1 }`)
+- `Expand Parents of Zhejiang`: Zhejiang의 모든 부모 노드(Asia → China)를 자동으로 확장합니다. Zhejiang 자체는 자식 노드 Hangzhou를 가지므로 함께 확장됩니다 (`{ parents: true }`)
+- `Collapse Parents of Zhejiang`: Zhejiang의 모든 부모 노드를 축소합니다 (`{ parents: true, expand: false }`)
+
+<demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 
 
 ## 가상 리스트

@@ -29,6 +29,20 @@ To calculate the adsorption position of **fixed columns** using column widths, a
 As in the table above, all columns before the `Gender` column must have widths set. The same applies to fixed right columns.
 :::
 
+::: warning Right fixed column behaving "abnormally"?
+Fixed right columns are normally **declared at the end of `columns`**. In that case they always stay fixed, regardless of column width configuration.
+
+However, if you need the **sticking effect** (columns sticking only once they exceed the visible area, plus the fixed column shadow), you **must specify widths for all columns**. The sticking position is computed by accumulating each column's width, so when a middle column (such as the `url` column below) has no `width`, the computed result does not match the actual rendered width and the sticking timing becomes abnormal.
+
+```typescript
+const columns: StkTableColumn<any>[] = [
+    { title: 'Name', dataIndex: 'name', width: 100 },
+    { title: 'Stream URL', dataIndex: 'url' }, // ❌ No width, sticking calculation becomes inaccurate
+    { title: 'Operation', dataIndex: '_action', fixed: 'right', width: 150 },
+];
+```
+:::
+
 <demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>
 
 You can see that when scrolling horizontally, the `Gender` column automatically adsorbs to the left.

@@ -18,6 +18,14 @@ export const jaConfig = defineConfig({
             { text: 'ホーム', link: '/ja/' },
             { text: 'ドキュメント', link: '/ja/main/start/start' },
             { text: 'デモ', link: '/ja/demos/huge-data' },
+            {
+                text: '他のバージョン',
+                items: [
+                    { text: 'React版', link: 'https://ja-plus.github.io/stk-table-react/' },
+                    { text: 'Svelte版', link: 'https://ja-plus.github.io/stk-table-svelte/' },
+                    { text: 'Solid版', link: 'https://ja-plus.github.io/stk-table-solid/' },
+                ],
+            },
             { text: 'スポンサー', link: '/ja/main/other/sponsor' }
         ],
         sidebar: {
@@ -55,7 +63,7 @@ export const jaConfig = defineConfig({
                                     { text: 'ヘッダーレス', link: '/table/basic/headless' },
                                     { text: '行展開', link: '/table/basic/expand-row' },
                                     { text: 'ツリー', link: '/table/basic/tree' },
-                                    { text: 'マルチレベルヘッダー(✨Update)', link: '/table/basic/multi-header' },
+                                    { text: 'マルチレベルヘッダー', link: '/table/basic/multi-header' },
                                     { text: 'シーケンス列', link: '/table/basic/seq' },
                                     { text: '空データ', link: '/table/basic/empty' },
                                     { text: '行・列の一意キー', link: '/table/basic/key' },
@@ -80,12 +88,14 @@ export const jaConfig = defineConfig({
                                     { text: 'カスタムソート', link: '/table/advanced/custom-sort' },
                                     { text: 'Vue 2スクロール最適化', link: '/table/advanced/vue2-scroll-optimize' },
                                     {
-                                        text: 'カスタムセル組み込み拡張(✨NEW)',
+                                        text: 'カスタムセル組み込み拡張',
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell 編集可能セル', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'FilterCell フィルター', link: '/table/advanced/custom-cells/filter-cell' },
                                             { text: 'CheckboxCell チェックボックス', link: '/table/advanced/custom-cells/checkbox-cell' },
+                                            { text: 'NumberCell 数値フォーマット', link: '/table/advanced/custom-cells/number-cell' },
+                                            { text: 'ChangeCell 騰落セル', link: '/table/advanced/custom-cells/change-cell' },
                                         ],
                                     },
                                 ]
@@ -127,6 +137,7 @@ export const jaConfig = defineConfig({
                     { text: 'セル編集', link: '/cell-edit' },
                     { text: 'パネルツリー', link: '/panel-tree' },
                     { text: '遅延ロード', link: '/lazy-load' },
+                    { text: 'リアルタイムセル結合', link: '/realtime-merge-cells' },
                 ]
             }
         },

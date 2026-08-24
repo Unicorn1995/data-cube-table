@@ -43,6 +43,14 @@ export const zhConfig = defineConfig({
             { text: '主页', link: '/' },
             { text: '文档', link: '/main/start/start' },
             { text: '示例', link: '/demos/huge-data' },
+            {
+                text: '其他版本',
+                items: [
+                    { text: 'React 版本', link: 'https://ja-plus.github.io/stk-table-react/' },
+                    { text: 'Svelte 版本', link: 'https://ja-plus.github.io/stk-table-svelte/' },
+                    { text: 'Solid 版本', link: 'https://ja-plus.github.io/stk-table-solid/' },
+                ],
+            },
             { text: '赞助', link: '/main/other/sponsor' },
         ],
         sidebar: {
@@ -81,7 +89,7 @@ export const zhConfig = defineConfig({
                                     { text: '无头', link: '/table/basic/headless', },
                                     { text: '行展开', link: '/table/basic/expand-row', },
                                     { text: '树形', link: '/table/basic/tree', },
-                                    { text: '多级表头(✨Update)', link: '/table/basic/multi-header', },
+                                    { text: '多级表头', link: '/table/basic/multi-header', },
                                     { text: '序号列', link: '/table/basic/seq', },
                                     { text: '空数据', link: '/table/basic/empty' },
                                     { text: '行、列唯一键', link: '/table/basic/key', },
@@ -106,12 +114,14 @@ export const zhConfig = defineConfig({
                                     { text: '自定义排序', link: '/table/advanced/custom-sort', },
                                     { text: 'Vue2 滚动优化', link: '/table/advanced/vue2-scroll-optimize', },
                                     {
-                                        text: '自定义单元格内置扩展(✨NEW)',
+                                        text: '自定义单元格内置扩展',
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell 可编辑单元格', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'FilterCell 筛选', link: '/table/advanced/custom-cells/filter-cell' },
                                             { text: 'CheckboxCell 多选框', link: '/table/advanced/custom-cells/checkbox-cell' },
+                                            { text: 'NumberCell 数字格式化', link: '/table/advanced/custom-cells/number-cell' },
+                                            { text: 'ChangeCell 涨跌单元格', link: '/table/advanced/custom-cells/change-cell' },
                                         ],
                                     },
                                 ]
@@ -154,6 +164,7 @@ export const zhConfig = defineConfig({
                     { text: '单元格编辑', link: '/cell-edit' },
                     { text: '面板树', link: '/panel-tree' },
                     { text: '懒加载', link: '/lazy-load' },
+                    { text: '实时合并单元格', link: '/realtime-merge-cells' },
                 ]
             }
         },

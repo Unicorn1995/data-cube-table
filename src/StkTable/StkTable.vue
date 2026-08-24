@@ -61,6 +61,11 @@
                 @contextmenu="onRowMenu"
                 @mouseover="onTrMouseOver"
             >
+                <!-- table-layout:fixed 下浏览器仅依据首行/colgroup 决定列宽，多级表头时子列宽度位于非首行会被忽略。
+                     故固定模式下通过 colgroup 显式声明每个叶子列宽度，保证子列 width 生效。 -->
+                <colgroup v-if="props.fixedMode && !virtualX_on">
+                    <col v-for="col in tableHeaderLast" :key="colKeyGen(col)" :style="getColGroupColStyle(col)" />
+                </colgroup>
                 <thead v-if="!headless">
                     <tr
                         v-for="(row, rowIndex) in virtualX_on ? virtualX_tableHeaders : tableHeaders"
@@ -184,76 +189,108 @@
                             ></td>
                         </template>
                     </tr>
-                    <tr v-for="(row, rowIndex) in virtual_dataSourcePart" ref="trRef" :key="rowKeyGen(row)" v-bind="getTRProps(row, rowIndex)">
-                        <td v-if="row && row.__EXP_R__" :colspan="expandRowColspan">
-                            <div class="table-cell-wrapper" tabindex="-1">
-                                <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
-                                    {{ (row.__EXP_R__ && row.__EXP_C__ && row.__EXP_R__[row.__EXP_C__.dataIndex]) || '' }}
-                                </slot>
-                            </div>
-                        </td>
-                        <template v-else>
-                            <td v-if="virtualX_on" class="vt-x-left"></td>
-                            <template v-for="(col, _colIdx) in virtualX_columnPart" :key="col.__VT_C_SP__ ? `spacer-${_colIdx}` : colKeyGen(col)">
-                                <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
-                                <td
-                                    v-else-if="!shouldHideCell(row, col)"
-                                    v-bind="getTDProps(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0)"
+                    <!-- tbody 渲染列表（异构）：
+                         - row: 数据行（视口行 + 视口上方保留的锚点行/孤立空行）
+                         - above-ph: 视口上方连续空行（无 td）合并的占位段
+                         - below-ph: 视口下方行（rowspan 修正产生的 viewportEndIndex ~ endIndex 区域）
+                           按跨界 rowspan 结束行切分的占位段
+                         占位 tr 以 height: calc(var(--row-height) * 行数) 保持总高度，大 rowspan 场景显著减少 DOM 节点数 -->
+                    <!-- key 必须在 template 上：v-for 模板含多个条件分支时子节点 key 不会提升到 Fragment，
+                         会导致 Fragment 无 key 走 unkeyed diff，滚动时整行重建 -->
+                    <template v-for="item in bodyRenderItems" :key="item.key">
+                        <tr v-if="item.type === 'row'" ref="trRef" v-bind="getTRProps(item.row, item.rowIndex)">
+                            <td v-if="item.row && item.row.__EXP_R__" :colspan="expandRowColspan">
+                                <div class="table-cell-wrapper" tabindex="-1">
+                                    <slot name="expand" :row="item.row.__EXP_R__" :col="item.row.__EXP_C__">
+                                        {{ (item.row.__EXP_R__ && item.row.__EXP_C__ && item.row.__EXP_R__[item.row.__EXP_C__.dataIndex]) || '' }}
+                                    </slot>
+                                </div>
+                            </td>
+                            <template v-else>
+                                <td v-if="virtualX_on" class="vt-x-left"></td>
+                                <template
+                                    v-for="(col, _colIdx) in getBodyColumns(item.row, item.rowIndex)"
+                                    :key="col.__VT_C_SP__ ? `spacer-${_colIdx}` : col.__VT_PH__ ? `ph-${_colIdx}` : colKeyGen(col)"
                                 >
-                                    <template
-                                        v-for="text in [getFormattedValue(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0)]"
-                                        :key="text"
+                                    <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
+                                    <td v-else-if="col.__VT_PH__" class="vt-above-viewport-ph" :colspan="col.__VT_PH__"></td>
+                                    <td
+                                        v-else-if="!shouldHideCell(item.row, col)"
+                                        v-bind="getTDProps(item.row, col, item.rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0)"
                                     >
-                                        <component
-                                            :is="col.customCell"
-                                            v-if="col.customCell"
-                                            class="table-cell-wrapper"
-                                            tabindex="-1"
-                                            :col="col"
-                                            :row="row"
-                                            :rowIndex="getAbsoluteRowIndex(rowIndex)"
-                                            :colIndex="(col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0"
-                                            :cellValue="row && text"
-                                            :expanded="row && row.__EXP__"
-                                            :tree-expanded="row && row.__T_EXP__"
+                                        <template
+                                            v-for="text in [
+                                                getFormattedValue(item.row, col, item.rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0),
+                                            ]"
+                                            :key="text"
                                         >
-                                            <template #stkFoldIcon>
-                                                <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
-                                            </template>
-                                            <template #stkDragIcon>
-                                                <DragHandle @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))" />
-                                            </template>
-                                        </component>
-                                        <div v-else-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="text || ''">
-                                            {{ (row && text) != null ? row && text : getEmptyCellText(col, row) }}
-                                        </div>
-                                        <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
-                                            {{ (props.seqConfig.startIndex || 0) + getAbsoluteRowIndex(rowIndex) + 1 }}
-                                        </div>
-                                        <div v-else-if="col.type === 'selection'" class="table-cell-wrapper" tabindex="-1">
-                                            <input type="checkbox" :checked="row.__isChecked" @change="onCellCheckboxChange(row)" />
-                                        </div>
-                                        <TreeNodeCell
-                                            v-else-if="col.type === 'tree-node'"
-                                            class="table-cell-wrapper"
-                                            tabindex="-1"
-                                            :col="col"
-                                            :row="row"
-                                        ></TreeNodeCell>
-                                        <div v-else class="table-cell-wrapper" tabindex="-1" :title="text || ''">
-                                            <DragHandle
-                                                v-if="col.type === 'dragRow'"
-                                                @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))"
-                                            />
-                                            <TriangleIcon v-else-if="col.type === 'expand'" />
-                                            <span v-if="text != null">{{ text }}</span>
-                                        </div>
-                                    </template>
-                                </td>
+                                            <component
+                                                :is="col.customCell"
+                                                v-if="col.customCell"
+                                                class="table-cell-wrapper"
+                                                tabindex="-1"
+                                                :col="col"
+                                                :row="item.row"
+                                                :rowIndex="getAbsoluteRowIndex(item.rowIndex)"
+                                                :colIndex="(col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0"
+                                                :cellValue="item.row && text"
+                                                :expanded="item.row && item.row.__EXP__"
+                                                :tree-expanded="item.row && item.row.__T_EXP__"
+                                            >
+                                                <template #stkFoldIcon>
+                                                    <TriangleIcon @click="triangleClick($event, item.row, col)"></TriangleIcon>
+                                                </template>
+                                                <template #stkDragIcon>
+                                                    <DragHandle @dragstart="onTrDragStart($event, getAbsoluteRowIndex(item.rowIndex))" />
+                                                </template>
+                                            </component>
+                                            <div v-else-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="text || ''">
+                                                {{
+                                                    (item.row && item.row[col.dataIndex]) != null
+                                                        ? item.row && item.row[col.dataIndex]
+                                                        : getEmptyCellText(col, item.row)
+                                                }}
+                                            </div>
+                                            <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
+                                                {{ (props.seqConfig.startIndex || 0) + getAbsoluteRowIndex(item.rowIndex) + 1 }}
+                                            </div>
+                                            <div v-else-if="col.type === 'selection'" class="table-cell-wrapper" tabindex="-1">
+                                                <input type="checkbox" :checked="item.row.__isChecked" @change="onCellCheckboxChange(item.row)" />
+                                            </div>
+                                            <TreeNodeCell
+                                                v-else-if="col.type === 'tree-node'"
+                                                class="table-cell-wrapper"
+                                                tabindex="-1"
+                                                :col="col"
+                                                :row="item.row"
+                                            ></TreeNodeCell>
+                                            <div v-else class="table-cell-wrapper" tabindex="-1" :title="text || ''">
+                                                <DragHandle
+                                                    v-if="col.type === 'dragRow'"
+                                                    @dragstart="onTrDragStart($event, getAbsoluteRowIndex(item.rowIndex))"
+                                                />
+                                                <TriangleIcon v-else-if="col.type === 'expand'" />
+                                                <span v-if="text != null">{{ text }}</span>
+                                            </div>
+                                        </template>
+                                    </td>
+                                </template>
+                                <td v-if="virtualX_on" class="vt-x-right"></td>
                             </template>
-                            <td v-if="virtualX_on" class="vt-x-right"></td>
-                        </template>
-                    </tr>
+                        </tr>
+                        <tr
+                            v-else-if="item.type === 'above-ph'"
+                            class="vt-above-viewport-ph-row"
+                            :data-above-count="item.count"
+                            :style="`height: calc(var(--row-height) * ${item.count})`"
+                        ></tr>
+                        <tr
+                            v-else
+                            class="vt-below-viewport-ph"
+                            :data-below-count="item.count"
+                            :style="`height: calc(var(--row-height) * ${item.count})`"
+                        ></tr>
+                    </template>
                     <template v-if="!isExperimentalScrollY">
                         <tr v-if="virtual_on && !isSRBRActive" :style="offsetBottomStyle"></tr>
                         <tr v-if="SRBRBottomHeight" :style="SRBRBottomStyle"></tr>
@@ -324,6 +361,9 @@ import {
     PrivateRowDT,
     PrivateStkTableColumn,
     RowActiveOption,
+    ScrollAxisTarget,
+    ScrollToFn,
+    ScrollToOptions,
     SeqConfig,
     SortConfig,
     StkTableColumn,
@@ -340,6 +380,7 @@ import { useGetFixedColPosition } from './useGetFixedColPosition';
 import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useMaxRowSpan } from './useMaxRowSpan';
+import { createMergeCellsCache } from './mergeCellsCache';
 import { useMergeCells } from './useMergeCells';
 import { useRowExpand } from './useRowExpand';
 import { useScrollbar, type ScrollbarOptions } from './useScrollbar';
@@ -919,7 +960,14 @@ const [onThDragStart, onThDragOver, onThDrop, isHeaderDraggable] = useThDrag(pro
 
 const [onTrDragStart, onTrDragEnter, onTrDragOver, onTrDrop, onTrDragEnd] = useTrDrag(props, emits, dataSourceCopy);
 
-const [maxRowSpan, updateMaxRowSpan] = useMaxRowSpan(props, tableHeaderLast, rowKeyGen, dataSourceCopy);
+const [maxRowSpan, updateMaxRowSpan, getMaxRowSpanValue] = useMaxRowSpan(props, tableHeaderLast, rowKeyGen, dataSourceCopy);
+
+/**
+ * mergeCells 结果共享缓存：useVirtualScroll（可视列范围修正）与 useMergeCells
+ * （hidden map 构建 / 视口上方占位 / 渲染）共用，同一单元格只调用一次用户回调，
+ * 且可跨滚动帧复用（数据/列变化时才清空）。
+ */
+const mergeCellsCache = createMergeCellsCache();
 
 const [
     virtualScroll,
@@ -937,11 +985,15 @@ const [
     updateVirtualScrollX,
     setAutoHeight,
     clearAllAutoHeight,
+    getRowsHeight,
     clearColWidthCache,
     virtualX_tableHeaders,
     expandRowColspan,
     theadVirtualX,
     virtualX_columnPart,
+    virtualX_expandColSegments,
+    // 内部诊断用（测试通过 setupState 访问），不加入 defineExpose
+    getRowHeightCacheInfo,
 ] = useVirtualScroll(
     props,
     tableContainerRef,
@@ -951,8 +1003,10 @@ const [
     tableHeaders,
     rowKeyGen,
     maxRowSpan,
+    getMaxRowSpanValue,
     scrollbarOptions,
     isExperimentalScrollY,
+    mergeCellsCache,
 );
 
 /** requestAnimationFrame throttled version of updateVirtualScrollY for smoother wheel scrolling */
@@ -968,12 +1022,66 @@ const [scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrol
     isExperimentalScrollY,
 );
 
-const [hiddenCellMap, mergeCellsWrapper, hoverMergedCells, updateHoverMergedCells, activeMergedCells, updateActiveMergedCells] = useMergeCells(
+/**
+ * 是否允许把虚拟窗口内的连续空行合并为占位 tr。
+ * autoRowHeight 时容器不定义 --row-height 且行高不均匀，不能合并。
+ */
+const canMergeEmptyRows = computed(() => virtual_on.value && !props.autoRowHeight);
+
+/** 视口上方行数（rowspan/stripe 修正区域）。不允许合并时为 0（上方行走常规行渲染） */
+const aboveViewportRowCount = computed(() => {
+    if (!canMergeEmptyRows.value) return 0;
+    const part = virtual_dataSourcePart.value;
+    const { startIndex, viewportStartIndex } = virtualScroll.value;
+    return Math.min(part.length, Math.max(0, viewportStartIndex - startIndex));
+});
+
+/**
+ * 视口下方可合并的占位行数。
+ * rowspan 修正会使 endIndex 超出 viewportEndIndex，二者之间的行无可见内容
+ * （跨视口的合并单元格由视口内锚点覆盖），此前逐行渲染为空 tr。
+ * 这里将其合并为占位 tr（按跨界 rowspan 结束行切段，见 belowPhSegments），
+ * 用 `height: calc(var(--row-height) * N)` 保持总高度，
+ * 大 rowspan 场景下可显著减少 DOM 节点数。
+ * 行高不均匀时（autoRowHeight / 该区域存在展开行）不能按统一行高合并，返回 0。
+ */
+const belowViewportRowCount = computed(() => {
+    if (!canMergeEmptyRows.value) return 0;
+    const part = virtual_dataSourcePart.value;
+    const { startIndex, viewportEndIndex } = virtualScroll.value;
+    // 视口行数（含 rowspan/stripe 修正的越界部分），钳制到实际数据长度
+    const viewportCount = Math.min(part.length, Math.max(0, viewportEndIndex - startIndex + 1));
+    const count = part.length - viewportCount;
+    if (count <= 0) return 0;
+    // 展开行有独立行高（--row-height 被行内覆写），不能参与统一行高合并
+    for (let i = viewportCount; i < part.length; i++) {
+        if (part[i]?.__EXP_R__) return 0;
+    }
+    return count;
+});
+
+const [
+    hiddenCellMap,
+    mergeCellsWrapper,
+    hoverMergedCells,
+    updateHoverMergedCells,
+    activeMergedCells,
+    updateActiveMergedCells,
+    aboveViewportColumnMap,
+    aboveEmptyBlocks,
+    belowPhSegments,
+] = useMergeCells(
     rowActiveProp,
     tableHeaderLast,
     rowKeyGen,
     colKeyGen,
     virtual_dataSourcePart,
+    virtualScroll,
+    virtualX_columnPart,
+    dataSourceCopy,
+    mergeCellsCache,
+    canMergeEmptyRows,
+    belowViewportRowCount,
 );
 
 const getFixedColPosition = useGetFixedColPosition(tableHeadersForCalc, colKeyGen);
@@ -981,10 +1089,6 @@ const getFixedColPosition = useGetFixedColPosition(tableHeadersForCalc, colKeyGe
 const getFixedStyle = useFixedStyle<DT>(props, isRelativeMode, getFixedColPosition, virtualScroll, virtualScrollX, virtualX_on, virtualX_offsetRight);
 
 const [highlightSteps, setHighlightDimRow, setHighlightDimCell] = useHighlight(props, stkTableId, tableContainerRef);
-
-if (props.autoResize) {
-    useAutoResize(tableContainerRef, initVirtualScroll, props, 200);
-}
 
 function getRowIndex(row: DT): number {
     const targetKey = rowKeyGen(row);
@@ -1034,6 +1138,19 @@ const [fixedCols, fixedColClassMap, updateFixedShadow] = useFixedCol(
     tableContainerRef,
 );
 
+if (props.autoResize) {
+    useAutoResize(
+        tableContainerRef,
+        () => {
+            initVirtualScroll();
+            // 容器宽度变化后，需重新计算固定列状态
+            updateFixedShadow();
+        },
+        props,
+        200,
+    );
+}
+
 const [colResizeOn, isColResizing, onThResizeMouseDown] = useColResize(
     props,
     emits,
@@ -1053,6 +1170,67 @@ const [toggleTreeNode, setTreeExpand, flatTreeData] = useTree(props, dataSourceC
 const paddingTopStyle = computed(() => `height:${virtualScroll.value.offsetTop}px`);
 const offsetBottomStyle = computed(() => `height:${virtual_offsetBottom.value}px`);
 const SRBRBottomStyle = computed(() => `height:${SRBRBottomHeight.value}px`);
+
+/** tbody 渲染项：数据行 | 视口上方合并占位段 | 视口下方合并占位段 */
+type BodyRenderItem =
+    | { type: 'row'; row: DT; rowIndex: number; key: UniqKey }
+    | { type: 'above-ph'; count: number; key: string }
+    | { type: 'below-ph'; count: number; key: string };
+
+/**
+ * 视口上方区域（startIndex..viewportStartIndex-1）的有序渲染段。
+ * 含 must-render 单元格（rowspan 跨入视口）的锚点行保留独立 tr；
+ * 连续「无 td」的空行（aboveEmptyBlocks，>= 2 行）合并为单个占位段，
+ * 以 height: calc(var(--row-height) * N) 保持总高度。
+ *
+ * 注意：占位段在 DOM 中只算 1 行，跨越它的 rowspan 属性已在
+ * mergeCellsWrapper 中按合并行数修正，保证单元格不会多跨行。
+ * 不允许合并时返回空数组。
+ */
+const aboveRenderParts = computed<BodyRenderItem[]>(() => {
+    const aboveCount = aboveViewportRowCount.value;
+    if (aboveCount <= 0) return [];
+    const part = virtual_dataSourcePart.value;
+    const blocks = aboveEmptyBlocks.value;
+    const { startIndex } = virtualScroll.value;
+
+    const items: BodyRenderItem[] = [];
+    let i = 0;
+    let blockIdx = 0;
+    while (i < aboveCount) {
+        const block = blocks[blockIdx];
+        if (block && block.start === startIndex + i) {
+            items.push({ type: 'above-ph', count: block.count, key: `vt-above-ph-${i}` });
+            i += block.count;
+            blockIdx++;
+        } else {
+            const row = part[i];
+            items.push({ type: 'row', row, rowIndex: i, key: rowKeyGen(row) });
+            i++;
+        }
+    }
+    return items;
+});
+
+/**
+ * tbody 渲染列表（异构）：视口上方段 + 视口行 + 视口下方占位段。
+ * 不允许合并时退化为全量数据行列表。
+ */
+const bodyRenderItems = computed<BodyRenderItem[]>(() => {
+    const part = virtual_dataSourcePart.value;
+    const items = aboveRenderParts.value.slice();
+    const rowEnd = part.length - belowViewportRowCount.value;
+    for (let i = aboveViewportRowCount.value; i < rowEnd; i++) {
+        const row = part[i];
+        items.push({ type: 'row', row, rowIndex: i, key: rowKeyGen(row) });
+    }
+    // 下方占位按跨界 rowspan 结束行分段输出，保证不同结束行的单元格止于不同 tr
+    const belowSegs = belowPhSegments.value;
+    for (let i = 0; i < belowSegs.length; i++) {
+        items.push({ type: 'below-ph', count: belowSegs[i].count, key: `vt-below-ph-${i}` });
+    }
+    return items;
+});
 
 watch(
     () => props.columns,
@@ -1320,6 +1498,16 @@ const cellStyleMap = computed(() => {
     };
 });
 
+/**
+ * fixed 模式下 colgroup 中单个 col 的样式。
+ * 仅取叶子列的 width（与 cellStyleMap 中 --cw 保持一致）；未设置 width 的列不声明宽度，
+ * 由 table-layout:fixed 将剩余空间平分，符合“一列固定、其余列平分”的预期。
+ */
+function getColGroupColStyle(col: PrivateStkTableColumn<DT>) {
+    const width = transformWidthToStr(col.width);
+    return width ? `width:${width}` : null;
+}
+
 function getAbsoluteRowIndex(rowIndex: number) {
     return rowIndex + virtualScroll.value.startIndex;
 }
@@ -1327,6 +1515,90 @@ function getAbsoluteRowIndex(rowIndex: number) {
 function shouldHideCell(row: PrivateRowDT | null | undefined, col: StkTableColumn<PrivateRowDT>): boolean | undefined {
     if (!hiddenCellMap.value || !row) return;
     return hiddenCellMap.value[rowKeyGen(row)]?.has(colKeyGen.value(col));
+}
+
+/**
+ * Get the column list for a body row.
+ * - Above-viewport rows: returns a modified list with placeholder entries (__VT_PH__) to reduce DOM nodes.
+ *   Rows without any must-render cell return [] and consecutive such rows are merged into a single
+ *   placeholder tr (see aboveRenderParts).
+ * - Below-viewport rows: normally merged into placeholder tr segments split at crossing rowspan
+ *   ends (see belowPhSegments); when still rendered individually (fallback), returns []
+ *   (tr already has height via CSS, no td needed).
+ *
+ * 仅在 canMergeEmptyRows（定高虚拟列表）时启用上述剔除：空 tr 依赖 CSS `height: var(--row-height)`
+ * 保持高度，autoRowHeight 模式行高靠 td 内容撑开（容器也不定义 --row-height），
+ * 剔除 td 会让视口上方行（stripe/rowspan 修正保留的行）塌陷为 0 高，且塌陷高度会被
+ * DOM 测量写入行高缓存，导致行高无法正常撑开。
+ */
+function getBodyColumns(row: PrivateRowDT | null | undefined, rowIndex: number): PrivateStkTableColumn<PrivateRowDT>[] {
+    if (!row) return virtualX_columnPart.value;
+    if (canMergeEmptyRows.value) {
+        const { startIndex, viewportStartIndex, viewportEndIndex } = virtualScroll.value;
+        const aboveCount = viewportStartIndex - startIndex;
+        if (aboveCount > 0 && rowIndex < aboveCount) {
+            return (aboveViewportColumnMap.value.get(rowKeyGen(row)) || virtualX_columnPart.value) as PrivateStkTableColumn<PrivateRowDT>[];
+        }
+        // Below-viewport rows: no td needed
+        if (startIndex + rowIndex > viewportEndIndex) {
+            return [];
+        }
+    }
+    const segments = virtualX_expandColSegments.value;
+    if (!segments) return virtualX_columnPart.value;
+    return buildExpandColumns(row, rowIndex, segments) as PrivateStkTableColumn<PrivateRowDT>[];
+}
+
+/**
+ * 超长 colspan 优化：收缩修正扩展区域（virtualX_expandColSegments）内的行渲染列列表。
+ * - 左扩展区：colspan/rowspan 锚点单元格保留真实渲染（否则行列占位断裂）；
+ *   被覆盖单元格照旧不渲染（槽位由跨越它的单元格占用）；其余连续普通单元格
+ *   合并为单个 colspan 占位 td（fixed 布局下恰好占用相同列槽位，保持对齐）；
+ * - 右扩展区：完全不渲染（均在可视视口外，不影响可视单元格对齐）。
+ */
+function buildExpandColumns(
+    row: PrivateRowDT,
+    rowIndex: number,
+    segments: {
+        prefix: PrivateStkTableColumn<PrivateRowDT>[];
+        leftExpand: PrivateStkTableColumn<PrivateRowDT>[];
+        viewport: PrivateStkTableColumn<PrivateRowDT>[];
+        suffix: PrivateStkTableColumn<PrivateRowDT>[];
+        leftExpandStart: number;
+    },
+) {
+    const { prefix, leftExpand, viewport, suffix, leftExpandStart } = segments;
+    const result: (PrivateStkTableColumn<PrivateRowDT> | { __VT_PH__: number })[] = prefix.slice();
+
+    if (leftExpand.length) {
+        const hiddenSet = hiddenCellMap.value ? hiddenCellMap.value[rowKeyGen(row)] : void 0;
+        const colKeyGenValue = colKeyGen.value;
+        const absRowIndex = (virtual_on.value ? virtualScroll.value.startIndex : 0) + rowIndex;
+        let run = 0;
+        for (let i = 0; i < leftExpand.length; i++) {
+            const col = leftExpand[i];
+            // 被覆盖单元格：不渲染 td（槽位由上方/左侧的跨越单元格占用）
+            if (hiddenSet && hiddenSet.has(colKeyGenValue(col))) continue;
+            // 锚点单元格（colspan/rowspan > 1）必须真实渲染，不能占位替代
+            if (col.mergeCells) {
+                const { colspan, rowspan } = mergeCellsCache.getMergeCellsResult(row, col, absRowIndex, col.__LF_S__ ?? leftExpandStart + i);
+                if (colspan > 1 || rowspan > 1) {
+                    if (run > 0) {
+                        result.push({ __VT_PH__: run } as PrivateStkTableColumn<PrivateRowDT>);
+                        run = 0;
+                    }
+                    result.push(col);
+                    continue;
+                }
+            }
+            run++;
+        }
+        if (run > 0) result.push({ __VT_PH__: run } as PrivateStkTableColumn<PrivateRowDT>);
+    }
+
+    // 右扩展区不渲染，直接拼接可视区与右侧固定列
+    result.push(...viewport, ...suffix);
+    return result;
 }
 /** th title */
 function getHeaderTitle(col: StkTableColumn<DT>): string {
@@ -1791,27 +2063,192 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
     }
 }
 
+/** smooth 滚动动画时长（ms） */
+const SMOOTH_SCROLL_DURATION = 300;
+let smoothScrollRafId = 0;
+/** 动画代际序号，取消后旧动画的 rAF 回调不再生效 */
+let smoothScrollSeq = 0;
+/** 当前动画的手势监听清理函数（监听直接挂 cancelSmoothScroll，无额外包装） */
+let removeGestureListeners: (() => void) | null = null;
+
+/** 取消进行中的平滑滚动动画 */
+function cancelSmoothScroll() {
+    smoothScrollSeq++;
+    if (smoothScrollRafId) {
+        cancelAnimationFrame(smoothScrollRafId);
+        smoothScrollRafId = 0;
+    }
+    if (removeGestureListeners) {
+        removeGestureListeners();
+        removeGestureListeners = null;
+    }
+}
+
 /**
- * set scroll bar position
- * @param top null to not change
- * @param left null to not change
+ * 解析滚动轴目标为绝对像素坐标
+ * @param target 数字坐标或 { index, key, px } 目标，undefined 表示不改变该轴
+ * @param resolveByIndex 按 index 解析基准偏移，失败返回 null
+ * @param resolveByKey 按 key 解析基准偏移，失败返回 null
+ * @returns null 表示该轴不滚动
  */
-function scrollTo(top: number | null = 0, left: number | null = 0) {
-    if (!tableContainerRef.value) return;
+function resolveScrollAxis(
+    target: number | ScrollAxisTarget | undefined,
+    resolveByIndex: (index: number) => number | null,
+    resolveByKey: (key: string | number) => number | null,
+): number | null {
+    if (target === undefined) return null;
+    if (typeof target === 'number') return target;
+    let base: number | null;
+    if (target.index !== undefined) {
+        // index 优先于 key
+        base = resolveByIndex(target.index);
+    } else if (target.key !== undefined) {
+        base = resolveByKey(target.key);
+    } else {
+        // 仅传 px：基准为 0
+        base = 0;
+    }
+    if (base === null) return null;
+    return base + (target.px ?? 0);
+}
+
+/** top 轴基准偏移：目标行之前所有行的累计高度 */
+function resolveTopByIndex(index: number): number | null {
+    if (index < 0 || index >= dataSourceCopy.value.length) return null;
+    return getRowsHeight(index);
+}
+function resolveTopByKey(key: string | number): number | null {
+    const index = dataSourceCopy.value.findIndex(row => rowKeyGen(row) === key);
+    return index === -1 ? null : getRowsHeight(index);
+}
+
+/** left 轴基准偏移：目标列之前所有列的宽度之和（与区域选择内部 getColPosition 同算法） */
+function getColLeft(colIndex: number): number {
+    const cols = tableHeaderLast.value;
+    let left = 0;
+    for (let i = 0; i < colIndex; i++) {
+        left += getCalculatedColWidth(cols[i]);
+    }
+    return left;
+}
+
+/** top 轴最大可滚动距离：基于理论内容高度（所有行高之和），不依赖 DOM 测量 */
+function getMaxScrollTop(): number {
+    return Math.max(0, getRowsHeight(dataSourceCopy.value.length) - virtualScroll.value.containerHeight);
+}
+
+function resolveLeftByIndex(index: number): number | null {
+    if (index < 0 || index >= tableHeaderLast.value.length) return null;
+    return getColLeft(index);
+}
+function resolveLeftByKey(key: string | number): number | null {
+    const index = tableHeaderLast.value.findIndex(col => col.dataIndex === key);
+    return index === -1 ? null : getColLeft(index);
+}
+
+/** 执行滚动（数字重载与 options 重载共用） */
+function applyScrollPosition(top: number | null, left: number | null) {
     if (top !== null) {
         if (isExperimentalScrollY.value) {
             updateVirtualScrollY(top);
             updateCustomScrollbar();
         } else {
-            tableContainerRef.value.scrollTop = top;
+            tableContainerRef.value!.scrollTop = top;
         }
     }
-    if (left !== null) tableContainerRef.value.scrollLeft = left;
+    if (left !== null) tableContainerRef.value!.scrollLeft = left;
 }
+
+/** 平滑滚动到目标位置（rAF 动画，ease-out）；每帧走与用户滚动相同的路径 */
+function smoothScrollTo(top: number | null, left: number | null) {
+    const container = tableContainerRef.value;
+    if (!container || (top === null && left === null)) return;
+    const startTop = isExperimentalScrollY.value ? virtualScroll.value.scrollTop : container.scrollTop;
+    const startLeft = container.scrollLeft;
+    const deltaTop = top === null ? 0 : top - startTop;
+    const deltaLeft = left === null ? 0 : left - startLeft;
+    if (!deltaTop && !deltaLeft) return;
+
+    const startTime = Date.now();
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    // 用户手势介入时取消动画
+    container.addEventListener('wheel', cancelSmoothScroll, { passive: true });
+    container.addEventListener('touchstart', cancelSmoothScroll, { passive: true });
+    removeGestureListeners = () => {
+        container.removeEventListener('wheel', cancelSmoothScroll);
+        container.removeEventListener('touchstart', cancelSmoothScroll);
+    };
+
+    const seq = smoothScrollSeq;
+    const step = () => {
+        // 动画已被取消（新调用或用户手势），旧回调直接退出
+        if (seq !== smoothScrollSeq) return;
+        const t = Math.min(1, (Date.now() - startTime) / SMOOTH_SCROLL_DURATION);
+        const eased = ease(t);
+        applyScrollPosition(top === null ? null : startTop + deltaTop * eased, left === null ? null : startLeft + deltaLeft * eased);
+        if (t < 1) {
+            smoothScrollRafId = requestAnimationFrame(step);
+        } else {
+            smoothScrollRafId = 0;
+            removeGestureListeners!();
+            removeGestureListeners = null;
+        }
+    };
+    smoothScrollRafId = requestAnimationFrame(step);
+}
+
+/**
+ * set scroll bar position
+ * - 数字重载（向后兼容）：`scrollTo(top, left)`，null 表示不改变该轴，省略默认 0
+ * - options 重载：`scrollTo({ top, left, behavior })`，每轴可传像素数字或 `{ index, key, px }` 目标，
+ *   省略的轴不改变位置；目标无法解析（index 越界 / key 不存在）时该轴静默跳过
+ * @param options null to not change
+ * @param leftArg null to not change
+ */
+function scrollTo(top?: number | null, left?: number | null): void;
+function scrollTo(options: ScrollToOptions): void;
+function scrollTo(options?: ScrollToOptions | number | null, leftArg?: number | null): void {
+    if (!tableContainerRef.value) return;
+    cancelSmoothScroll();
+    if (options === undefined || options === null || typeof options === 'number') {
+        // 数字重载：保持既有行为
+        applyScrollPosition(options === undefined ? 0 : options, leftArg === undefined ? 0 : leftArg);
+        return;
+    }
+    let top: number | null = resolveScrollAxis(options.top, resolveTopByIndex, resolveTopByKey);
+    let left: number | null = resolveScrollAxis(options.left, resolveLeftByIndex, resolveLeftByKey);
+    if (top === null && left === null) return;
+    // 钳制到合法滚动范围（基于理论内容尺寸，与滚动条语义一致）
+    if (top !== null) top = Math.min(Math.max(top, 0), getMaxScrollTop());
+    if (left !== null) left = Math.min(Math.max(left, 0), Math.max(0, getColLeft(tableHeaderLast.value.length) - virtualScrollX.value.containerWidth));
+    if (options.behavior === 'smooth') {
+        smoothScrollTo(top, left);
+    } else {
+        applyScrollPosition(top, left);
+    }
+}
+// 编译期断言：实现签名与公共类型 ScrollToFn 保持一致（type-tests 依赖此类型）
+void (scrollTo satisfies ScrollToFn);
 
 /** get current table data */
 function getTableData() {
     return toRaw(dataSourceCopy.value);
+}
+
+/**
+ * 清空 mergeCells 结果缓存并强制重算合并结果。
+ *
+ * 缓存以「绝对行索引 + 叶子列索引」为键、行引用同一性校验命中，
+ * 仅在 dataSource/列配置变化时自动清空。业务代码原地修改行字段
+ * （行对象引用不变，常见于响应式行对象）且 mergeCells 结果依赖这些字段时，
+ * 缓存会命中旧结果，需调用本方法显式失效。
+ */
+function clearMergeCellsCache() {
+    mergeCellsCache.clear();
+    // 重建 dataSourceCopy（新数组引用）：触发缓存清空 watch 与渲染更新，
+    // 使 hiddenCellMap/hoverRowMap 及渲染出的 rowspan/colspan 全部重算
+    initDataSource();
+    updateMaxRowSpan();
 }
 
 defineExpose({
@@ -1836,6 +2273,13 @@ defineExpose({
      * @see {@link initVirtualScrollY}
      */
     initVirtualScrollY,
+    /**
+     * 清空 mergeCells 结果缓存并强制重算合并结果
+     *
+     * en: Clear mergeCells result cache and force recomputation
+     * @see {@link clearMergeCellsCache}
+     */
+    clearMergeCellsCache,
     /**
      * 选中一行
      *
@@ -1899,8 +2343,10 @@ defineExpose({
     resetSorter,
     /**
      * 滚动至
+     * - 数字参数：scrollTo(top, left)，null 表示不改变该轴
+     * - 对象参数：scrollTo({ top, left, behavior })，top/left 可传像素数字或 { index, key, px } 目标
      *
-     * en: Scroll to
+     * en: Scroll to position or target row/column
      * @see {@link scrollTo}
      */
     scrollTo,
