@@ -218,33 +218,34 @@
                                         v-else-if="!shouldHideCell(item.row, col)"
                                         v-bind="getTDProps(item.row, col, item.rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0)"
                                     >
+                                        <component
+                                            :is="col.customCell"
+                                            v-if="col.customCell"
+                                            class="table-cell-wrapper"
+                                            tabindex="-1"
+                                            :col="col"
+                                            :row="item.row"
+                                            :rowIndex="getAbsoluteRowIndex(item.rowIndex)"
+                                            :colIndex="(col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0"
+                                            :cellValue="item.row && item.row[col.dataIndex]"
+                                            :expanded="item.row && item.row.__EXP__"
+                                            :tree-expanded="item.row && item.row.__T_EXP__"
+                                        >
+                                            <template #stkFoldIcon>
+                                                <TriangleIcon @click="triangleClick($event, item.row, col)"></TriangleIcon>
+                                            </template>
+                                            <template #stkDragIcon>
+                                                <DragHandle @dragstart="onTrDragStart($event, getAbsoluteRowIndex(item.rowIndex))" />
+                                            </template>
+                                        </component>
                                         <template
                                             v-for="text in [
                                                 getFormattedValue(item.row, col, item.rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0),
                                             ]"
+                                            v-else
                                             :key="text"
                                         >
-                                            <component
-                                                :is="col.customCell"
-                                                v-if="col.customCell"
-                                                class="table-cell-wrapper"
-                                                tabindex="-1"
-                                                :col="col"
-                                                :row="item.row"
-                                                :rowIndex="getAbsoluteRowIndex(item.rowIndex)"
-                                                :colIndex="(col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0"
-                                                :cellValue="item.row && text"
-                                                :expanded="item.row && item.row.__EXP__"
-                                                :tree-expanded="item.row && item.row.__T_EXP__"
-                                            >
-                                                <template #stkFoldIcon>
-                                                    <TriangleIcon @click="triangleClick($event, item.row, col)"></TriangleIcon>
-                                                </template>
-                                                <template #stkDragIcon>
-                                                    <DragHandle @dragstart="onTrDragStart($event, getAbsoluteRowIndex(item.rowIndex))" />
-                                                </template>
-                                            </component>
-                                            <div v-else-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="text || ''">
+                                            <div v-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="text || ''">
                                                 {{ (item.row && text) != null ? item.row && text : getEmptyCellText(col, item.row) }}
                                             </div>
                                             <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
