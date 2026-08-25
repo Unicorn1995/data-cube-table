@@ -103,3 +103,25 @@ interface FilterStatus {
     filter?: (args: { row: any; cellValue: any; filterValues: any[] }) => boolean;
 }
 ```
+
+## 注意远程排序冲突
+
+在 `sort-remote` 远程排序模式下，`@sort-change` 事件的第三个参数 `data` 是表格当前的工作数据副本，**如果此时有激活的筛选条件，该数据仅包含筛选后的行**，而非完整的原始 `props.dataSource`。
+
+如果直接将该 `data` 赋值给 `dataSource`，被筛选掉的行将**永久丢失**。
+
+::: warning 正确做法
+远程排序时，父组件应始终基于自己维护的**原始数据源**进行排序，而不是使用 `sort-change` 事件的 `data` 参数。
+```ts
+// ✘ 错误：data 可能已被筛选，直接赋值会丢失数据
+function handleSortChange(col, order, data) {
+    dataSource.value = data;
+}
+
+// ✔ 正确：基于原始数据源排序
+function handleSortChange(col, order) {
+    // originalData = dataSource.value
+    dataSource.value = sortMyData(originalData, col, order);
+}
+```
+:::

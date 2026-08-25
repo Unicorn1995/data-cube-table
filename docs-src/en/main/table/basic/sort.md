@@ -173,6 +173,11 @@ defineEmits type:
 ): void;
 
 ```
+::: warning Note
+The third parameter `data` returns the **filtered** data list if there is an active **filter**.
+
+If you want to sort based on the original data, you can ignore this parameter.
+:::
 
 ### Expose
 ```ts

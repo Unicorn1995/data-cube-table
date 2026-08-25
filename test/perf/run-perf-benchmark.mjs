@@ -35,6 +35,8 @@ const VERSIONS = [
     { name: '1.0.4', type: 'tag' },
     { name: '1.1.0', type: 'tag' },
     { name: '1.2.0', type: 'tag' },
+    { name: '1.2.1', type: 'tag' },
+    { name: '1.2.2', type: 'tag' },
     { name: 'master', type: 'branch' },
 ];
 

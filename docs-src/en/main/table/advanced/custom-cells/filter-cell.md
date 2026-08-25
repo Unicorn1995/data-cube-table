@@ -103,3 +103,25 @@ interface FilterStatus {
     filter?: (args: { row: any; cellValue: any; filterValues: any[] }) => boolean;
 }
 ```
+
+## Note on Remote Sorting Conflicts
+
+In `sort-remote` mode, the third parameter `data` of the `@sort-change` event is the table's current working data copy. **If there are active filter conditions at this time, this data only contains the filtered rows**, not the complete original `props.dataSource`.
+
+If you directly assign this `data` to `dataSource`, the filtered-out rows will be **permanently lost**.
+
+::: warning Correct Approach
+When using remote sorting, the parent component should always sort based on its own maintained **original data source**, rather than using the `data` parameter from the `sort-change` event.
+```ts
+// ✘ Wrong: data may already be filtered, direct assignment will lose data
+function handleSortChange(col, order, data) {
+    dataSource.value = data;
+}
+
+// ✔ Correct: sort based on original data source
+function handleSortChange(col, order) {
+    // originalData = dataSource.value
+    dataSource.value = sortMyData(originalData, col, order);
+}
+```
+:::

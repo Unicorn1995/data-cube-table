@@ -103,3 +103,25 @@ interface FilterStatus {
     filter?: (args: { row: any; cellValue: any; filterValues: any[] }) => boolean;
 }
 ```
+
+## リモートソートの競合に関する注意
+
+`sort-remote` リモートソートモードでは、`@sort-change` イベントの3番目のパラメータ `data` はテーブルの現在の作業データコピーです。**もしアクティブなフィルター条件がある場合、このデータはフィルター後の行のみを含み**、完全な元の `props.dataSource` ではありません。
+
+もし直接この `data` を `dataSource` に代入すると、フィルターで除外された行が**永久に失われます**。
+
+::: warning 正しい方法
+リモートソート時、親コンポーネントは常に自分が管理する**元のデータソース**に基づいてソートすべきであり、`sort-change` イベントの `data` パラメータを使用すべきではありません。
+```ts
+// ✘ 間違い：data はすでにフィルター済みの可能性があり、直接代入するとデータが失われます
+function handleSortChange(col, order, data) {
+    dataSource.value = data;
+}
+
+// ✔ 正しい：元のデータソースに基づいてソート
+function handleSortChange(col, order) {
+    // originalData = dataSource.value
+    dataSource.value = sortMyData(originalData, col, order);
+}
+```
+:::

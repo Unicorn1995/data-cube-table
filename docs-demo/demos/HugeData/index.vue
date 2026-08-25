@@ -199,7 +199,9 @@ function handleSortChange(
     currentSort.dataIndex = col.dataIndex;
     currentSort.order = order;
     currentSort.sortType = col.sortType;
-    dataSource.value = tableSort(col, order, data, sortConfig);
+    // 这里data 是筛选过后的数据，因此 调用 tableSort 时，需要使用 dataSource.value 作为数据源
+    // en: Here data is the filtered data, so when calling tableSort, the data source should be dataSource.value
+    dataSource.value = tableSort(col, order, dataSource.value, sortConfig);
     calculateFootData();
 }
 

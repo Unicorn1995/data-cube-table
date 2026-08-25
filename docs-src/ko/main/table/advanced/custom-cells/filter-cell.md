@@ -103,3 +103,25 @@ interface FilterStatus {
     filter?: (args: { row: any; cellValue: any; filterValues: any[] }) => boolean;
 }
 ```
+
+## 원격 정렬 충돌 주의
+
+`sort-remote` 원격 정렬 모드에서 `@sort-change` 이벤트의 세 번째 매개변수 `data`는 테이블의 현재 작업 데이터 복사본입니다. **만약 활성화된 필터 조건이 있다면, 이 데이터는 필터링된 행만 포함하며**, 원본 `props.dataSource` 전체가 아닙니다.
+
+만약 이 `data`를 직접 `dataSource`에 할당하면, 필터링된 행이 **영구적으로 손실**됩니다.
+
+::: warning 올바른 방법
+원격 정렬 시, 부모 컴포넌트는 항상 자신이 관리하는 **원본 데이터 소스**를 기반으로 정렬해야 하며, `sort-change` 이벤트의 `data` 매개변수를 사용하면 안 됩니다.
+```ts
+// ✘ 잘못된 방법: data는 이미 필터링되었을 수 있어, 직접 할당 시 데이터가 손실됩니다
+function handleSortChange(col, order, data) {
+    dataSource.value = data;
+}
+
+// ✔ 올바른 방법: 원본 데이터 소스를 기반으로 정렬
+function handleSortChange(col, order) {
+    // originalData = dataSource.value
+    dataSource.value = sortMyData(originalData, col, order);
+}
+```
+:::

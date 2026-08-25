@@ -10,11 +10,12 @@ import { Order, SortOption, SortState, StkTableColumn, UniqKey } from './types/i
  * @param dataSourceCopy 数据源副本 ref
  * @param initDataSource 初始化数据源函数
  * @param emits 事件发射函数
+ * @param onDataSourceChange 数据源变化后的刷新回调（重算虚拟滚动等，见 #80）
  * @returns 排序相关状态和方法
  */
 export declare function useSorter<DT extends Record<string, any>>(props: any, emits: any, colKeyGen: Ref<(col: StkTableColumn<DT>) => string>, tableHeaderLast: Ref<StkTableColumn<DT>[]>, dataSourceCopy: Ref<DT[]>, initDataSource: (data?: DT[], option?: {
     forceSort?: boolean;
-}) => void): readonly [Ref<{
+}) => void, onDataSourceChange: () => void): readonly [Ref<{
     key?: any;
     dataIndex: import('vue').UnwrapRef<keyof DT & string>;
     sortField?: import('vue').UnwrapRef<keyof DT> | undefined;
