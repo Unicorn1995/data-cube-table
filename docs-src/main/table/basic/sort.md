@@ -168,7 +168,7 @@ defineEmits 类型：
     col: StkTableColumn<DT> | null, 
     /** 正序/倒序 */
     order: Order,
-    /** 排序后的值 */
+    /** 表格当前工作数据（经排序和筛选后的内部副本，可能不等于原始 props.dataSource） */
     data: DT[], 
     sortConfig: SortConfig<DT>
 ): void;

@@ -42,6 +42,15 @@ props:
 
 某些情况下，仍需要手动重新计算虚拟列表的可视区域，此时可以调用组件expose的方法。
 
+::: tip 自动重算时机
+以下数据变化会自动重算可视区，无需手动调用：
+
+* `dataSource` 变化（替换新数组）；
+* 本地筛选（`setFilter`，`remote: false`）；
+* 排序（表头点击排序、`setSorter`、`resetSorter`）；
+* 树形展开/收起、行展开（`setTreeExpand`、`setRowExpand`）。
+:::
+
 ```ts
 /**
  * 初始化纵向虚拟列表的可视区域

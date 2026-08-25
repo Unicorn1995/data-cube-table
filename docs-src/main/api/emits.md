@@ -10,6 +10,13 @@
 (e: 'sort-change', col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>): void;
 ```
 
+| 参数 | 说明 |
+|---|---|
+| col | 排序的列 |
+| order | 排序方向 |
+| data | 表格当前工作数据（经过排序和筛选后的内部副本），**不是原始 `props.dataSource`**。如果当前有激活的筛选，`data` 仅包含过滤后的行。在 `sort-remote` 场景中，应基于原始数据源排序后回传，而非直接将 `data` 赋值给 `dataSource` |
+| sortConfig | 排序配置 |
+
 ### row-click
 
 一行点击事件。

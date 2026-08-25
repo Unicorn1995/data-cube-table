@@ -17,7 +17,11 @@ export type VirtualScrollStore = {
     rowHeight: number;
     /** 表格定位上边距 */
     offsetTop: number;
-    /** 纵向滚动条位置，用于判断是横向滚动还是纵向 */
+    /**
+     * 纵向滚动条位置，用于判断是横向滚动还是纵向。
+     * 静默字段：非 relative 模式下写入不触发 triggerRef（滚动窗口未变的帧零重渲染），
+     * 不得在响应式上下文（computed/模板/watch）中依赖此字段。
+     */
     scrollTop: number;
     /** 总滚动高度 */
     scrollHeight: number;
@@ -39,7 +43,10 @@ export type VirtualScrollXStore = {
     endIndex: number;
     /** 表格定位左边距 */
     offsetLeft: number;
-    /** 横向滚动位置，用于判断是横向滚动还是纵向 */
+    /**
+     * 横向滚动位置，用于判断是横向滚动还是纵向。
+     * 静默字段：非 relative 模式下写入不触发 triggerRef，不得在响应式上下文中依赖此字段。
+     */
     scrollLeft: number;
 };
 /**
@@ -49,6 +56,8 @@ export type VirtualScrollXStore = {
 export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTMLElement | undefined>, trRef: Ref<HTMLTableRowElement[] | undefined>, dataSourceCopy: ShallowRef<PrivateRowDT[]>, tableHeaderLast: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[]>, tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>, rowKeyGen: RowKeyGen, maxRowSpan: Map<UniqKey, number>, 
 /** 全局最大 rowspan（限定跨界修正扫描范围用） */
 getMaxRowSpanValue: () => number, scrollbarOptions: Ref<Required<ScrollbarOptions>>, isExperimentalScrollY: Ref<boolean | undefined>, 
+/** relative 固定模式的样式（useFixedStyle）以响应式方式依赖 scrollTop/scrollLeft，该模式下保留滚动位置的响应式触发 */
+isRelativeMode: Ref<boolean>, 
 /** mergeCells 结果共享缓存（与 useMergeCells 共用，避免重复调用用户回调） */
 mergeCellsCache: MergeCellsCache): readonly [ShallowRef<VirtualScrollStore, VirtualScrollStore>, ShallowRef<VirtualScrollXStore, VirtualScrollXStore>, import('vue').ComputedRef<any>, import('vue').ComputedRef<PrivateRowDT[]>, import('vue').ComputedRef<number>, import('vue').ComputedRef<any>, import('vue').ComputedRef<number>, import('vue').ComputedRef<number>, (height?: number) => void, (height?: number) => void, () => void, (sTop?: number) => void, (sLeft?: number) => void, (rowKey: UniqKey, height?: number | null) => void, () => void, (count: number) => number, () => void, import('vue').ComputedRef<PrivateStkTableColumn<PrivateRowDT>[][]>, import('vue').ComputedRef<number>, import('vue').ComputedRef<{
     startIndex: number;

@@ -42,6 +42,15 @@ Browsers that do not support `ResizeObserver` will use `onresize` as a fallback.
 
 In some cases, you still need to manually recalculate the visible area of the virtual list. In this case, you can call the method exposed by the component.
 
+::: tip Automatic recalculation
+The following data changes automatically recalculate the visible area — no manual call needed:
+
+* `dataSource` changes (replacing the array)
+* Local filtering (`setFilter` with `remote: false`)
+* Sorting (header-click sorting, `setSorter`, `resetSorter`)
+* Tree expand/collapse and row expand (`setTreeExpand`, `setRowExpand`)
+:::
+
 ```ts
 /**
  * Initialize the visible area of the vertical virtual list

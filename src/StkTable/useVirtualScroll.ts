@@ -21,7 +21,11 @@ export type VirtualScrollStore = {
     rowHeight: number;
     /** 表格定位上边距 */
     offsetTop: number;
-    /** 纵向滚动条位置，用于判断是横向滚动还是纵向 */
+    /**
+     * 纵向滚动条位置，用于判断是横向滚动还是纵向。
+     * 静默字段：非 relative 模式下写入不触发 triggerRef（滚动窗口未变的帧零重渲染），
+     * 不得在响应式上下文（computed/模板/watch）中依赖此字段。
+     */
     scrollTop: number;
     /** 总滚动高度 */
     scrollHeight: number;
@@ -43,7 +47,10 @@ export type VirtualScrollXStore = {
     endIndex: number;
     /** 表格定位左边距 */
     offsetLeft: number;
-    /** 横向滚动位置，用于判断是横向滚动还是纵向 */
+    /**
+     * 横向滚动位置，用于判断是横向滚动还是纵向。
+     * 静默字段：非 relative 模式下写入不触发 triggerRef，不得在响应式上下文中依赖此字段。
+     */
     scrollLeft: number;
 };
 
@@ -91,6 +98,10 @@ function useColWidthCache<T extends { fixed?: StkTableColumn<PrivateRowDT>['fixe
 /** vue2 优化滚动回收延时 */
 const VUE2_SCROLL_TIMEOUT_MS = 200;
 
+/** 静默字段常量（模块级复用，避免每次滚动帧分配数组）；relative 模式不静默（见 assignVs 注释） */
+const SILENT_Y_KEYS: ['scrollTop'] = ['scrollTop'];
+const SILENT_X_KEYS: ['scrollLeft'] = ['scrollLeft'];
+
 /**
  * 合并单元格可视范围修正的最大迭代次数。
  * 合法（不重叠）的合并配置最多 2 轮即收敛（1 轮扩展 + 1 轮验证）；
@@ -115,6 +126,8 @@ export function useVirtualScroll(
     getMaxRowSpanValue: () => number,
     scrollbarOptions: Ref<Required<ScrollbarOptions>>,
     isExperimentalScrollY: Ref<boolean | undefined>,
+    /** relative 固定模式的样式（useFixedStyle）以响应式方式依赖 scrollTop/scrollLeft，该模式下保留滚动位置的响应式触发 */
+    isRelativeMode: Ref<boolean>,
     /** mergeCells 结果共享缓存（与 useMergeCells 共用，避免重复调用用户回调） */
     mergeCellsCache: MergeCellsCache,
 ) {
@@ -538,15 +551,20 @@ export function useVirtualScroll(
      * shallowRef 内部属性变更不会触发响应式，必须手动 triggerRef；但无条件触发会让
      * 「值未变」的调用也强制整表重渲染（每帧滚动多付 1~5ms 渲染成本）。
      * 本函数恢复 Vue 深响应式 ref 的 hasChanged 语义，滚动重算回到 0.02ms 级。
+     *
+     * silentKeys：写入 store 但不参与 triggerRef 判定的字段。滚动位置（scrollTop/scrollLeft）
+     * 每帧必变且模板不直接消费，静默写入使「滚动窗口（startIndex/endIndex）未变」的帧
+     * 完全跳过组件重渲染（消费方均在滚动处理函数中即时读取 .value）。
+     * relative 固定模式例外：useFixedStyle 的样式计算响应式依赖滚动位置，该模式下不静默。
      */
-    function assignVs<T extends object>(ref: ShallowRef<T>, patch: Partial<T>) {
+    function assignVs<T extends object>(ref: ShallowRef<T>, patch: Partial<T>, silentKeys?: (keyof T)[]) {
         const store = ref.value;
         let changed = false;
         for (const key in patch) {
             const k = key as keyof T;
             if (store[k] !== patch[k]) {
                 store[k] = patch[k] as T[keyof T];
-                changed = true;
+                if (!silentKeys?.includes(k)) changed = true;
             }
         }
         if (changed) triggerRef(ref);
@@ -736,16 +754,21 @@ export function useVirtualScroll(
         }
         vsValue.scrollTop = sTop;
 
-        assignVs(virtualScroll, vsValue);
+        // relative 模式固定表头样式响应式依赖 scrollTop，保留触发；其余模式静默写入
+        assignVs(virtualScroll, vsValue, isRelativeMode.value ? undefined : SILENT_Y_KEYS);
 
         if (!virtual_on.value) {
             // github #34 init
+            // endIndex 重置为最后一行而非 0：virtual_on=false 时虽不参与切片（全量渲染），
+            // 但若后续数据变多而未被重算（如旧版筛选/排序路径，见 #80），残留 endIndex=0
+            // 会使 slice(startIndex, 0+1) 只渲染 1 行；指向末行可让残留窗口覆盖全量数据。
+            const lastIdx = Math.max(0, dataLength - 1);
             assignVs(virtualScroll, {
                 startIndex: 0,
-                endIndex: 0,
+                endIndex: lastIdx,
                 offsetTop: 0,
                 viewportStartIndex: 0,
-                viewportEndIndex: 0,
+                viewportEndIndex: lastIdx,
             });
             return;
         }
@@ -864,8 +887,9 @@ export function useVirtualScroll(
         endIndex = Math.min(endIndex, dataLength);
 
         if (startIndex >= endIndex) {
-            // fallback
-            startIndex = endIndex - pageSize;
+            // fallback（#80：scrollTop 残留超出新数据长度时 endIndex 被钳到 dataLength，
+            // 需回退到末页窗口；钳非负防 pageSize 并常时产生负 startIndex → 负 offsetTop）
+            startIndex = Math.max(0, endIndex - pageSize);
         }
 
         if (vue2ScrollYTimeout) {
@@ -958,13 +982,16 @@ export function useVirtualScroll(
             window.clearTimeout(vue2ScrollXTimeout);
         }
 
+        // relative 模式固定列样式响应式依赖 scrollLeft，保留触发；其余模式静默写入
+        const silentXKeys = isRelativeMode.value ? undefined : SILENT_X_KEYS;
+
         // <= 等于是因为初始化时要赋值
         if (!props.optimizeVue2Scroll || sLeft <= scrollLeft) {
             // 向左滚动
-            assignVs(virtualScrollX, { startIndex, endIndex, offsetLeft, scrollLeft: sLeft });
+            assignVs(virtualScrollX, { startIndex, endIndex, offsetLeft, scrollLeft: sLeft }, silentXKeys);
         } else {
             // vue2 向右滚动优化
-            assignVs(virtualScrollX, { endIndex, scrollLeft: sLeft });
+            assignVs(virtualScrollX, { endIndex, scrollLeft: sLeft }, silentXKeys);
             vue2ScrollXTimeout = window.setTimeout(() => {
                 assignVs(virtualScrollX, { startIndex, offsetLeft });
             }, VUE2_SCROLL_TIMEOUT_MS);

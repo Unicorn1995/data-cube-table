@@ -166,6 +166,7 @@ function setSorter(
 * `option.silent`가 true이면 `@sort-change` 콜백 트리거 안함.
 * `option.sortOption`의 역할은 전달된 `colKey`가 `columns`에 없을 때 정렬 매개변수를 지정할 수 있습니다.某一 열을 숨겼지만 여전히 해당 열 필드로 정렬해야 하는 경우에有用.
     - 가장 높은 우선순위, 이것을 설정하면 `colKey`로 해당 열을 찾아 정렬하지 않습니다.
+* 로컬 정렬(`sortRemote`가 `false`, 기본값)이 트리거된 후 컴포넌트가 가상 스크롤 가시 영역(`scrollbar` 상태 포함)을 자동으로 재계산하므로 `initVirtualScrollY`를 수동으로 호출할 필요가 없습니다. `resetSorter`도 동일합니다.
 
 ### resetSorter
 정렬 상태 초기화
@@ -342,6 +343,8 @@ function copySelectedArea(): string
 
 ### setFilter(Beta)
 필터 상태 설정(Beta). 설정 후 `filter-change` 이벤트가 트리거됩니다.
+
+로컬 필터링(`option.remote`가 `false`, 기본값)인 경우, 데이터 필터링 후 컴포넌트가 가상 스크롤 가시 영역(`scrollbar` 상태 포함)을 자동으로 재계산하므로 `initVirtualScrollY`를 수동으로 호출할 필요가 없습니다.
 
 ```ts
 /**

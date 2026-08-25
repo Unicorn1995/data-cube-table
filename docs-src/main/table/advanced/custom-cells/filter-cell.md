@@ -27,6 +27,10 @@ Filter 是一个内置的列头筛选组件，点击列头筛选图标即可弹�
 * option 顺序不固定。
 :::
 
+::: warning autoOptions 缓存刷新时机
+`autoOptions` 会缓存提取结果。当 `props.dataSource` 引用发生变化时（例如 `sort-remote` 场景下父组件将已过滤的数据回传为 `dataSource`），缓存会被清除并在下次打开下拉时从新数据中重新提取选项，可能导致筛选选项减少。如需保持选项稳定，请使用 `options` 手动指定固定选项列表。
+:::
+
 ### 自定义筛选逻辑
 
 通过 `filter` 参数可以自定义筛选逻辑：

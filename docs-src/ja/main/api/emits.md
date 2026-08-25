@@ -10,6 +10,13 @@
 (e: 'sort-change', col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>): void;
 ```
 
+| パラメータ | 説明 |
+|---|---|
+| col | 排序対象の列 |
+| order | 排序方向 |
+| data | テーブルの現在の作業データ（排序・フィルタリング後の内部コピー）。**元の `props.dataSource` とは異なります**。フィルタが有効な場合、`data` にはフィルタリングされた行のみが含まれます。`sort-remote` シナリオでは、元のデータソースを排序して戻してください。`data` を直接 `dataSource` に代入しないでください |
+| sortConfig | 排序設定 |
+
 ### row-click
 
 行のクリックイベント。

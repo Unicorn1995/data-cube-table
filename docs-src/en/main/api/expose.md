@@ -167,6 +167,7 @@ function setSorter(
 * When `option.silent` is true, the `@sort-change` callback will not be triggered.
 * The role of `option.sortOption` is that if the passed `colKey` is not in `columns`, you can specify sorting parameters. This is useful when hiding a column but still wanting to sort by that column's field.
     - Highest priority; if this is configured, it will not use `colKey` to find the corresponding column for sorting.
+* After local sorting is triggered (`sortRemote` is `false`, the default), the component automatically recalculates the virtual-scroll visible area (including `scrollbar` state) — no need to call `initVirtualScrollY` manually. The same applies to `resetSorter`.
 
 ### resetSorter
 Reset sort state
@@ -343,6 +344,8 @@ function copySelectedArea(): string
 
 ### setFilter(Beta)
 Set filter status(Beta). Triggers the `filter-change` event after setting.
+
+With local filtering (`option.remote` is `false`, the default), the component automatically recalculates the virtual-scroll visible area (including `scrollbar` state) after the data is filtered — no need to call `initVirtualScrollY` manually.
 
 ```ts
 /**

@@ -13,11 +13,12 @@ const SORT_SWITCH_ORDER: Order[] = [null, 'desc', 'asc'] as const;
  * 排序 Hook
  * 管理表格排序状态和相关操作
  * @param props 表格 props
- * @param colKeyGen 列 key 生成函数
+ * @param colKeyGen 列 key 生成函数 
  * @param tableHeaderLast 表头最后一行（叶子节点）
  * @param dataSourceCopy 数据源副本 ref
  * @param initDataSource 初始化数据源函数
  * @param emits 事件发射函数
+ * @param onDataSourceChange 数据源变化后的刷新回调（重算虚拟滚动等，见 #80）
  * @returns 排序相关状态和方法
  */
 export function useSorter<DT extends Record<string, any>>(
@@ -27,6 +28,7 @@ export function useSorter<DT extends Record<string, any>>(
     tableHeaderLast: Ref<StkTableColumn<DT>[]>,
     dataSourceCopy: Ref<DT[]>,
     initDataSource: (data?: DT[], option?: { forceSort?: boolean }) => void,
+    onDataSourceChange: () => void,
 ) {
     /** 多列排序状态数组 */
     const sortStates = ref<SortState<DT>[]>([]);
@@ -182,6 +184,8 @@ export function useSorter<DT extends Record<string, any>>(
 
         if (!props.sortRemote) {
             initDataSource();
+            // #80：排序后数据窗口需重算，否则残留 startIndex/endIndex 会“吃掉”数据
+            onDataSourceChange();
         }
 
         emits('sort-change', col, order, toRaw(dataSourceCopy.value), sortConfig);
@@ -220,6 +224,8 @@ export function useSorter<DT extends Record<string, any>>(
         if (newOption.sort && dataSourceCopy.value?.length) {
             if (!props.sortRemote || newOption.force) {
                 initDataSource(props.dataSource, { forceSort: newOption.force });
+                // #80：与 onColumnSort 一致，排序后重算虚拟滚动窗口
+                onDataSourceChange();
             }
         }
 
@@ -243,6 +249,8 @@ export function useSorter<DT extends Record<string, any>>(
     function resetSorter() {
         sortStates.value = [];
         initDataSource();
+        // #80：重置后同样重算虚拟滚动窗口
+        onDataSourceChange();
     }
 
     /**

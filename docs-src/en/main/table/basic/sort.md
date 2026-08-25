@@ -167,7 +167,7 @@ defineEmits type:
     col: StkTableColumn<DT> | null, 
     /** Ascending/descending order */
     order: Order,
-    /** Sorted values */
+    /** Table's current working data (sorted & filtered internal copy, may differ from original props.dataSource) */
     data: DT[], 
     sortConfig: SortConfig<DT>
 ): void;

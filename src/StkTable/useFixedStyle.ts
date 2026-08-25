@@ -34,8 +34,6 @@ export function useFixedStyle<DT extends Record<string, any>>(
 
         const { headerRowHeight, rowHeight } = props;
         const isFixedLeft = fixed === 'left';
-        const { scrollLeft, scrollWidth, offsetLeft, containerWidth } = virtualScrollX.value;
-        const scrollRight = scrollWidth - containerWidth - scrollLeft;
 
         let style = '';
 
@@ -60,6 +58,8 @@ export function useFixedStyle<DT extends Record<string, any>>(
                     style += `right:${lr};`;
                 }
             } else {
+                const { scrollLeft, scrollWidth, offsetLeft, containerWidth } = virtualScrollX.value;
+                const scrollRight = scrollWidth - containerWidth - scrollLeft;
                 if (isFixedLeft) {
                     style += `left:${scrollLeft - (virtualX_on.value ? offsetLeft : 0)}px;`;
                 } else {

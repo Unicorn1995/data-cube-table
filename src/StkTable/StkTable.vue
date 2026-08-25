@@ -949,6 +949,7 @@ const [sortStates, sortCol, onColumnSort, setSorter, resetSorter, getSortColumns
     tableHeaderLast,
     dataSourceCopy,
     initDataSource,
+    onDataSourceChange,
 );
 
 const [isSRBRActive] = useScrollRowByRow(props, tableContainerRef);
@@ -1003,6 +1004,7 @@ const [
     getMaxRowSpanValue,
     scrollbarOptions,
     isExperimentalScrollY,
+    isRelativeMode,
     mergeCellsCache,
 );
 
@@ -1292,6 +1294,8 @@ onUnmounted(() => {
 });
 
 async function onDataSourceChange() {
+    // 数据顺序/行数变化后重算 rowspan 映射（排序后 mergeCells 的 rowIndex 会变化）
+    updateMaxRowSpan();
     await nextTick();
     initVirtualScrollY();
     updateCustomScrollbar();
@@ -1366,6 +1370,9 @@ function setFilter(
     filterStatus.value = status;
     if (!option?.remote) {
         initDataSource();
+        // #80：筛选改变 dataSourceCopy 后重算虚拟滚动窗口，
+        // 否则残留 startIndex/endIndex/scrollHeight 会导致只渲染 1 行或空白视口
+        onDataSourceChange();
     }
     if (!option?.silent) {
         emits('filter-change', status);
@@ -1651,14 +1658,16 @@ function getTHProps(col: PrivateStkTableColumn<DT>) {
         colspan: col.__C_SP__,
         style: cellStyleMap.value[TagType.TH].get(colKey),
         title: getHeaderTitle(col),
+        // class 用预拼接字符串（而非数组），降低每格 vnode diff 与 GC 开销
         class: [
             col.sorter ? 'sortable' : '',
-            isSorted && 'sorter-' + sortState?.order,
+            isSorted ? 'sorter-' + sortState?.order : '',
             col.headerClassName,
             fixedColClassMap.value.get(colKey),
-            col.headerAlign &&
-                (col.headerAlign === 'left' ? 'text-l' : col.headerAlign === 'right' ? 'text-r' : col.headerAlign === 'center' ? 'text-c' : null),
-        ],
+            col.headerAlign === 'left' ? 'text-l' : col.headerAlign === 'right' ? 'text-r' : col.headerAlign === 'center' ? 'text-c' : '',
+        ]
+            .filter(Boolean)
+            .join(' '),
     };
 }
 
@@ -1672,7 +1681,9 @@ function getTFProps(col: StkTableColumn<DT>) {
             fixedColClassMap.value.get(colKey),
             col.type === 'seq' ? 'seq-column' : '',
             col.align === 'center' ? 'text-c' : col.align === 'right' ? 'text-r' : '',
-        ],
+        ]
+            .filter(Boolean)
+            .join(' '),
     };
 }
 
@@ -1722,7 +1733,7 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     return {
         'data-col-key': colKey,
         style: cellStyleMap.value[TagType.TD].get(colKey),
-        class: classList,
+        class: classList.filter(Boolean).join(' '),
         ...mergeCellsWrapper(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0),
     };
 }
@@ -2217,7 +2228,8 @@ function scrollTo(options?: ScrollToOptions | number | null, leftArg?: number | 
     if (top === null && left === null) return;
     // 钳制到合法滚动范围（基于理论内容尺寸，与滚动条语义一致）
     if (top !== null) top = Math.min(Math.max(top, 0), getMaxScrollTop());
-    if (left !== null) left = Math.min(Math.max(left, 0), Math.max(0, getColLeft(tableHeaderLast.value.length) - virtualScrollX.value.containerWidth));
+    if (left !== null)
+        left = Math.min(Math.max(left, 0), Math.max(0, getColLeft(tableHeaderLast.value.length) - virtualScrollX.value.containerWidth));
     if (options.behavior === 'smooth') {
         smoothScrollTo(top, left);
     } else {

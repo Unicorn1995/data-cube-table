@@ -166,6 +166,7 @@ function setSorter(
 * `option.silent` 为 true 时，不会触发 `@sort-change` 回调。
 * `option.sortOption` 的作用的是，如果 传入的 `colKey` 不在 `columns` 中，可以指定排序参数。在隐藏某一列时，但仍然要按照那一列的字段排序的情况下有用。
     - 优先级最高，如果配置了这个，则不会用 `colKey` 去找对应的列排序。
+* 本地排序（`sortRemote` 为 `false`，默认）触发后，组件会自动重算虚拟滚动可视区（含 `scrollbar` 滚动条状态），无需手动调用 `initVirtualScrollY`。`resetSorter` 同理。
 
 ### resetSorter
 重置排序状态
@@ -342,6 +343,8 @@ function copySelectedArea(): string
 
 ### setFilter(Beta)
 设置筛选状态(Beta)。设置后会触发 `filter-change` 事件。
+
+本地筛选（`option.remote` 为 `false`，默认）时，组件会在数据过滤后自动重算虚拟滚动可视区（含 `scrollbar` 滚动条状态），无需手动调用 `initVirtualScrollY`。
 
 ```ts
 /**

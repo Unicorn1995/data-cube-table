@@ -27,6 +27,10 @@ Set `autoOptions: true`, and Filter will automatically extract unique values fro
 * Option order is not guaranteed.
 :::
 
+::: warning autoOptions Cache Invalidation
+`autoOptions` caches the extracted results. When the `props.dataSource` reference changes (e.g., in `sort-remote` scenarios where the parent passes filtered data back as `dataSource`), the cache is cleared and options are re-extracted from the new data the next time the dropdown opens, which may result in fewer options. Use the `options` parameter with a fixed list to keep options stable.
+:::
+
 ### Custom Filter Logic
 
 You can customize the filter logic via the `filter` parameter:

@@ -10,6 +10,13 @@
 (e: 'sort-change', col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>): void;
 ```
 
+| 매개변수 | 설명 |
+|---|---|
+| col | 정렬 대상 열 |
+| order | 정렬 방향 |
+| data | 테이블의 현재 작업 데이터(정렬 및 필터링 후 내부 복사본), **원본 `props.dataSource`가 아님**. 필터가 활성화된 경우 `data`는 필터링된 행만 포함합니다. `sort-remote` 시나리오에서는 원본 데이터 소트를 정렬한 후 대입해야 하며, `data`를 직접 `dataSource`에 대입하지 마세요 |
+| sortConfig | 정렬 설정 |
+
 ### row-click
 
 행 클릭 이벤트.

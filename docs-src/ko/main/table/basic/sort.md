@@ -168,7 +168,7 @@ defineEmits 타입:
     col: StkTableColumn<DT> | null, 
     /** 오름차순/내림차순 */
     order: Order,
-    /** 정렬 후 값 */
+    /** 테이블의 현재 작업 데이터(정렬 및 필터링 후 내부 복사본, 원본 props.dataSource와 다를 수 있음) */
     data: DT[], 
     sortConfig: SortConfig<DT>
 ): void;

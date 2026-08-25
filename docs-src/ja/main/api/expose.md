@@ -167,6 +167,7 @@ function setSorter(
 * `option.silent` が true の場合、`@sort-change` コールバックはトリガーされません。
 * `option.sortOption` の役割は、渡された `colKey` が `columns` にない場合に排序パラメータを指定できることです。列を非表示にしているがその列のフィールドで排序仍然したい場合は便利です。
     - 最高優先順位；これが設定されている場合、`colKey` を使用して対応する列を検索して排序することはしません。
+* ローカルソート（`sortRemote` が `false`、デフォルト）がトリガーされた後、コンポーネントは仮想スクロールの可視領域（`scrollbar` の状態を含む）を自動的に再計算します。`initVirtualScrollY` を手動で呼び出す必要はありません。`resetSorter` も同様です。
 
 ### resetSorter
 排序状態をリセット
@@ -343,6 +344,8 @@ function copySelectedArea(): string
 
 ### setFilter(Beta)
 フィルター状態を設定(Beta)。設定後に `filter-change` イベントをトリガーします。
+
+ローカルフィルタリング（`option.remote` が `false`、デフォルト）の場合、データのフィルタリング後にコンポーネントが仮想スクロールの可視領域（`scrollbar` の状態を含む）を自動的に再計算します。`initVirtualScrollY` を手動で呼び出す必要はありません。
 
 ```ts
 /**

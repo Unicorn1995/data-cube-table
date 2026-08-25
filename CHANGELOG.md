@@ -1,4 +1,12 @@
 
+## 1.2.2
+* Optimize
+  - perf: intra-window scrolling no longer triggers full re-render (silent `scrollTop`/`scrollLeft` writes); `useFixedStyle` skips scroll reads in sticky mode; `getTHProps`/`getTFProps`/`getTDProps` return class strings; `mergeCellsWrapper` memoized per row/column.
+* Chore
+  - chore: stop publishing `lib/test/**` and `.bak.ts` (141 → 125 files).
+* Bugfix
+  - fix: virtual-scroll window now recalculates after local filter/sort (#80), fixing stale `startIndex`/`endIndex` rendering; `mergeCells` rowspan follows new row order; `startIndex` fallback clamped to `0`.
+
 ## 1.2.1
 * Bugfix:
   - fix: `sideEffects` now includes `"./lib/**/*.css"`, preventing webpack from tree-shaking CSS imports in production builds.

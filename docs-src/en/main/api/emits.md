@@ -10,6 +10,13 @@ Triggered when sorting changes. When defaultSort.dataIndex is not found, col wil
 (e: 'sort-change', col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>): void;
 ```
 
+| Parameter | Description |
+|---|---|
+| col | The sorted column |
+| order | Sort direction |
+| data | The table's current working data (internal copy after sorting and filtering), **not the original `props.dataSource`**. If filters are active, `data` only contains filtered rows. In `sort-remote` scenarios, sort your original data source and assign it back, do NOT directly assign `data` to `dataSource` |
+| sortConfig | Sort configuration |
+
 ### row-click
 
 Click event for a row.
