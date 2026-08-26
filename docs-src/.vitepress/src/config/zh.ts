@@ -63,6 +63,7 @@ export const zhConfig = defineConfig({
                             { text: '介绍', link: '/start/introduce' },
                             { text: '开始', link: '/start/start' },
                             { text: '在vue2中使用', link: '/start/vue2-usage' },
+                            { text: 'Vue 表格性能对比', link: '/other/vue-table-benchmark' },
                             // { text: 'Runtime API Examples', link: '/api-examples' },
                         ]
                     }, {

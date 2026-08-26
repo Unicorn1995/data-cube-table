@@ -59,7 +59,7 @@ export function useFixedCol<DT extends Record<string, any>>(
                 if (fixed === 'right' && fixedBorderLeftColsValue.includes(col)) {
                     classList.push('fixed-cell--border-left');
                 }
-                colMap.set(colKeyFn(col), classList);
+                colMap.set(colKeyFn(col), classList.join(' '));
             }
         }
         return colMap;

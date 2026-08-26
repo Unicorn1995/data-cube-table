@@ -38,6 +38,7 @@ export const jaConfig = defineConfig({
                             { text: 'はじめに', link: '/start/introduce' },
                             { text: 'クイックスタート', link: '/start/start' },
                             { text: 'Vue 2での使用方法', link: '/start/vue2-usage' },
+                            { text: 'Vueテーブル性能ベンチマーク', link: '/other/vue-table-benchmark' },
                         ]
                     }, {
                         text: '機能',

@@ -38,6 +38,7 @@ export const koConfig = defineConfig({
                             { text: '소개', link: '/start/introduce' },
                             { text: '빠른 시작', link: '/start/start' },
                             { text: 'Vue 2에서 사용하기', link: '/start/vue2-usage' },
+                            { text: 'Vue 테이블 성능 벤치마크', link: '/other/vue-table-benchmark' },
                         ]
                     }, {
                         text: '기능',

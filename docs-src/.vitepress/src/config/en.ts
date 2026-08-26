@@ -38,6 +38,7 @@ export const enConfig = defineConfig({
                             { text: 'Introduction', link: '/start/introduce' },
                             { text: 'Getting Started', link: '/start/start' },
                             { text: 'Usage in Vue 2', link: '/start/vue2-usage' },
+                            { text: 'Vue Table Performance Benchmark', link: '/other/vue-table-benchmark' },
                         ]
                     }, {
                         text: 'Features',

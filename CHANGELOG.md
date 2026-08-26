@@ -1,4 +1,8 @@
 
+## 1.2.3
+* Bugfix
+  - fix: fixed column class names were comma-joined instead of space-separated after the class-string optimization, causing `position: sticky` to never activate.
+
 ## 1.2.2
 * Optimize
   - perf: intra-window scrolling no longer triggers full re-render (silent `scrollTop`/`scrollLeft` writes); `useFixedStyle` skips scroll reads in sticky mode; `getTHProps`/`getTFProps`/`getTDProps` return class strings; `mergeCellsWrapper` memoized per row/column.
