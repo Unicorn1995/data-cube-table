@@ -1,4 +1,17 @@
 
+## 1.2.6
+* Bugfix
+  - fix: the custom horizontal scrollbar thumb length did not update after an auto-resize. The resize handler refreshed `containerWidth` in the store but never re-ran `updateCustomScrollbar`; it is now called after `initVirtualScroll`.
+
+## 1.2.5
+* Bugfix
+  - fix: `--row-height` kept its mount-time value after `row-height` changed, so rows rendered with the old height while virtual-scroll math used the new one (blank bands / misaligned rows). The store now re-syncs the base row height, which also fixes `scroll-row-by-row` total height and area-selection keyboard scrolling.
+  - fix: changing `row-height` / `header-row-height` / `footer-row-height` / `expand-config.height` did not recalculate `pageSize`; the watcher also passed the row height into `initVirtualScrollY` as the container height, leaving about 1 rendered row. Row-height props are now watched together and recomputed after the new styles are applied.
+
+## 1.2.4
+* Bugfix:
+  - fix: #86 mac scroll x
+
 ## 1.2.3
 * Bugfix
   - fix: fixed column class names were comma-joined instead of space-separated after the class-string optimization, causing `position: sticky` to never activate.

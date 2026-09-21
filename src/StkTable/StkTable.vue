@@ -325,6 +325,36 @@ export default {
 
 <script setup lang="ts">
 /**
+ * StkTable 主组件（Vue 3 / Vue 2.7）
+ *
+ * 这是一个超大的核心组件文件，约 1800+ 行。理解它时请按以下「分区地图」定位：
+ *
+ * 1. 顶部（template 261 行前）
+ *    渲染结构：滚动容器 + 原生 <table>。包括 colgroup（固定模式列宽）、thead（多级表头、
+ *    sticky 固定）、tbody（虚拟滚动 tr / 空 td 定位）、tfoot（汇总行）、自定义滚动条容器。
+ *    通过 CSS 类（如 virtual / virtual-x / area-selection / theme 等）联动对应 hook 状态。
+ *
+ * 2. script setup（270 行起）
+ *    - props 定义：全部配置项，即公共 API（对应 types/index.ts 与文档 table-props.md）。
+ *    - 大量 useXxx hooks 的组装：本文件只做「装配」，具体逻辑在对应 hook 中。
+ *
+ * 3. 核心 hook 与职责（均在 src/StkTable/use*.ts）：
+ *    - useVirtualScroll     XY 轴虚拟滚动（可视区裁剪、占位 tr/th 定位、scroll 计算）
+ *    - useTableColumns      列配置归一化 / 多级表头展开为叶子列
+ *    - useFixedCol/useFixedStyle/getFixedColPosition  固定列 sticky/relative 定位
+ *    - useSorter/useTableColumns.sort  排序（本地/远端、多列）
+ *    - useColResize/useThDrag/useTrDrag  列宽调整 / 表头拖拽 / 行拖拽
+ *    - useMergeCells/useMaxRowSpan  单元格合并与最大行跨
+ *    - useRowExpand/useTree  展开行 / 树形
+ *    - useHighlight         单元格/行高亮（Web Animations API 或 css）
+ *    - useAreaSelection (features/)  区域选取（Excel 式键盘操作）
+ *    - useScrollbar/useScrollRowByRow/useWheeling  自定义滚动条 / 按行滚动 / 滚轮
+ *    - useAutoResize        容器尺寸自动适配
+ *
+ * 4. expose：对外暴露的实例方法（对应文档 expose.md），供 ref 调用。
+ *
+ * 注意：此文件与 vue2.7 兼容，props 不可抽离到独立文件（见下方注释），修改时注意不要破坏兼容性。
+ *
  * @author japlus
  */
 import { computed, nextTick, onMounted, onUnmounted, provide, ref, shallowRef, toRaw, toRef, watch } from 'vue';
@@ -425,6 +455,7 @@ const props = withDefaults(
         /**
          * 行高
          * - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
+         * - 支持动态修改，修改后自动重算可视区行数与滚动高度，并与 `--row-height` 保持同步。
          */
         rowHeight?: number;
         /**
@@ -440,9 +471,15 @@ const props = withDefaults(
          * @deprecated
          */
         rowCurrentRevokable?: boolean;
-        /** 表头行高。default = rowHeight */
+        /**
+         * 表头行高。default = rowHeight
+         * - 支持动态修改，表头占用的表体行数（pageSize）随之重算。
+         */
         headerRowHeight?: number | string;
-        /** 表尾行高。default = rowHeight */
+        /**
+         * 表尾行高。default = rowHeight
+         * - 支持动态修改。表尾行悬浮于滚动区底部，不计入虚拟滚动的总高度。
+         */
         footerRowHeight?: number | string;
         /** 虚拟滚动 */
         virtual?: boolean;
@@ -1144,6 +1181,9 @@ if (props.autoResize) {
             initVirtualScroll();
             // 容器宽度变化后，需重新计算固定列状态
             updateFixedShadow();
+            // initVirtualScroll 只是把新的 containerWidth/Height 写回 store，
+            // 自定义滚动条 thumb 长度依赖 store 值，须在其后重算，否则 resize 后横向滚动条长度不更新
+            updateCustomScrollbar();
         },
         props,
         200,
@@ -1251,7 +1291,21 @@ watch(
     },
 );
 
-watch(() => props.rowHeight, initVirtualScrollY);
+/**
+ * 行高类配置变化后重算虚拟滚动几何。
+ * 合并为一个 watcher：同一 tick 内多项同时变化只重算一次。
+ * 必须无参调用 initVirtualScrollY（其首参是虚拟滚动容器高度，不能把行高值传入），
+ * 且需 nextTick 等新的 --row-height / 表头行高等样式应用到 DOM 后再测量。
+ *
+ * 监听值拼接为单个原始值（字符串）而非返回数组：getter 返回数组时每次求值都是新数组，
+ * 身份比较必然变化，父组件传入内联对象字面量（如 :expand-config="{ height: 40 }"，官方示例即如此写法）
+ * 会让本 watcher 在父组件每次重渲染时误触发；展开行/变高大表下误触发一次会连带行高树 O(n) 重建
+ * （实测 50K 行每次父重渲染多付 ~10ms）。拼接为原始值后仅在值真正变化时触发，且兼容 Vue 2.7。
+ */
+watch(
+    () => `${props.rowHeight}|${props.headerRowHeight}|${props.footerRowHeight}|${props.expandConfig?.height}`,
+    () => nextTick(initVirtualScrollY),
+);
 
 watch(
     () => props.virtualX,

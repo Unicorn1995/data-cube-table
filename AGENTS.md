@@ -1,41 +1,70 @@
 # AGENTS.md
 
-本文件面向所有在本项目中工作的 AI 编码工具（Cursor、Claude Code、Copilot、Trae、Qoder 等）。
-`.trae/rules/` 下的规则文件对本项目同样有效，请一并遵守。
+> 本文件面向 AI 编码助手（Claude Code / CodeBuddy / Cursor 等）与新的贡献者，提供操作本仓库所需的上下文与约定。请先阅读本文再修改代码。
 
-## 规则 1：代码与文档同步（Code-Docs Sync）
+## 项目定位
 
-本项目是组件库（stk-table-vue），文档站点（docs-src/）是产品的一部分。
-**修改代码时，必须检查并同步受影响的文档，二者视为同一个改动。**
+**Stk Table Vue** 是一个基于 **Vue 3 / Vue 2.7** 的高性能虚拟滚动表格组件库。
+目标用户：需要在浏览器中流畅展示**数万行实时数据**的开发者。
 
-### 何时触发
+核心能力：XY 轴虚拟滚动、CSS sticky 固定列/固定表头、多级表头、树形/展开行、单元格合并（虚拟模式支持）、区域选取（Excel 式键盘操作）、单元格高亮（Web Animations API）、内置自定义单元格（筛选/编辑/多选/数字/涨跌）、列宽调整、表头/行拖拽、主题（暗/亮）、基于原生 `<table>`、**零运行时第三方依赖**。
 
-出现以下任一改动时，必须执行「定位文档 → 同步修改」流程：
+## 目录结构
 
-1. 公共 API 变化：新增/修改/删除 `defineExpose` 暴露的实例方法、props、events、slots；
-2. 功能行为或约束变化：如缓存语义、渲染时机、默认值、边界条件等与文档描述相关的逻辑；
-3. 修复了文档中描述过的行为缺陷（文档示例/说明可能已过时）。
+```
+src/StkTable/                核心源码（唯一的实现）
+├── StkTable.vue             主组件（超大文件，按文件头注释的模块分区理解）
+├── index.ts                 公共导出入口
+├── registerFeature.ts       功能注册机制
+├── const.ts                 常量
+├── types/                   API 类型定义（唯一权威 API 来源，修改 API 必改这里）
+│   └── index.ts             StkTableColumn / Props / Sort / AreaSelection 等全部类型
+├── components/              DragHandle / SortIcon / TreeNodeCell / TriangleIcon
+├── custom-cells/            内置自定义单元格（Filter / Editable / Checkbox / Number / Change）
+├── features/                区域选取等 feature
+├── utils/                   工具函数（排序、二分查找等）
+└── use*.ts                  按 feature 拆分的组合式逻辑 hook
+lib/                         构建产物（勿手改，由 vite build 生成）
+docs-src/                    文档站源码（vitepress，中/英/日/韩四语言）
+docs-demo/                   文档示例组件（*.vue）
+test/                        单元测试（vitest）
+```
 
-### 如何定位受影响的文档
+## 常用命令
 
-1. 用改动涉及的**关键词**（API 名、功能名）在 `docs-src/` 中全局搜索；
-2. 新增实例方法时，参考一个**同类已有方法**（如 `initVirtualScroll`）在文档中出现的所有位置；
-3. 重点检查目录：
-   - `docs-src/main/api/`：expose.md（实例方法清单）、props、events、slots 等 API 登记页——公共 API 必须在此登记；
-   - `docs-src/main/table/`、`docs-src/main/other/`、`docs-src/demos/`：功能说明页，注意其中的 `::: tip` 行为描述；
-   - `CHANGELOG.md`：公共 API 新增/变更需记录。
+| 命令 | 作用 |
+|------|------|
+| `pnpm dev` | 本地开发（vite） |
+| `pnpm build` | 构建组件库产物到 lib/ |
+| `pnpm test` | 运行单元测试（vitest） |
+| `pnpm docs:dev` | 本地文档站（vitepress） |
+| `pnpm docs:build` | 构建文档站（会生成 llms.txt / llms-full.txt） |
+| `pnpm perf` | 性能基准测试 |
 
-### 同步要求
+包管理器固定为 `pnpm`（见 `packageManager` 字段）。提交前请运行 `pnpm test` 与 `pnpm docs:build`。
 
-1. 文档描述必须与改动后的实际行为一致，不留矛盾（尤其是「何时自动重算/何时需手动调用」这类语义）；
-2. 新增公共方法需给出：用途说明、函数签名代码块、使用示例、适用/不适用场景；
-3. 多语言镜像：`docs-src/en|ja|ko/` 下存在同路径页面，至少先更新中文主文档（`docs-src/main/`），其余语言版本如能一并翻译则同步更新；
-4. 文档中的示例代码必须与实际 API 签名一致，可直接运行。
+## 代码约定
 
-### 完成标准
+- **类型优先**：所有对外公开的 API（props / emits / slots / expose / 列配置）必须在 `src/StkTable/types/index.ts` 定义并补充 JSDoc。不要直接在组件里定义散落类型。
+- **按 feature 拆 hook**：新逻辑应拆分为 `useXxx.ts`，避免让 `StkTable.vue` 继续膨胀。
+- **私有字段命名**：内部私有字段统一以双下划线 `__` 开头（如 `__EXP__`、`__R_K__`、`__LF_S__`），并在类型上标注 `@private`，对外不可见。
+- **注释语言**：源码注释与 JSDoc 使用中文。
+- **通用类型参数**：`StkTableColumn<T>` / 组件 props 普遍使用泛型 `T extends Record<string, any>`，`T` 代表数据行（dataSource 元素）类型。
+- **列唯一键**：默认取 `dataIndex`，可显式指定 `key`。
+- **虚拟滚动宽度**：列配置中 `min-width = max-width = width`，保证计算宽度稳定（详见 `虚拟滚动表格开发.md`）。
 
-提交改动前自查：用改动关键词再次搜索 `docs-src/`，确认所有命中页面要么已更新，要么确认无需更新。
+## 修改指引（改 API 的完整闭环）
 
-## 规则 2：Git 提交信息
+1. 修改 `src/StkTable/types/index.ts` 中的类型定义与 JSDoc。
+2. 在 `src/StkTable/StkTable.vue` 中接入/实现对应 props/emits/expose。
+3. 同步文档 `docs-src/main/api/*.md`（props / emits / slots / expose / stk-table-column）。
+4. 在 `docs-src/main/table/basic|advanced/` 或 `docs-demo/` 补充示例。
+5. 为改动补充测试（`test/`）。
+6. 运行 `pnpm test`、`pnpm docs:build` 验证。
 
-使用英文 commit message（见 `.trae/rules/git-commit-message.md`）。
+## AI 协作建议
+
+- 提问时优先指向具体符号（如"给 `StkTableColumn` 增加 `xxx` 字段"），而非"改一下表格"。
+- 需要理解某一能力时，先在 `src/StkTable/use*.ts` 中找对应 hook，再回看 `StkTable.vue` 的接入点。
+- 查阅公开 API 优先看 `src/StkTable/types/index.ts` 与浓缩手册 `AI-API-REFERENCE.md`，比读渲染逻辑更快。
+- 浓缩手册涵盖：Props / StkTableColumn / Emits / Slots / Expose / 内置单元格 / 导出 / 实现文件索引。
