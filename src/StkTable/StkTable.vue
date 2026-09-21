@@ -1414,7 +1414,7 @@ function handleDealColumns() {
 }
 
 function updateDataSource(val: DT[]) {
-    emits('selectionChange', []);
+    emits('selectionChange', checkedData.value);
     if (!Array.isArray(val)) {
         console.warn('invalid dataSource');
         return;
