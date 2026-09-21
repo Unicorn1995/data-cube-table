@@ -1414,7 +1414,6 @@ function handleDealColumns() {
 }
 
 function updateDataSource(val: DT[]) {
-    emits('selectionChange', checkedData.value);
     if (!Array.isArray(val)) {
         console.warn('invalid dataSource');
         return;
@@ -1437,6 +1436,7 @@ function updateDataSource(val: DT[]) {
         // wait for table render,initVirtualScrollY has get `dom` operation.
         nextTick(() => initVirtualScrollY());
     }
+    emits('selectionChange', checkedData.value);
     nextTick(updateCustomScrollbar);
 }
 
