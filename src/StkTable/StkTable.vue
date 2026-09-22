@@ -294,6 +294,7 @@
                     </template>
                 </tbody>
             </table>
+            <slot name="customContent" />
             <div
                 v-if="scrollbarOptions.enabled && showScrollbar.y"
                 class="stk-sb-thumb vertical"

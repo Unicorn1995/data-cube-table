@@ -846,6 +846,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
         row: any;
         col: any;
     }): any;
+    customContent?(_: {}): any;
     empty?(_: {}): any;
     customBottom?(_: {}): any;
 }>;
